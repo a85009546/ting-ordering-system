@@ -1,0 +1,9 @@
+**/target/
+.idea
+*.iml
+*.class
+*Test.java
+**/test/
+
+# 忽略 application-dev.yml
+application-dev.yml

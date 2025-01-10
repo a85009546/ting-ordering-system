@@ -1,0 +1,13 @@
+server:
+  port: 8080
+
+spring:
+  profiles:
+    active: dev
+  main:
+    allowed-bean-definition-overriding: true
+  datasource:
+    driver-class-name: ${ting.datasource.driver-class-name}
+    url: jdbc:mysql://${ting.datasource.host}:${ting.datasource.port}/${ting.datasource.database}
+    username: ${ting.datasource.username}
+    password: ${ting.datasource.password}
