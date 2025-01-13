@@ -1,6 +1,8 @@
 package com.github.mattwei.service;
 
+import com.github.mattwei.dto.UserLoginDTO;
 import com.github.mattwei.entity.User;
+import com.github.mattwei.vo.UserLoginVO;
 
 /**
  * Description:
@@ -22,4 +24,11 @@ public interface AuthService {
      * @param user
      */
     void register(User user);
+
+    /**
+     * 登入
+     * @param user
+     * @return
+     */
+    UserLoginVO login(User user);
 }

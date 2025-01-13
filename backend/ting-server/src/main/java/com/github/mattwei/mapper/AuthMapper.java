@@ -1,9 +1,12 @@
 package com.github.mattwei.mapper;
 
+import com.github.mattwei.entity.MenuItem;
 import com.github.mattwei.entity.User;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
 
 /**
  * Description:
@@ -32,4 +35,12 @@ public interface AuthMapper {
             "create_time, update_time) values(#{account}, #{password}, #{name}, #{sex}, #{phone}, " +
             "#{avatar}, #{balance}, #{role}, #{createTime}, #{updateTime})")
     void insert(User user);
+
+    /**
+     * 根據角色查詢菜單項目
+     * @param role
+     * @return
+     */
+    @Select("select * from menu_item where level <= #{role}")
+    List<MenuItem> getMenuItemsByRole(Integer role);
 }
