@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.4</version>
+        <version>2.7.3</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.github.mattwei</groupId>
@@ -19,7 +19,7 @@
     <version>0.0.1-SNAPSHOT</version>
 
     <properties>
-        <mybatis.spring>2.2.2</mybatis.spring>
+        <mybatis.spring>2.2.0</mybatis.spring>
         <lombok>1.18.20</lombok>
         <fastjson>2.0.53</fastjson>
     </properties>
