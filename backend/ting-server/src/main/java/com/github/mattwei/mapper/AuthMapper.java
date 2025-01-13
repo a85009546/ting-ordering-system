@@ -5,6 +5,7 @@ import com.github.mattwei.entity.User;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
 
@@ -43,4 +44,10 @@ public interface AuthMapper {
      */
     @Select("select * from menu_item where level <= #{role}")
     List<MenuItem> getMenuItemsByRole(Integer role);
+
+    /**
+     * 更新用戶數據
+     * @param user
+     */
+    void update(User user);
 }

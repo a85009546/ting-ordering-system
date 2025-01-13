@@ -48,6 +48,7 @@ public class AuthController {
         // 判斷帳號是否存在
         if(user == null){
             // 這裡的 user 皆為 customer
+            user = new User();
             BeanUtils.copyProperties(registerRequestDTO, user);
             user.setRole(1);
             user.setBalance(new BigDecimal("5000.00")); // 默認5000元
@@ -79,6 +80,7 @@ public class AuthController {
             }else{
                 // 登入成功，獲取對應資源
                 UserLoginVO userLoginVO = authService.login(user);
+
                 System.out.println(userLoginVO);
                 return Result.success(userLoginVO);
             }

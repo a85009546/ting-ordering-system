@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,6 +61,9 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public UserLoginVO login(User user) {
+        // 更新用戶最後登入時間
+        user.setUpdateTime(LocalDateTime.now());
+        authMapper.update(user);
         // 登入成功，獲取令牌以及路徑資源
         Map<String, Object> claims = new HashMap<>();
         claims.put(JwtClaimsConstant.USER_ID, user.getId());
