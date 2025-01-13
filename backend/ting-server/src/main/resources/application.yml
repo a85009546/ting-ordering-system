@@ -20,7 +20,6 @@ mybatis:
 
 
 
-
 ting:
   jwt:
     # jwt 密鑰

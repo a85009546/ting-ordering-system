@@ -26,7 +26,7 @@ public class User implements Serializable {
 
     private Long id;
 
-    // 角色 - 0:customer，1:employee，2:admin
+    // 角色 - 1:customer，2:employee，3:admin
     private Integer role;
 
     private String name;

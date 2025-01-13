@@ -46,7 +46,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     /**
-     * 註冊
+     * 顧客註冊
      * @param user
      */
     @Override
@@ -68,7 +68,7 @@ public class AuthServiceImpl implements AuthService {
                 jwtProperties.getTtl(),
                 claims
         );
-        // 獲取對應資源，1為customer，2為employee，3為admin
+        // 根據角色獲取對應資源，1為customer，2為employee，3為admin
         List<MenuItem> menuItems = authMapper.getMenuItemsByRole(user.getRole());
 
         // 封裝返回數據

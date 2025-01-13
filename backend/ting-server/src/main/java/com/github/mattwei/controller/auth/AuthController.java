@@ -39,7 +39,7 @@ public class AuthController {
     private AuthService authService;
 
     /**
-     * 註冊
+     * 顧客註冊
      * @return
      */
     @PostMapping("/register")
@@ -47,6 +47,7 @@ public class AuthController {
         User user = authService.findByAccount(registerRequestDTO.getAccount());
         // 判斷帳號是否存在
         if(user == null){
+            // 這裡的 user 皆為 customer
             BeanUtils.copyProperties(registerRequestDTO, user);
             user.setRole(1);
             user.setBalance(new BigDecimal("5000.00")); // 默認5000元
