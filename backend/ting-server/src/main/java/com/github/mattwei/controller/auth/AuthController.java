@@ -7,11 +7,13 @@ import com.github.mattwei.service.AuthService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.constraints.Pattern;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -34,7 +36,7 @@ public class AuthController {
      * @return
      */
     @PostMapping("/register")
-    public Result register(@RequestBody RegisterRequestDTO registerRequestDTO) {
+    public Result register(@RequestBody @Validated RegisterRequestDTO registerRequestDTO) {
         User user = new User();
         BeanUtils.copyProperties(registerRequestDTO, user);
         // 皆為顧客註冊
@@ -48,9 +50,8 @@ public class AuthController {
             authService.register(user);
             return Result.success();
         }else{
-            throw new RuntimeException("帳號已存在");
+            return Result.error("帳號已存在");
         }
-
 
     }
 }
