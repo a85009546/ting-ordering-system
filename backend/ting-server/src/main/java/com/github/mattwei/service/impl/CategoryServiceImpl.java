@@ -84,4 +84,13 @@ public class CategoryServiceImpl implements CategoryService {
         category.setUpdateTime(LocalDateTime.now());
         categoryMapper.update(category);
     }
+
+    /**
+     * 根據id刪除分類
+     * @param id
+     */
+    @Override
+    public void deleteById(Long id) {
+        categoryMapper.deleteById(id);
+    }
 }

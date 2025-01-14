@@ -3,6 +3,7 @@ package com.github.mattwei.mapper;
 import com.github.mattwei.dto.CategoryPageQueryDTO;
 import com.github.mattwei.entity.Category;
 import com.github.pagehelper.Page;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -46,4 +47,11 @@ public interface CategoryMapper {
      */
     @Select("select * from category where id = #{id}")
     Category getById(Long id);
+
+    /**
+     * 根據id刪除分類
+     * @param id
+     */
+    @Delete("delete from category where id = #{id}")
+    void deleteById(Long id);
 }

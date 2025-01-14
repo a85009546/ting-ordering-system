@@ -85,5 +85,17 @@ public class CategoryController {
         return Result.success();
     }
 
+    /**
+     * 刪除分類
+     * @param id
+     * @return
+     */
+    @DeleteMapping
+    public Result delete(Long id){
+        log.info("刪除餐點分類，餐點id: {}", id);
+        categoryService.deleteById(id);
+        return Result.success();
+    }
+
 
 }

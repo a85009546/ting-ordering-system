@@ -43,4 +43,10 @@ public interface CategoryService {
      * @param category
      */
     void update(Category category);
+
+    /**
+     * 根據id刪除分類
+     * @param id
+     */
+    void deleteById(Long id);
 }
