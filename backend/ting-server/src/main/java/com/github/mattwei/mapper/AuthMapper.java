@@ -1,7 +1,9 @@
 package com.github.mattwei.mapper;
 
+import com.github.mattwei.annotation.AutoFill;
 import com.github.mattwei.entity.MenuItem;
 import com.github.mattwei.entity.User;
+import com.github.mattwei.enumeration.OperationType;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -35,6 +37,7 @@ public interface AuthMapper {
     @Insert("insert into user(account, password, name, sex, phone, avatar, balance, role, " +
             "create_time, update_time) values(#{account}, #{password}, #{name}, #{sex}, #{phone}, " +
             "#{avatar}, #{balance}, #{role}, #{createTime}, #{updateTime})")
+    @AutoFill(value = OperationType.INSERT)
     void insert(User user);
 
     /**

@@ -1,7 +1,9 @@
 package com.github.mattwei.mapper;
 
+import com.github.mattwei.annotation.AutoFill;
 import com.github.mattwei.dto.UserPageQueryDTO;
 import com.github.mattwei.entity.User;
+import com.github.mattwei.enumeration.OperationType;
 import com.github.mattwei.vo.EmployeeVO;
 import com.github.pagehelper.Page;
 import org.apache.ibatis.annotations.Delete;
@@ -26,6 +28,7 @@ public interface EmployeeMapper {
     @Insert("insert into user (role, name, account, password, balance, phone, sex, " +
             "avatar, create_time, update_time) values (#{role}, #{name}, #{account}, " +
             "#{password}, #{balance}, #{phone}, #{sex}, #{avatar}, #{createTime}, #{updateTime})")
+    @AutoFill(value = OperationType.INSERT)
     void insert(User user);
 
     /**

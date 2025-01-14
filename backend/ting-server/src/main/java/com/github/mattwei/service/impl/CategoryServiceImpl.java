@@ -38,7 +38,6 @@ public class CategoryServiceImpl implements CategoryService {
     public void save(Category category) {
         // 默認分類狀態為 0-禁用
         category.setStatus(0);
-        category.setCreateTime(LocalDateTime.now());
         categoryMapper.insert(category);
     }
 

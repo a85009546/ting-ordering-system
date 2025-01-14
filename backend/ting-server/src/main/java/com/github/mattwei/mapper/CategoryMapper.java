@@ -1,7 +1,9 @@
 package com.github.mattwei.mapper;
 
+import com.github.mattwei.annotation.AutoFill;
 import com.github.mattwei.dto.CategoryPageQueryDTO;
 import com.github.mattwei.entity.Category;
+import com.github.mattwei.enumeration.OperationType;
 import com.github.pagehelper.Page;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
@@ -25,6 +27,7 @@ public interface CategoryMapper {
      */
     @Insert("insert into category (name, status, create_time, update_time) " +
             "values (#{name}, #{status}, #{createTime}, #{updateTime})")
+    @AutoFill(value = OperationType.INSERT)
     void insert(Category category);
 
     /**

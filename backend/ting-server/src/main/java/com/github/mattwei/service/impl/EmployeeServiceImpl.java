@@ -53,7 +53,6 @@ public class EmployeeServiceImpl implements EmployeeService {
             user.setRole(2);
             // 默認密碼 123456
             user.setPassword(DigestUtils.md5DigestAsHex(PasswordConstant.DEFAULT_PASSWORD.getBytes()));
-            user.setCreateTime(LocalDateTime.now());
             employeeMapper.insert(user);
         }else{
             // 帳號已存在
@@ -97,6 +96,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     public void update(EmployeeDTO employeeDTO) {
         User user = new User();
         BeanUtils.copyProperties(employeeDTO, user);
+        user.setUpdateTime(LocalDateTime.now());
         authMapper.update(user);
     }
 

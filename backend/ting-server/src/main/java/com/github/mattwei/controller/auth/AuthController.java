@@ -52,8 +52,6 @@ public class AuthController {
             BeanUtils.copyProperties(registerRequestDTO, user);
             user.setRole(1);
             user.setBalance(new BigDecimal("5000.00")); // 默認5000元
-            user.setCreateTime(LocalDateTime.now());
-            user.setUpdateTime(LocalDateTime.now());
             authService.register(user);
             return Result.success();
         }else{
