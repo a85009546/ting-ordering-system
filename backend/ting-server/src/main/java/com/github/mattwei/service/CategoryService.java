@@ -30,4 +30,11 @@ public interface CategoryService {
      * @param id
      */
     void changeStatus(Integer status, Long id);
+
+    /**
+     * 根據id查詢分類名稱
+     * @param id
+     * @return
+     */
+    String getNameById(Long id);
 }

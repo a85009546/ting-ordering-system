@@ -59,7 +59,19 @@ public class CategoryServiceImpl implements CategoryService {
         Category category = Category.builder()
                 .id(id)
                 .status(status)
+                .updateTime(LocalDateTime.now())
                 .build();
         categoryMapper.update(category);
+    }
+
+    /**
+     * 根據id查詢分類名稱
+     * @param id
+     * @return
+     */
+    @Override
+    public String getNameById(Long id) {
+        Category category = categoryMapper.getById(id);
+        return category.getName();
     }
 }

@@ -5,6 +5,7 @@ import com.github.mattwei.entity.Category;
 import com.github.pagehelper.Page;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
 
 /**
  * Description:
@@ -37,4 +38,12 @@ public interface CategoryMapper {
      * @param category
      */
     void update(Category category);
+
+    /**
+     * 根據id查詢分類名稱
+     * @param id
+     * @return
+     */
+    @Select("select * from category where id = #{id}")
+    Category getById(Long id);
 }
