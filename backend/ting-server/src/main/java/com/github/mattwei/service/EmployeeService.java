@@ -32,4 +32,10 @@ public interface EmployeeService {
      * @return
      */
     EmployeeVO getById(Long id);
+
+    /**
+     * 編輯員工
+     * @param employeeDTO
+     */
+    void update(EmployeeDTO employeeDTO);
 }

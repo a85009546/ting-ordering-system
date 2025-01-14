@@ -60,4 +60,18 @@ public class EmployeeController {
         EmployeeVO employeeVO = employeeService.getById(id);
         return Result.success(employeeVO);
     }
+
+    /**
+     * 編輯員工
+     * @param employeeDTO
+     * @return
+     */
+    @PutMapping
+    public Result update(@RequestBody EmployeeDTO employeeDTO){
+        log.info("編輯員工數據: {}", employeeDTO);
+        employeeService.update(employeeDTO);
+        return Result.success();
+    }
+
+
 }

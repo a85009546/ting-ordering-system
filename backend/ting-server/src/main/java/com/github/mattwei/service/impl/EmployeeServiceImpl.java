@@ -88,4 +88,15 @@ public class EmployeeServiceImpl implements EmployeeService {
     public EmployeeVO getById(Long id) {
         return employeeMapper.getById(id);
     }
+
+    /**
+     * 編輯員工
+     * @param employeeDTO
+     */
+    @Override
+    public void update(EmployeeDTO employeeDTO) {
+        User user = new User();
+        BeanUtils.copyProperties(employeeDTO, user);
+        authMapper.update(user);
+    }
 }
