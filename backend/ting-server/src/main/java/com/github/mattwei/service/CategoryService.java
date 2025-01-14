@@ -1,6 +1,8 @@
 package com.github.mattwei.service;
 
+import com.github.mattwei.dto.CategoryPageQueryDTO;
 import com.github.mattwei.entity.Category;
+import com.github.mattwei.result.PageResult;
 
 /**
  * Description:
@@ -14,4 +16,11 @@ public interface CategoryService {
      * @param category
      */
     void save(Category category);
+
+    /**
+     * 分類的條件分頁查詢
+     * @param categoryPageQueryDTO
+     * @return
+     */
+    PageResult pageQuery(CategoryPageQueryDTO categoryPageQueryDTO);
 }

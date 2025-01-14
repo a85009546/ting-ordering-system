@@ -1,8 +1,12 @@
 package com.github.mattwei.service.impl;
 
+import com.github.mattwei.dto.CategoryPageQueryDTO;
 import com.github.mattwei.entity.Category;
 import com.github.mattwei.mapper.CategoryMapper;
+import com.github.mattwei.result.PageResult;
 import com.github.mattwei.service.CategoryService;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,5 +35,17 @@ public class CategoryServiceImpl implements CategoryService {
         category.setStatus(0);
         category.setCreateTime(LocalDateTime.now());
         categoryMapper.insert(category);
+    }
+
+    /**
+     * 分類的條件分頁查詢
+     * @param categoryPageQueryDTO
+     * @return
+     */
+    @Override
+    public PageResult pageQuery(CategoryPageQueryDTO categoryPageQueryDTO) {
+        PageHelper.startPage(categoryPageQueryDTO.getPage(), categoryPageQueryDTO.getPageSize());
+        Page<Category> page = categoryMapper.pageQuery(categoryPageQueryDTO);
+        return new PageResult(page.getTotal(), page.getResult());
     }
 }

@@ -1,6 +1,8 @@
 package com.github.mattwei.mapper;
 
+import com.github.mattwei.dto.CategoryPageQueryDTO;
 import com.github.mattwei.entity.Category;
+import com.github.pagehelper.Page;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -22,4 +24,11 @@ public interface CategoryMapper {
     @Insert("insert into category (name, status, create_time, update_time) " +
             "values (#{name}, #{status}, #{createTime}, #{updateTime})")
     void insert(Category category);
+
+    /**
+     * 分類的條件分頁查詢
+     * @param categoryPageQueryDTO
+     * @return
+     */
+    Page<Category> pageQuery(CategoryPageQueryDTO categoryPageQueryDTO);
 }
