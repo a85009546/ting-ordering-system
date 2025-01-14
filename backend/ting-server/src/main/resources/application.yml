@@ -28,3 +28,8 @@ ting:
     ttl: 72000000
     # 前端傳遞過來時的令牌名稱
     token-name: token
+  alioss:
+    endpoint: ${ting.alioss.endpoint}
+    access-key-id: ${ting.alioss.access-key-id}
+    access-key-secret: ${ting.alioss.access-key-secret}
+    bucket-name: ${ting.alioss.bucket-name}
