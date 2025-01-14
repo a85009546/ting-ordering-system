@@ -10,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * Description:
  *
@@ -70,6 +72,18 @@ public class EmployeeController {
     public Result update(@RequestBody EmployeeDTO employeeDTO){
         log.info("編輯員工數據: {}", employeeDTO);
         employeeService.update(employeeDTO);
+        return Result.success();
+    }
+
+    /**
+     * 刪除員工
+     * @param id
+     * @return
+     */
+    @DeleteMapping
+    public Result delete(Long id){
+        log.info("刪除員工: {}", id);
+        employeeService.deleteById(id);
         return Result.success();
     }
 

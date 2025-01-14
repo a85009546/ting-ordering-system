@@ -99,4 +99,13 @@ public class EmployeeServiceImpl implements EmployeeService {
         BeanUtils.copyProperties(employeeDTO, user);
         authMapper.update(user);
     }
+
+    /**
+     * 根據id刪除員工
+     * @param id
+     */
+    @Override
+    public void deleteById(Long id) {
+        employeeMapper.deleteById(id);
+    }
 }

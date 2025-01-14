@@ -38,4 +38,10 @@ public interface EmployeeService {
      * @param employeeDTO
      */
     void update(EmployeeDTO employeeDTO);
+
+    /**
+     * 根據id刪除員工
+     * @param id
+     */
+    void deleteById(Long id);
 }
