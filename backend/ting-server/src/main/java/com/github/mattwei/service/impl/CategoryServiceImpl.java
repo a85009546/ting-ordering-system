@@ -48,4 +48,18 @@ public class CategoryServiceImpl implements CategoryService {
         Page<Category> page = categoryMapper.pageQuery(categoryPageQueryDTO);
         return new PageResult(page.getTotal(), page.getResult());
     }
+
+    /**
+     * 變更分類狀態
+     * @param status
+     * @param id
+     */
+    @Override
+    public void changeStatus(Integer status, Long id) {
+        Category category = Category.builder()
+                .id(id)
+                .status(status)
+                .build();
+        categoryMapper.update(category);
+    }
 }

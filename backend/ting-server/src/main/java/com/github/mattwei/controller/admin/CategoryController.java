@@ -48,4 +48,17 @@ public class CategoryController {
         PageResult pageResult = categoryService.pageQuery(categoryPageQueryDTO);
         return Result.success(pageResult);
     }
+
+    /**
+     * 變更分類狀態
+     * @param status
+     * @param id
+     * @return
+     */
+    @PostMapping("/status/{status}")
+    public Result changeStatus(@PathVariable Integer status, Long id){
+        log.info("修改分類狀態，參數為: {}, {}", status, id);
+        categoryService.changeStatus(status, id);
+        return Result.success();
+    }
 }

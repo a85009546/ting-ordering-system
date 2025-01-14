@@ -3,7 +3,6 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.github.mattwei.mapper.CategoryMapper">
 
-
     <select id="pageQuery" resultType="category">
         select * from category
         <where>
@@ -16,4 +15,20 @@
         </where>
         order by update_time desc
     </select>
+
+    <update id="update" parameterType="category">
+        update category
+        <set>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
 </mapper>

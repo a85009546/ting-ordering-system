@@ -23,4 +23,11 @@ public interface CategoryService {
      * @return
      */
     PageResult pageQuery(CategoryPageQueryDTO categoryPageQueryDTO);
+
+    /**
+     * 變更分類狀態
+     * @param status
+     * @param id
+     */
+    void changeStatus(Integer status, Long id);
 }
