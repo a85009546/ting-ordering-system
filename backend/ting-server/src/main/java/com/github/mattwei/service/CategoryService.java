@@ -37,4 +37,10 @@ public interface CategoryService {
      * @return
      */
     String getNameById(Long id);
+
+    /**
+     * 修改分類
+     * @param category
+     */
+    void update(Category category);
 }

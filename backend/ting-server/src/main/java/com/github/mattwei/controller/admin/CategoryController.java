@@ -62,11 +62,27 @@ public class CategoryController {
         return Result.success();
     }
 
+    /**
+     * 根據id查詢分類
+     * @param id
+     * @return
+     */
     @GetMapping("/{id}")
     public Result<String> getNameById(@PathVariable Long id){
         log.info("根據id查詢分類名稱，參數為: {}", id);
         String name = categoryService.getNameById(id);
         return Result.success(name);
+    }
+
+    /**
+     * 修改分類
+     * @param category
+     * @return
+     */
+    @PutMapping
+    public Result update(@RequestBody Category category){
+        categoryService.update(category);
+        return Result.success();
     }
 
 
