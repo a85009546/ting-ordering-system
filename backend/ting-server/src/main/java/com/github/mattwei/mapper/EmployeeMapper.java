@@ -1,6 +1,9 @@
 package com.github.mattwei.mapper;
 
+import com.github.mattwei.dto.UserPageQueryDTO;
 import com.github.mattwei.entity.User;
+import com.github.mattwei.vo.EmployeeVO;
+import com.github.pagehelper.Page;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -22,4 +25,11 @@ public interface EmployeeMapper {
             "avatar, create_time, update_time) values (#{role}, #{name}, #{account}, " +
             "#{password}, #{balance}, #{phone}, #{sex}, #{avatar}, #{createTime}, #{updateTime})")
     void insert(User user);
+
+    /**
+     * 員工分頁查詢
+     * @param userPageQueryDTO
+     * @return
+     */
+    Page<EmployeeVO> pageQuery(UserPageQueryDTO userPageQueryDTO);
 }

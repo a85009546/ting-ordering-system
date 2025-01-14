@@ -59,6 +59,11 @@ public class AuthServiceImpl implements AuthService {
         authMapper.insert(user);
     }
 
+    /**
+     * 登入
+     * @param user
+     * @return
+     */
     @Override
     public UserLoginVO login(User user) {
         // 更新用戶最後登入時間

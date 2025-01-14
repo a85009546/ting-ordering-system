@@ -1,6 +1,8 @@
 package com.github.mattwei.service;
 
 import com.github.mattwei.dto.EmployeeDTO;
+import com.github.mattwei.dto.UserPageQueryDTO;
+import com.github.mattwei.result.PageResult;
 
 /**
  * Description:
@@ -15,4 +17,11 @@ public interface EmployeeService {
      * @param employeeDTO
      */
     void save(EmployeeDTO employeeDTO);
+
+    /**
+     * 分頁查詢
+     * @param userPageQueryDTO
+     * @return
+     */
+    PageResult pageQuery(UserPageQueryDTO userPageQueryDTO);
 }

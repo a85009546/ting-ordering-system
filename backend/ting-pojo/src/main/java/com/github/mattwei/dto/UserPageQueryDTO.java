@@ -1,18 +1,19 @@
 package com.github.mattwei.dto;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
 /**
  * Description:
- *  封裝新增員工時傳遞的數據
+ *  封裝分頁請求的數據
  * @Author Matt Wei
- * @Create 2025/1/13 下午 09:00
+ * @Create 2025/1/14 上午 09:48
  */
+
 @Data
-public class EmployeeDTO implements Serializable {
+public class UserPageQueryDTO implements Serializable {
+
 
     private String account;
 
@@ -21,4 +22,8 @@ public class EmployeeDTO implements Serializable {
     private String phone;
 
     private String sex;
+
+    private Integer page;
+
+    private Integer pageSize;
 }
