@@ -11,4 +11,5 @@ public class MessageConstant {
     public static final String ACCOUNT_ALREADY_EXIST = "帳號已存在";
     public static final String ACCOUNT_NOT_FOUND = "帳號不存在";
     public static final String PASSWORD_ERROR = "密碼錯誤";
+    public static final String CATEGORY_BE_RELATED_BY_MEAL = "當前分類關聯了餐點，無法刪除";
 }

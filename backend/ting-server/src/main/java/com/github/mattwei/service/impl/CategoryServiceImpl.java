@@ -1,8 +1,11 @@
 package com.github.mattwei.service.impl;
 
+import com.github.mattwei.constant.MessageConstant;
 import com.github.mattwei.dto.CategoryPageQueryDTO;
 import com.github.mattwei.entity.Category;
+import com.github.mattwei.exception.DeletionNotAllowedException;
 import com.github.mattwei.mapper.CategoryMapper;
+import com.github.mattwei.mapper.MealMapper;
 import com.github.mattwei.result.PageResult;
 import com.github.mattwei.service.CategoryService;
 import com.github.pagehelper.Page;
@@ -24,6 +27,8 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Autowired
     private CategoryMapper categoryMapper;
+    @Autowired
+    private MealMapper mealMapper;
 
     /**
      * 新增餐點分類
@@ -91,6 +96,13 @@ public class CategoryServiceImpl implements CategoryService {
      */
     @Override
     public void deleteById(Long id) {
+        // 查詢當前分類下是否有餐點，如果有則拋出異常
+        Integer count = mealMapper.countByCategoryId(id);
+        if(count > 0){
+            // 當前分類有餐點，不能刪除
+            throw new DeletionNotAllowedException(MessageConstant.CATEGORY_BE_RELATED_BY_MEAL);
+        }
+        // 若沒有拋出異常，則刪除
         categoryMapper.deleteById(id);
     }
 }
