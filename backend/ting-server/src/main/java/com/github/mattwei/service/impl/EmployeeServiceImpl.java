@@ -78,4 +78,14 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         return new PageResult(total, records);
     }
+
+    /**
+     * 根據id查詢員工
+     * @param id
+     * @return
+     */
+    @Override
+    public EmployeeVO getById(Long id) {
+        return employeeMapper.getById(id);
+    }
 }

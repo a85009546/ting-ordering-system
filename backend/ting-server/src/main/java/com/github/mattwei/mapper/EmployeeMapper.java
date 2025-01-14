@@ -6,6 +6,7 @@ import com.github.mattwei.vo.EmployeeVO;
 import com.github.pagehelper.Page;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
 
 /**
  * Description:
@@ -32,4 +33,12 @@ public interface EmployeeMapper {
      * @return
      */
     Page<EmployeeVO> pageQuery(UserPageQueryDTO userPageQueryDTO);
+
+    /**
+     * 根據id查詢員工
+     * @param id
+     * @return
+     */
+    @Select("select * from user where role = 2 and id = #{id}")
+    EmployeeVO getById(Long id);
 }

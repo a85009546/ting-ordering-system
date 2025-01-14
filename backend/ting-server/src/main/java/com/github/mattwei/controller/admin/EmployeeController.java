@@ -5,6 +5,7 @@ import com.github.mattwei.dto.UserPageQueryDTO;
 import com.github.mattwei.result.PageResult;
 import com.github.mattwei.result.Result;
 import com.github.mattwei.service.EmployeeService;
+import com.github.mattwei.vo.EmployeeVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -46,5 +47,17 @@ public class EmployeeController {
         log.info("員工分頁查詢，參數為: {}", userPageQueryDTO);
         PageResult pageResult = employeeService.pageQuery(userPageQueryDTO);
         return Result.success(pageResult);
+    }
+
+    /**
+     * 根據id查詢員工
+     * @param id
+     * @return
+     */
+    @GetMapping("/{id}")
+    public Result<EmployeeVO> getById(@PathVariable Long id){
+        log.info("根據id查詢員工: {}", id);
+        EmployeeVO employeeVO = employeeService.getById(id);
+        return Result.success(employeeVO);
     }
 }

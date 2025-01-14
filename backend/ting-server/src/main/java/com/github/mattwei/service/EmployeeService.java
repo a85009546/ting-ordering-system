@@ -3,6 +3,7 @@ package com.github.mattwei.service;
 import com.github.mattwei.dto.EmployeeDTO;
 import com.github.mattwei.dto.UserPageQueryDTO;
 import com.github.mattwei.result.PageResult;
+import com.github.mattwei.vo.EmployeeVO;
 
 /**
  * Description:
@@ -24,4 +25,11 @@ public interface EmployeeService {
      * @return
      */
     PageResult pageQuery(UserPageQueryDTO userPageQueryDTO);
+
+    /**
+     * 根據id查詢員工
+     * @param id
+     * @return
+     */
+    EmployeeVO getById(Long id);
 }
