@@ -38,7 +38,7 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
                                 // 攔截所有請求
                                 .addPathPatterns("/**")
                                 // 排除 /auth 路徑下的請求
-                                .excludePathPatterns("/auth/**");
+                                .excludePathPatterns("/auth/**", "/customer/**");
     }
 
 
