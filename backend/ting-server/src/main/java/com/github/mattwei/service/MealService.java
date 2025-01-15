@@ -1,6 +1,8 @@
 package com.github.mattwei.service;
 
 import com.github.mattwei.dto.MealDTO;
+import com.github.mattwei.dto.MealPageQueryDTO;
+import com.github.mattwei.result.PageResult;
 
 /**
  * Description:
@@ -14,4 +16,11 @@ public interface MealService {
      * @param mealDTO
      */
     void saveWithFlavor(MealDTO mealDTO);
+
+    /**
+     * 餐點條件分頁查詢
+     * @param mealPageQueryDTO
+     * @return
+     */
+    PageResult pageQuery(MealPageQueryDTO mealPageQueryDTO);
 }

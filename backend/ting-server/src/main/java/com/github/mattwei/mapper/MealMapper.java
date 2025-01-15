@@ -1,8 +1,11 @@
 package com.github.mattwei.mapper;
 
 import com.github.mattwei.annotation.AutoFill;
+import com.github.mattwei.dto.MealPageQueryDTO;
 import com.github.mattwei.entity.Meal;
 import com.github.mattwei.enumeration.OperationType;
+import com.github.mattwei.vo.MealVO;
+import com.github.pagehelper.Page;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
@@ -28,4 +31,11 @@ public interface MealMapper {
      */
     @AutoFill(value = OperationType.INSERT)
     void insert(Meal meal);
+
+    /**
+     * 分頁查詢
+     * @param mealPageQueryDTO
+     * @return
+     */
+    Page<MealVO> pageQuery(MealPageQueryDTO mealPageQueryDTO);
 }

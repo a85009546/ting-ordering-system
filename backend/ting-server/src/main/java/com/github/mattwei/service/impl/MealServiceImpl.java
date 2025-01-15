@@ -1,11 +1,16 @@
 package com.github.mattwei.service.impl;
 
 import com.github.mattwei.dto.MealDTO;
+import com.github.mattwei.dto.MealPageQueryDTO;
 import com.github.mattwei.entity.Meal;
 import com.github.mattwei.entity.MealFlavor;
 import com.github.mattwei.mapper.MealFlavorMapper;
 import com.github.mattwei.mapper.MealMapper;
+import com.github.mattwei.result.PageResult;
 import com.github.mattwei.service.MealService;
+import com.github.mattwei.vo.MealVO;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -55,5 +60,19 @@ public class MealServiceImpl implements MealService {
             // 向口味表插入 n 條數據
             mealFlavorMapper.insertBatch(flavors);
         }
+    }
+
+    /**
+     * 餐點條件分頁查詢
+     * @param mealPageQueryDTO
+     * @return
+     */
+    @Override
+    public PageResult pageQuery(MealPageQueryDTO mealPageQueryDTO) {
+        PageHelper.startPage(mealPageQueryDTO.getPage(), mealPageQueryDTO.getPageSize());
+
+        Page<MealVO> page = mealMapper.pageQuery(mealPageQueryDTO);
+
+        return new PageResult(page.getTotal(), page.getResult());
     }
 }

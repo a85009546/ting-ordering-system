@@ -6,14 +6,16 @@ import java.io.Serializable;
 
 /**
  * Description:
- *  封裝分類的查詢條件
+ *  封裝餐點的查詢條件
  * @Author Matt Wei
- * @Create 2025/1/14 下午 02:51
+ * @Create 2025/1/15 上午 09:40
  */
 @Data
-public class CategoryPageQueryDTO implements Serializable {
+public class MealPageQueryDTO implements Serializable {
 
     private String name;
+
+    private Long categoryId;
 
     private Integer status;
 

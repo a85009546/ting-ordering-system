@@ -8,4 +8,22 @@
         insert into meal(name, category_id, price, image, description, status, create_time, update_time)
         values (#{name}, #{categoryId}, #{price}, #{image}, #{description}, #{status}, #{createTime}, #{updateTime})
     </insert>
+
+    <select id="pageQuery" resultType="com.github.mattwei.vo.MealVO">
+        select m.*, c.name as categoryName
+        from meal m
+        left join category c on m.category_id = c.id
+        <where>
+            <if test="name != null and name != ''">
+                and m.name like concat('%', #{name}, '%')
+            </if>
+            <if test="categoryId != null">
+                and m.category_id = #{categoryId}
+            </if>
+            <if test="status != null">
+                and m.status = #{status}
+            </if>
+        </where>
+        order by m.create_time desc
+    </select>
 </mapper>

@@ -1,15 +1,14 @@
 package com.github.mattwei.controller.admin;
 
 import com.github.mattwei.dto.MealDTO;
+import com.github.mattwei.dto.MealPageQueryDTO;
+import com.github.mattwei.result.PageResult;
 import com.github.mattwei.result.Result;
 import com.github.mattwei.service.MealService;
 import com.github.mattwei.service.impl.MealServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Description:
@@ -36,5 +35,17 @@ public class MealController {
         log.info("新增餐點: {}", mealDTO);
         mealService.saveWithFlavor(mealDTO);
         return Result.success();
+    }
+
+    /**
+     * 餐點的條件分頁查詢
+     * @param mealPageQueryDTO
+     * @return
+     */
+    @GetMapping("/page")
+    public Result<PageResult> page(MealPageQueryDTO mealPageQueryDTO){
+        log.info("餐點分頁查詢: {}", mealPageQueryDTO);
+        PageResult pageResult = mealService.pageQuery(mealPageQueryDTO);
+        return Result.success(pageResult);
     }
 }
