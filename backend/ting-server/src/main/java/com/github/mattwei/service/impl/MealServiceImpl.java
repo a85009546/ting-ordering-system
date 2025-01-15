@@ -101,4 +101,22 @@ public class MealServiceImpl implements MealService {
         // SQL: delete from meal_flavor where meal_id in (1,2,3)
         mealFlavorMapper.deleteByMealIds(ids);
     }
+
+    /**
+     * 根據id查詢餐點和對應的口味
+     * @param id
+     * @return
+     */
+    @Override
+    public MealVO getByIdWithFlavor(Long id) {
+        // 查詢餐點表
+        Meal meal = mealMapper.getById(id);
+        // 查詢口味表
+        List<MealFlavor> flavors = mealFlavorMapper.getByMealId(id);
+        // 將查詢結果封裝到 MealVO 中
+        MealVO mealVO = new MealVO();
+        BeanUtils.copyProperties(meal, mealVO);
+        mealVO.setFlavors(flavors);
+        return mealVO;
+    }
 }

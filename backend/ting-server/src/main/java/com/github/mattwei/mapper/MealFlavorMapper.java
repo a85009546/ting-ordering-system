@@ -2,6 +2,7 @@ package com.github.mattwei.mapper;
 
 import com.github.mattwei.entity.MealFlavor;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
@@ -25,4 +26,12 @@ public interface MealFlavorMapper {
      * @param mealIds
      */
     void deleteByMealIds(List<Long> mealIds);
+
+    /**
+     * 根據mealId查詢口味數據
+     * @param mealId
+     * @return
+     */
+    @Select("select * from meal_flavor where meal_id = #{mealId}")
+    List<MealFlavor> getByMealId(Long mealId);
 }

@@ -6,6 +6,7 @@ import com.github.mattwei.result.PageResult;
 import com.github.mattwei.result.Result;
 import com.github.mattwei.service.MealService;
 import com.github.mattwei.service.impl.MealServiceImpl;
+import com.github.mattwei.vo.MealVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -61,5 +62,17 @@ public class MealController {
         log.info("批次刪除餐點: {}", ids);
         mealService.deleteBatch(ids);
         return Result.success();
+    }
+
+    /**
+     * 根據id查詢餐點和對應的口味
+     * @param id
+     * @return
+     */
+    @GetMapping("/{id}")
+    public Result<MealVO> getById(@PathVariable Long id){
+        log.info("根據id查詢餐點: {}", id);
+        MealVO mealVO = mealService.getByIdWithFlavor(id);
+        return Result.success(mealVO);
     }
 }

@@ -3,6 +3,7 @@ package com.github.mattwei.service;
 import com.github.mattwei.dto.MealDTO;
 import com.github.mattwei.dto.MealPageQueryDTO;
 import com.github.mattwei.result.PageResult;
+import com.github.mattwei.vo.MealVO;
 
 import java.util.List;
 
@@ -31,4 +32,11 @@ public interface MealService {
      * @param ids
      */
     void deleteBatch(List<Long> ids);
+
+    /**
+     * 根據id查詢餐點和對應的口味
+     * @param id
+     * @return
+     */
+    MealVO getByIdWithFlavor(Long id);
 }
