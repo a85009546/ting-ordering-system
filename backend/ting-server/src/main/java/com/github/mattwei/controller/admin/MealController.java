@@ -75,4 +75,16 @@ public class MealController {
         MealVO mealVO = mealService.getByIdWithFlavor(id);
         return Result.success(mealVO);
     }
+
+    /**
+     * 編輯餐點
+     * @param mealDTO
+     * @return
+     */
+    @PutMapping
+    public Result update(@RequestBody MealDTO mealDTO){
+        log.info("編輯餐點: {}", mealDTO);
+        mealService.updateWithFlavor(mealDTO);
+        return Result.success();
+    }
 }

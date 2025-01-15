@@ -1,6 +1,7 @@
 package com.github.mattwei.mapper;
 
 import com.github.mattwei.entity.MealFlavor;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
@@ -34,4 +35,11 @@ public interface MealFlavorMapper {
      */
     @Select("select * from meal_flavor where meal_id = #{mealId}")
     List<MealFlavor> getByMealId(Long mealId);
+
+    /**
+     * 根據mealId刪除口味數據
+     * @param mealId
+     */
+    @Delete("delete from meal_flavor where meal_id = #{mealId}")
+    void deleteByMealId(Long mealId);
 }

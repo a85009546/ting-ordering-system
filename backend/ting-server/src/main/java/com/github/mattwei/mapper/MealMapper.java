@@ -55,4 +55,10 @@ public interface MealMapper {
      * @param ids
      */
     void deleteByIds(List<Long> ids);
+
+    /**
+     * 更新餐點數據
+     * @param meal
+     */
+    void update(Meal meal);
 }

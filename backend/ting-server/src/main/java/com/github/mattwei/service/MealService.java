@@ -39,4 +39,10 @@ public interface MealService {
      * @return
      */
     MealVO getByIdWithFlavor(Long id);
+
+    /**
+     * 編輯餐點
+     * @param mealDTO
+     */
+    void updateWithFlavor(MealDTO mealDTO);
 }

@@ -119,4 +119,28 @@ public class MealServiceImpl implements MealService {
         mealVO.setFlavors(flavors);
         return mealVO;
     }
+
+    /**
+     * 根據id編輯餐點和對應的口味
+     * @param mealDTO
+     */
+    @Override
+    public void updateWithFlavor(MealDTO mealDTO) {
+        // 更新餐點表
+        Meal meal = new Meal();
+        BeanUtils.copyProperties(mealDTO, meal);
+        mealMapper.update(meal);
+
+        // 更新口味表，先刪除後再新增
+        mealFlavorMapper.deleteByMealId(mealDTO.getId());
+        List<MealFlavor> flavors = mealDTO.getMealFlavors();
+        if(flavors != null && flavors.size() > 0){
+            // 給每個口味數據附上mealId
+            flavors.forEach(mealFlavor -> {
+                mealFlavor.setMealId(mealDTO.getId());
+            });
+            // 向口味表插入 n 條數據
+            mealFlavorMapper.insertBatch(flavors);
+        }
+    }
 }
