@@ -11,6 +11,11 @@ spring:
     url: jdbc:mysql://${ting.datasource.host}:${ting.datasource.port}/${ting.datasource.database}
     username: ${ting.datasource.username}
     password: ${ting.datasource.password}
+  redis:
+    host: ${ting.redis.host}
+    port: ${ting.redis.port}
+    password: ${ting.redis.password}
+    database: ${ting.redis.database}
 
 mybatis:
   mapper-locations: classpath:mapper/*.xml    # mapper文件位置
