@@ -4,6 +4,8 @@ import com.github.mattwei.dto.MealDTO;
 import com.github.mattwei.dto.MealPageQueryDTO;
 import com.github.mattwei.result.PageResult;
 
+import java.util.List;
+
 /**
  * Description:
  *
@@ -23,4 +25,10 @@ public interface MealService {
      * @return
      */
     PageResult pageQuery(MealPageQueryDTO mealPageQueryDTO);
+
+    /**
+     * 批次刪除餐點
+     * @param ids
+     */
+    void deleteBatch(List<Long> ids);
 }

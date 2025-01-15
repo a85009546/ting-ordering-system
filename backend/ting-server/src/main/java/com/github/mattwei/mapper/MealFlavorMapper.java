@@ -19,4 +19,10 @@ public interface MealFlavorMapper {
      * @param flavors
      */
     void insertBatch(List<MealFlavor> flavors);
+
+    /**
+     * 根據mealId批次刪除相關的口味數據
+     * @param mealIds
+     */
+    void deleteByMealIds(List<Long> mealIds);
 }

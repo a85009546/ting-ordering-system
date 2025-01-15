@@ -1,9 +1,12 @@
 package com.github.mattwei.service.impl;
 
+import com.github.mattwei.constant.MessageConstant;
+import com.github.mattwei.constant.StatusConstant;
 import com.github.mattwei.dto.MealDTO;
 import com.github.mattwei.dto.MealPageQueryDTO;
 import com.github.mattwei.entity.Meal;
 import com.github.mattwei.entity.MealFlavor;
+import com.github.mattwei.exception.DeletionNotAllowedException;
 import com.github.mattwei.mapper.MealFlavorMapper;
 import com.github.mattwei.mapper.MealMapper;
 import com.github.mattwei.result.PageResult;
@@ -74,5 +77,28 @@ public class MealServiceImpl implements MealService {
         Page<MealVO> page = mealMapper.pageQuery(mealPageQueryDTO);
 
         return new PageResult(page.getTotal(), page.getResult());
+    }
+
+    /**
+     * 批次刪除餐點
+     * @param ids
+     */
+    @Override
+    @Transactional
+    public void deleteBatch(List<Long> ids) {
+        // 先判斷當前餐點是否能刪除
+        // 上架中不能刪
+        for (Long id : ids) {
+            Meal meal = mealMapper.getById(id);
+            if(meal.getStatus() == StatusConstant.ENABLE){
+                throw new DeletionNotAllowedException(MessageConstant.MEAL_ON_SALE);
+            }
+        }
+        // 根據id集合批次刪除餐點數據
+        // SQL: delete from meal where id in (1,2,3)
+        mealMapper.deleteByIds(ids);
+        // 根據餐點id集合批次刪除餐點相關的口味數據
+        // SQL: delete from meal_flavor where meal_id in (1,2,3)
+        mealFlavorMapper.deleteByMealIds(ids);
     }
 }

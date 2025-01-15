@@ -9,6 +9,8 @@ import com.github.pagehelper.Page;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
+import java.util.List;
+
 /**
  * Description:
  *
@@ -38,4 +40,19 @@ public interface MealMapper {
      * @return
      */
     Page<MealVO> pageQuery(MealPageQueryDTO mealPageQueryDTO);
+
+    /**
+     * 根據id查詢餐點
+     * @param id
+     * @return
+     */
+    @Select("select * from meal where id = #{id}")
+    Meal getById(Long id);
+
+
+    /**
+     * 根據id集合批次刪除餐點數據
+     * @param ids
+     */
+    void deleteByIds(List<Long> ids);
 }

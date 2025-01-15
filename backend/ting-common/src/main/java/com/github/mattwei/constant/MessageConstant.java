@@ -13,5 +13,6 @@ public class MessageConstant {
     public static final String PASSWORD_ERROR = "密碼錯誤";
     public static final String CATEGORY_BE_RELATED_BY_MEAL = "當前分類關聯了餐點，無法刪除";
     public static final String UPLOAD_FAILED = "文件上傳失敗";
+    public static final String MEAL_ON_SALE = "當前餐點上架中，無法刪除";
 
 }

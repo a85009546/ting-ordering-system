@@ -10,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * Description:
  *  餐點管理
@@ -47,5 +49,17 @@ public class MealController {
         log.info("餐點分頁查詢: {}", mealPageQueryDTO);
         PageResult pageResult = mealService.pageQuery(mealPageQueryDTO);
         return Result.success(pageResult);
+    }
+
+    /**
+     * 批次刪除餐點
+     * @param ids
+     * @return
+     */
+    @DeleteMapping
+    public Result delete(@RequestParam List<Long> ids){
+        log.info("批次刪除餐點: {}", ids);
+        mealService.deleteBatch(ids);
+        return Result.success();
     }
 }
