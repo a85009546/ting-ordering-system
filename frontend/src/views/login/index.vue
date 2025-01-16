@@ -65,7 +65,18 @@ const rules = {
   ]
 }
 
-  
+// 註冊
+import axios from 'axios'
+const register = async () => {
+  let result = await axios.post('http://localhost:8080/auth/register', registerData.value)
+  if(result.data.code === 1){
+    // 註冊成功
+    alert('註冊成功');
+  }else{
+    // 註冊失敗
+    alert('註冊失敗');
+  }
+}  
 </script>
 
 <template>
@@ -95,7 +106,7 @@ const rules = {
         </el-form-item>
 
         <el-form-item>
-          <el-button class="button" type="primary">註 冊</el-button>
+          <el-button class="button" type="primary" @click="register">註 冊</el-button>
           <el-button class="button" type="info">清 空</el-button>
         </el-form-item>
 
