@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  <router-view />
+  工作臺
 </template>
 
 <style scoped>

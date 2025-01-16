@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  <router-view />
+  訂單管理
 </template>
 
 <style scoped>

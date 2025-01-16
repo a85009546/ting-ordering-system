@@ -30,7 +30,7 @@
               </el-menu-item>
             
             <!-- 工作台 -->
-            <el-menu-item index="/index">
+            <el-menu-item index="/dashboard">
               <el-icon><Platform /></el-icon> 工作臺
             </el-menu-item>
 
@@ -50,7 +50,7 @@
             </el-menu-item>
 
             <!-- 員工管理 -->
-            <el-menu-item index="/meal">
+            <el-menu-item index="/employee">
               <el-icon><Management /></el-icon> 員工管理
             </el-menu-item>
             
