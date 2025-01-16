@@ -1,0 +1,40 @@
+server:
+  port: 8080
+
+spring:
+  profiles:
+    active: dev
+  main:
+    allow-circular-references: true
+  datasource:
+    driver-class-name: ${ting.datasource.driver-class-name}
+    url: jdbc:mysql://${ting.datasource.host}:${ting.datasource.port}/${ting.datasource.database}
+    username: ${ting.datasource.username}
+    password: ${ting.datasource.password}
+  redis:
+    host: ${ting.redis.host}
+    port: ${ting.redis.port}
+    password: ${ting.redis.password}
+    database: ${ting.redis.database}
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml    # mapper文件位置
+  type-aliases-package: com.github.mattwei.entity  # 類別包名
+  configuration:
+    map-underscore-to-camel-case: true   # 駝峰命名
+
+
+
+ting:
+  jwt:
+    # jwt 密鑰
+    secret-key: ${ting.jwt.admin-secret-key}
+    # jwt 有效時間
+    ttl: 72000000
+    # 前端傳遞過來時的令牌名稱
+    token-name: token
+  alioss:
+    endpoint: ${ting.alioss.endpoint}
+    access-key-id: ${ting.alioss.access-key-id}
+    access-key-secret: ${ting.alioss.access-key-secret}
+    bucket-name: ${ting.alioss.bucket-name}
