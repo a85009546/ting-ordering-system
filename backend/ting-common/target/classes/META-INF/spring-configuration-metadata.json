@@ -1,0 +1,53 @@
+{
+  "groups": [
+    {
+      "name": "ting.alioss",
+      "type": "com.github.mattwei.properties.AliOssProperties",
+      "sourceType": "com.github.mattwei.properties.AliOssProperties"
+    },
+    {
+      "name": "ting.jwt",
+      "type": "com.github.mattwei.properties.JwtProperties",
+      "sourceType": "com.github.mattwei.properties.JwtProperties"
+    }
+  ],
+  "properties": [
+    {
+      "name": "ting.alioss.access-key-id",
+      "type": "java.lang.String",
+      "sourceType": "com.github.mattwei.properties.AliOssProperties"
+    },
+    {
+      "name": "ting.alioss.access-key-secret",
+      "type": "java.lang.String",
+      "sourceType": "com.github.mattwei.properties.AliOssProperties"
+    },
+    {
+      "name": "ting.alioss.bucket-name",
+      "type": "java.lang.String",
+      "sourceType": "com.github.mattwei.properties.AliOssProperties"
+    },
+    {
+      "name": "ting.alioss.endpoint",
+      "type": "java.lang.String",
+      "sourceType": "com.github.mattwei.properties.AliOssProperties"
+    },
+    {
+      "name": "ting.jwt.secret-key",
+      "type": "java.lang.String",
+      "sourceType": "com.github.mattwei.properties.JwtProperties"
+    },
+    {
+      "name": "ting.jwt.token-name",
+      "type": "java.lang.String",
+      "sourceType": "com.github.mattwei.properties.JwtProperties"
+    },
+    {
+      "name": "ting.jwt.ttl",
+      "type": "java.lang.Long",
+      "sourceType": "com.github.mattwei.properties.JwtProperties",
+      "defaultValue": 0
+    }
+  ],
+  "hints": []
+}

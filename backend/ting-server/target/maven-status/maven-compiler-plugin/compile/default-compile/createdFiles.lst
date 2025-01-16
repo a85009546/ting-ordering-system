@@ -1,0 +1,8 @@
+com\github\mattwei\TingApplication.class
+com\github\mattwei\controller\admin\ShopController.class
+com\github\mattwei\mapper\AuthMapper.class
+com\github\mattwei\controller\user\ShopController.class
+com\github\mattwei\service\AuthService.class
+com\github\mattwei\handler\GlobalExceptionHandler.class
+com\github\mattwei\service\impl\AuthServiceImpl.class
+com\github\mattwei\controller\auth\AuthController.class
