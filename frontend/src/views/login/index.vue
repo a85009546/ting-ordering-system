@@ -1,27 +1,137 @@
-<script setup>
-  import { ref } from 'vue'
-  
-  let loginForm = ref({username:'', password:''})
+<script lang="ts" setup>
+import { ref } from 'vue'
+import { ElMessage } from 'element-plus'
+import { Avatar, User, Lock, Phone } from '@element-plus/icons-vue'
+
+// 控制登入與註冊表單的切換
+const isRegister = ref(false)
+// 定義註冊表單數據
+const sex = ref('')
+let registerData = ref({
+  name:'',
+  account:'',
+  password:'',
+  rePassword:'',
+  phone:'',
+  sex:''
+})
+
+// 定義登入表單數據
+let loginData = ref({
+  account:'',
+  password:'',
+})
+
+// 校驗密碼的函數
+const checkRePassword = (rule, value, callback) => {
+  if (value === '') {
+    callback(new Error('請再次輸入密碼'))
+  } else if (value !== registerData.value.password) {
+    callback(new Error('兩次輸入的密碼不一致'))
+  } else {
+    callback()
+  }
+}
+// 校驗手機號的函數
+const checkPhone = (rule, value, callback) => {
+  const phoneRegex = /^09\d{8}$/; // 以09開頭，後面8位數字
+  if (!phoneRegex.test(value)) {
+    callback(new Error('手機號碼必須為 09 開頭的 10 位數字'));
+  } else {
+    callback();
+  }
+}
+
+// 定義註冊表單校驗規則
+const rules = {
+  name: [
+  { required: true, message: '請輸入姓名', trigger: 'blur' },
+  { min: 1, max: 16, message: '長度為 1 到 16 位非空字符', trigger: 'blur' }
+  ],
+  account: [
+    { required: true, message: '請輸入帳號', trigger: 'blur' },
+    { min: 4, max: 16, message: '長度為 4 到 16 位非空字符', trigger: 'blur' }
+  ],
+  password: [
+    { required: true, message: '請輸入密碼', trigger: 'blur' },
+    { min: 4, max: 16, message: '長度為 4 到 16 位非空字符', trigger: 'blur' }
+  ],
+  rePassword: [
+    { validator: checkRePassword, trigger: 'blur' }
+  ],
+  phone: [
+    { required: true, message: '請輸入手機號碼', trigger: 'blur' },
+    { validator: checkPhone, trigger: 'blur',}
+  ]
+}
+
   
 </script>
 
 <template>
   <div id="container">
     <div class="login-form">
-      <el-form label-width="80px">
-        <p class="title">Ting 點餐系統</p>
-        <el-form-item label="用户名" prop="username">
-          <el-input v-model="loginForm.username" placeholder="請輸入用戶名"></el-input>
+      <!-- 註冊 表單 -->
+      <el-form label-width="80px" v-if="isRegister" :model="registerData" :rules="rules">
+        <p class="title">註冊</p>
+        <el-form-item label="姓名" prop="name">
+          <el-input :prefix-icon="Avatar" v-model="registerData.name" placeholder="請輸入姓名"></el-input>
         </el-form-item>
 
-        <el-form-item label="密码" prop="password">
-          <el-input type="password" v-model="loginForm.password" placeholder="請輸入密碼"></el-input>
+        <el-form-item label="帳號" prop="account">
+          <el-input :prefix-icon="User" v-model="registerData.account" placeholder="請輸入帳號"></el-input>
+        </el-form-item>
+
+        <el-form-item label="密碼" prop="password">
+          <el-input :prefix-icon="Lock" type="password" v-model="registerData.password" placeholder="請輸入密碼"></el-input>
+        </el-form-item>
+
+        <el-form-item prop="rePassword">
+          <el-input :prefix-icon="Lock" type="password" v-model="registerData.rePassword"  placeholder="請再次輸入密碼"></el-input>
+        </el-form-item>
+
+        <el-form-item label="手機號碼" prop="phone">
+          <el-input :prefix-icon="Phone" v-model="registerData.phone" placeholder="請輸入手機號碼"></el-input>
         </el-form-item>
 
         <el-form-item>
-          
+          <el-button class="button" type="primary">註 冊</el-button>
+          <el-button class="button" type="info">清 空</el-button>
+        </el-form-item>
+
+        <el-form-item class="flex">
+            <el-link type="info" :underline="false" @click="isRegister = false">
+                ← 返回
+            </el-link>
+        </el-form-item>
+
+      </el-form>
+      <!-- 登入 表單 -->
+      <el-form label-width="80px" v-else :model="loginData">
+        <p class="title">登入</p>
+        <el-form-item label="帳號" prop="account">
+          <el-input :prefix-icon="User" v-model="loginData.account" placeholder="請輸入帳號"></el-input>
+        </el-form-item>
+
+        <el-form-item label="密碼" prop="password">
+          <el-input :prefix-icon="Lock" type="password" v-model="loginData.password" placeholder="請輸入密碼"></el-input>
+        </el-form-item>
+        
+        <el-form-item class="flex">
+            <div class="flex">
+                <el-checkbox>記住我</el-checkbox>
+            </div>
+        </el-form-item>
+        <!-- 登入按鈕 -->
+        <el-form-item>
           <el-button class="button" type="primary">登 入</el-button>
           <el-button class="button" type="info">清 空</el-button>
+        </el-form-item>
+
+        <el-form-item class="flex">
+          <el-link type="info" :underline="false" @click="isRegister = true">
+              註冊 →
+          </el-link>
         </el-form-item>
       </el-form>
     </div>

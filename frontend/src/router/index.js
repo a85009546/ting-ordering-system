@@ -11,11 +11,9 @@ import MealView from '@/views/admin/meal/index.vue'
 
 
 const routes = [
-  {
-    path: '/',
-    name: 'layout',
-    component: LayoutView,
-    redirect: '/index', // 重定向
+  { path: '/login', name: 'login', component: LoginView},
+
+  { path: '/', name: 'layout', component: LayoutView, redirect: '/index', // 重定向
     children: [
       { path: '/index', name: 'index', component: IndexView},
       { path: '/dashboard', name: 'dashboard', component: DashboardView},
@@ -24,15 +22,13 @@ const routes = [
       { path: '/employee', name: 'employee', component: EmpView},
       { path: '/meal', name: 'meal', component: MealView},
     ]
-  },
-  { path: '/login', name: 'login', component: LoginView}
-  
+  }
 ]
 
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  routes,
+  routes: routes,
 })
 
 export default router
