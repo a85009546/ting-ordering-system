@@ -67,9 +67,6 @@ const register = async () => {
   }else{
     ElMessage.error(result.msg ? result.msg : '註冊失敗')
   }
-  
-  
-  
 }  
 // 登入函數
 const login = async () => {

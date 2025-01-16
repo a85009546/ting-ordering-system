@@ -22,10 +22,15 @@ const instance = axios.create({
 import router from '@/router'
 // 響應攔截器
 instance.interceptors.response.use(
-  response => { //如果響應成功做什麼
-    return response.data
+  response => { // 如果響應成功做什麼
+    // 判斷狀態碼
+    if(response.data.code === 1){
+      return response.data
+    }
+    // 操作失敗
+    return Promise.reject(err)
   },
-  err => { //如果請求錯誤做什麼
+  err => { // 如果響應錯誤做什麼
     ElMessage.error('伺服器異常')
     return Promise.reject(err)
   }
