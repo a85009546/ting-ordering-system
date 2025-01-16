@@ -7,7 +7,7 @@
 /backend/**/test/
 
 # 忽略 application-dev.yml
-**/application-dev.yml
+/backend/**/application-dev.yml
 
 
 # 前端

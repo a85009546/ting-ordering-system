@@ -17,10 +17,15 @@ const routes = [
     children: [
       { path: '/index', name: 'index', component: IndexView},
       { path: '/dashboard', name: 'dashboard', component: DashboardView},
+      { path: '/amdin/dashboard', name: 'dashboard', component: DashboardView},
       { path: '/order', name: 'order', component: OrderView},
+      { path: '/admin/order', name: 'order', component: OrderView},
       { path: '/category', name: 'category', component: CategoryView},
+      { path: '/admin/category', name: 'category', component: CategoryView},
       { path: '/employee', name: 'employee', component: EmpView},
+      { path: '/admin/employee', name: 'employee', component: EmpView},
       { path: '/meal', name: 'meal', component: MealView},
+      { path: '/admin/meal', name: 'meal', component: MealView},
     ]
   }
 ]

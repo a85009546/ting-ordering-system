@@ -30,6 +30,8 @@ public class MenuItem implements Serializable {
     // 前端路徑
     private String path;
 
+    private String icon;
+
     // 選單等級 1:表示customer可調用，2:表示employee可調用，3:表示admin可調用
     private String level;
 }

@@ -6,6 +6,7 @@ C:\Users\MATTWEI\Desktop\ting-ordering-system\backend\ting-common\src\main\java\
 C:\Users\MATTWEI\Desktop\ting-ordering-system\backend\ting-common\src\main\java\com\github\mattwei\properties\AliOssProperties.java
 C:\Users\MATTWEI\Desktop\ting-ordering-system\backend\ting-common\src\main\java\com\github\mattwei\constant\StatusConstant.java
 C:\Users\MATTWEI\Desktop\ting-ordering-system\backend\ting-common\src\main\java\com\github\mattwei\utils\AliOssUtil.java
+C:\Users\MATTWEI\Desktop\ting-ordering-system\backend\ting-common\src\main\java\com\github\mattwei\utils\HttpClientUtil.java
 C:\Users\MATTWEI\Desktop\ting-ordering-system\backend\ting-common\src\main\java\com\github\mattwei\constant\PasswordConstant.java
 C:\Users\MATTWEI\Desktop\ting-ordering-system\backend\ting-common\src\main\java\com\github\mattwei\enumeration\OperationType.java
 C:\Users\MATTWEI\Desktop\ting-ordering-system\backend\ting-common\src\main\java\com\github\mattwei\exception\AccountNotFoundException.java

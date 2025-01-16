@@ -80,7 +80,6 @@ public class AuthController {
                 // 登入成功，獲取對應資源
                 UserLoginVO userLoginVO = authService.login(user);
 
-                System.out.println(userLoginVO);
                 return Result.success(userLoginVO);
             }
         }

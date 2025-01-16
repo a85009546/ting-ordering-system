@@ -83,6 +83,7 @@ public class AuthServiceImpl implements AuthService {
         // 封裝返回數據
         return UserLoginVO.builder()
                 .id(user.getId())
+                .role(user.getRole())
                 .name(user.getName())
                 .account(user.getAccount())
                 .token(token)

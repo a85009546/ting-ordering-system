@@ -45,7 +45,8 @@
     {
       "name": "ting.jwt.ttl",
       "type": "java.lang.Long",
-      "sourceType": "com.github.mattwei.properties.JwtProperties"
+      "sourceType": "com.github.mattwei.properties.JwtProperties",
+      "defaultValue": 0
     }
   ],
   "hints": []

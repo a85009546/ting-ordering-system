@@ -3,6 +3,9 @@ import { ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { registerApi, loginApi } from '@/api/auth'
 import { Avatar, User, Lock, Phone } from '@element-plus/icons-vue'
+import { useRouter } from 'vue-router'
+import { useTokenStore } from '@/stores/token'
+import { useRoleStore } from '@/stores/role'
 
 // 控制登入與註冊表單的切換
 const isRegister = ref(false)
@@ -69,10 +72,21 @@ const register = async () => {
   }
 }  
 // 登入函數
+const router = useRouter()
+const tokenStore = useTokenStore()
+const roleStore = useRoleStore()
 const login = async () => {
   let result = await loginApi(registerData.value)
   if (result.code === 1) {
     ElMessage.success(result.msg ? result.msg : '登入成功') 
+    // 把token存到pinia
+    tokenStore.setToken(result.data.token)
+
+    // 角色狀態存到 pinia
+    roleStore.setRole(result.data.role)
+
+    // 跳轉到首頁
+    router.push('/')
   }else{
     ElMessage.error(result.msg ? result.msg : '登入失敗')
   }

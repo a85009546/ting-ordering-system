@@ -1,5 +1,34 @@
 <script setup>
+import { ref, onMounted, watch } from 'vue'
+import { useRouter } from 'vue-router'
+import { getMenuApi } from '@/api/menu'
 
+const menuList = ref([])
+const router = useRouter()
+const activeMenuItem = ref('/meal')
+
+const navigateToPath = (path) => {
+  router.push(path)
+}
+// 獲得選單數據
+onMounted(async () => {
+  const response = await getMenuApi()
+  menuList.value = response.data
+  console.log(menuList.value)
+  console.log(menuList.value[0])
+
+})
+
+// 監視路由變化並更新選單
+watch(
+  () => router.currentRoute.value.path,
+  (newPath) => {
+    const validPaths = ['/admin/meal', '/user/meal']
+    if(validPaths.includes(newPath)){
+      activeMenuItem.value = newPath
+    }
+  },
+)
 </script>
 
 <template>
@@ -22,38 +51,18 @@
         <!-- 左側選單 -->
         <el-aside width="200px" class="aside">
           <!-- 左側選單欄 -->
-          <el-menu router="true">
+          <el-menu v-if="menuList.length > 0" router="true" :default-active="activeMenuItem">
 
-            <!-- 首頁 -->
-              <el-menu-item index="/index">
-                <el-icon><HomeFilled /></el-icon> 首頁
-              </el-menu-item>
-            
-            <!-- 工作台 -->
-            <el-menu-item index="/dashboard">
-              <el-icon><Platform /></el-icon> 工作臺
-            </el-menu-item>
-
-            <!-- 訂單管理 -->
-            <el-menu-item index="/order">
-              <el-icon><List /></el-icon> 訂單管理
-            </el-menu-item>
-            
-            <!-- 套餐管理 -->
-            <el-menu-item index="/category">
-              <el-icon><Menu /></el-icon> 分類管理
+            <el-menu-item
+              v-for="menu in menuList"
+              :key="menu.path"
+              :index="menu.path"
+              @click="navigate(menu.path)"
+            >
+              <!-- <el-icon :name="menu.icon"/> -->
+              {{ menu.name }}
             </el-menu-item>
 
-            <!-- 餐點管理 -->
-            <el-menu-item index="/meal">
-              <el-icon><Dish /></el-icon> 餐點管理
-            </el-menu-item>
-
-            <!-- 員工管理 -->
-            <el-menu-item index="/employee">
-              <el-icon><Management /></el-icon> 員工管理
-            </el-menu-item>
-            
           </el-menu>
         </el-aside>
         <!-- 右側主區域 -->

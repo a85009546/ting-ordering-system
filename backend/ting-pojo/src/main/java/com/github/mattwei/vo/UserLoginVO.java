@@ -24,6 +24,8 @@ public class UserLoginVO implements Serializable {
 
     private Long id;
 
+    private Integer role;
+
     private String name;
 
     private String account;
@@ -31,4 +33,5 @@ public class UserLoginVO implements Serializable {
     private String token;
 
     private List<MenuItem> menuItems = new ArrayList<>();
+
 }

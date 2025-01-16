@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
+import { useTokenStore } from '@/stores/token'
 
 
 const instance = axios.create({
@@ -7,17 +8,23 @@ const instance = axios.create({
   timeout: 500000
 })
 
-// // 請求攔截器
-// instance.interceptors.request.use(
-//   config => {
-//     //在發送請求前做什麼
-//     return config
-//   },
-//   err => {
-//     //如果請求錯誤做什麼
-//     return Promise.reject(err)
-//   }
-// )
+
+// 請求攔截器
+instance.interceptors.request.use(
+  config => {
+    //在發送請求前做什麼
+    const tokenStore = useTokenStore()
+    // 判斷有沒有token
+    if(tokenStore.token){
+      config.headers.Authorization = tokenStore.token
+    }
+    return config
+  },
+  err => {
+    //如果請求錯誤做什麼
+    return Promise.reject(err)
+  }
+)
 
 import router from '@/router'
 // 響應攔截器
