@@ -36,9 +36,9 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
         log.info("開始註冊自定義攔截器...");
         registry.addInterceptor(jwtTokenInterceptor)
                                 // 攔截所有請求
-                                .addPathPatterns("/**")
+                                .addPathPatterns("/api/**")
                                 // 排除 /auth 路徑下的請求
-                                .excludePathPatterns("/auth/**", "/customer/**");
+                                .excludePathPatterns("/api/auth/**", "/customer/**");
     }
 
 

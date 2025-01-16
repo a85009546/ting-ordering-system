@@ -6,12 +6,12 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="ting-server" />
         <module name="ting-pojo" />
+        <module name="ting-common" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="17">
-      <module name="ting-common" target="17" />
-      <module name="ting-server" target="17" />
       <module name="tingorderingsystem" target="17" />
     </bytecodeTargetLevel>
   </component>

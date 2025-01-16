@@ -30,6 +30,9 @@ public class JwtTokenInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        String requestPath = request.getRequestURI();
+        System.out.println("Request Path: " + requestPath);
+
         // 判斷當前攔截到的是Controller的方法還是其他資源
         if(!(handler instanceof HandlerMethod)){
             // 當前攔截到的不是動態方法，直接放行
