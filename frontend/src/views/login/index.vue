@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import { ElMessage } from 'element-plus'
-import { registerApi } from '@/api/auth'
+import { registerApi, loginApi } from '@/api/auth'
 import { Avatar, User, Lock, Phone } from '@element-plus/icons-vue'
 
 // 控制登入與註冊表單的切換
@@ -14,12 +14,6 @@ let registerData = ref({
   password:'',
   rePassword:'',
   phone:''
-})
-
-// 定義登入表單數據
-let loginData = ref({
-  account:'',
-  password:'',
 })
 
 // 校驗密碼的函數
@@ -65,15 +59,28 @@ const rules = {
   ]
 }
 
-// 註冊
+// 註冊函數
 const register = async () => {
   let result = await registerApi(registerData.value)
-  ElMessage.success(result.msg ? result.msg : '註冊成功') 
+  if (result.code === 1) {
+    ElMessage.success(result.msg ? result.msg : '註冊成功') 
+  }else{
+    ElMessage.error(result.msg ? result.msg : '註冊失敗')
+  }
+  
   
   
 }  
-
-// 定義清空註冊數據模型的函數
+// 登入函數
+const login = async () => {
+  let result = await loginApi(registerData.value)
+  if (result.code === 1) {
+    ElMessage.success(result.msg ? result.msg : '登入成功') 
+  }else{
+    ElMessage.error(result.msg ? result.msg : '登入失敗')
+  }
+}
+// 定義清空數據模型的函數
 const clearRegisterData = () => {
   registerData.value = {
     name: '',
@@ -84,13 +91,6 @@ const clearRegisterData = () => {
   }
 }
 
-// 定義清空登入數據模型的函數
-const clearLoginData = () => {
-  loginData.value = {
-    account: '',
-    password: ''
-  }
-}
 </script>
 
 <template>
@@ -125,21 +125,21 @@ const clearLoginData = () => {
         </el-form-item>
 
         <el-form-item class="flex">
-            <el-link type="info" :underline="false" @click="isRegister = false">
+            <el-link type="info" :underline="false" @click="isRegister = false ; clearRegisterData()">
                 ← 登入頁面
             </el-link>
         </el-form-item>
 
       </el-form>
       <!-- 登入 表單 -->
-      <el-form label-width="80px" v-else :model="loginData">
+      <el-form label-width="80px" v-else :model="registerData">
         <p class="title">登入</p>
         <el-form-item label="帳號" prop="account">
-          <el-input :prefix-icon="User" v-model="loginData.account" placeholder="請輸入帳號"></el-input>
+          <el-input :prefix-icon="User" v-model="registerData.account" placeholder="請輸入帳號"></el-input>
         </el-form-item>
 
         <el-form-item label="密碼" prop="password">
-          <el-input :prefix-icon="Lock" type="password" v-model="loginData.password" placeholder="請輸入密碼"></el-input>
+          <el-input :prefix-icon="Lock" type="password" v-model="registerData.password" placeholder="請輸入密碼"></el-input>
         </el-form-item>
         
         <el-form-item class="flex">
@@ -149,12 +149,12 @@ const clearLoginData = () => {
         </el-form-item>
         <!-- 登入按鈕 -->
         <el-form-item>
-          <el-button class="button" type="primary">登 入</el-button>
-          <el-button class="button" type="info" @click="clearLoginData">清 空</el-button>
+          <el-button class="button" type="primary" @click="login">登 入</el-button>
+          <el-button class="button" type="info" @click="clearRegisterData">清 空</el-button>
         </el-form-item>
 
         <el-form-item class="flex">
-          <el-link type="info" :underline="false" @click="isRegister = true">
+          <el-link type="info" :underline="false" @click="isRegister = true; clearRegisterData()">
               註冊 →
           </el-link>
         </el-form-item>
@@ -166,7 +166,7 @@ const clearLoginData = () => {
 <style scoped>
 #container {
   padding: 10%;
-  height: 571px;
+  height: 600px;
   background-image: url('@/assets/images/login.jpg');
   background-repeat: no-repeat;
   background-size: cover;

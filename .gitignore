@@ -1,0 +1,41 @@
+# 後端
+**/target/
+.idea
+*.iml
+*.class
+*Test.java
+**/test/
+
+# 忽略 application-dev.yml
+application-dev.yml
+
+
+# 前端
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+.DS_Store
+dist
+dist-ssr
+coverage
+*.local
+
+/cypress/videos/
+/cypress/screenshots/
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
