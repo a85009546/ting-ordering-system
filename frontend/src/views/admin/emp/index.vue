@@ -1,6 +1,9 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { pageQueryApi } from '@/api/emp'
+import { pageQueryApi, addApi } from '@/api/emp'
+
+// 性別列表數據
+const sexes = ref([{ name: '女', value: 0}, { name: '男', value: 1}])
 
 const empList = ref([])
 
@@ -43,6 +46,44 @@ const handleCurrentChange = (val) => {
   search()
 }
 
+// 新增員工彈出對話框
+const addEmp = () => {
+  dialogVisible.value = true
+  dialogTitle.value = '新增員工'
+  employee.value = {
+    account: '',
+    name: '',
+    phone: '',
+    sex: ''
+  }
+}
+
+//新增/修改表单
+const employee = ref({
+  account: '',
+  name: '',
+  phone: '',
+  sex: ''
+})
+
+// 控制彈窗
+const dialogVisible = ref(false)
+const dialogTitle = ref('新增員工')
+
+// 保存員工
+const save = async () => {
+  const result = await addApi(employee.value)
+  if(result.code){
+    ElMessage.success('保存成功')
+    // 關閉彈框
+    dialogVisible.value = false
+    search()
+  }else{
+    ElMessage.error(result.msg)
+  }
+}
+
+
 </script>
 
 <template>
@@ -78,7 +119,7 @@ const handleCurrentChange = (val) => {
   
   <!-- 功能按鈕 -->
   <div class="container">
-    <el-button type="primary" > + 新增員工</el-button>
+    <el-button type="primary" @click="addEmp"> + 新增員工</el-button>
   </div>
 
   <!-- 表格 -->
@@ -118,7 +159,53 @@ const handleCurrentChange = (val) => {
   </div>
 
   <!-- 新增員工/編輯員工 彈出框 -->
-  
+  <el-dialog v-model="dialogVisible" :title="dialogTitle" width="30%">
+      <el-form :model="employee" label-width="80px">
+        <!-- 第一行 -->
+        <el-row>
+          <el-col :span="18">
+            <el-form-item label="帳號">
+              <el-input v-model="employee.account" placeholder="請輸入員工帳號，4-16 位"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <!-- 第二行 -->
+        <el-row>
+          <el-col :span="18">
+            <el-form-item label="姓名">
+              <el-input v-model="employee.name" placeholder="請輸入員工姓名，2-10 位"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <!-- 第三行 -->
+        <el-row>
+          <el-col :span="18">
+            <el-form-item label="手機號">
+              <el-input v-model="employee.phone" placeholder="請輸入員工手機號"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <!-- 第四行 -->
+        <el-row>
+          <el-col :span="18">
+            <el-form-item label="性别">
+              <el-select v-model="employee.sex" placeholder="請選擇性别" style="width: 100%;">
+                <el-option v-for="s in sexes" :key="s.value" :label="s.name" :value="s.value"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+      </el-form>
+      
+      <!-- 底部按钮 -->
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="dialogVisible = false">取消</el-button>
+          <el-button type="primary" @click="save">保存</el-button>
+        </span>
+      </template>
+  </el-dialog>
 </template>
 
 <style scoped>
