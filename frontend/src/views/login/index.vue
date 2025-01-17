@@ -7,6 +7,10 @@ import { useRouter } from 'vue-router'
 import { useTokenStore } from '@/stores/token'
 import { useRoleStore } from '@/stores/role'
 
+const router = useRouter()
+const tokenStore = useTokenStore()
+const roleStore = useRoleStore()
+
 // 控制登入與註冊表單的切換
 const isRegister = ref(false)
 // 定義註冊表單數據
@@ -18,6 +22,18 @@ let registerData = ref({
   rePassword:'',
   phone:''
 })
+
+// 定義清空數據模型的函數
+const clearRegisterData = () => {
+  registerData.value = {
+    name: '',
+    account: '',
+    password: '',
+    rePassword: '',
+    phone: '',
+    sex: ''
+  }
+}
 
 // 校驗密碼的函數
 const checkRePassword = (rule, value, callback) => {
@@ -59,6 +75,9 @@ const rules = {
   phone: [
     { required: true, message: '請輸入手機號碼', trigger: 'blur' },
     { validator: checkPhone, trigger: 'blur',}
+  ],
+  sex:  [
+    { required: true, message: '請選擇性別', trigger: 'change' } // 性別校驗
   ]
 }
 
@@ -67,14 +86,15 @@ const register = async () => {
   let result = await registerApi(registerData.value)
   if (result.code === 1) {
     ElMessage.success(result.msg ? result.msg : '註冊成功') 
+    // 跳轉到登入頁面
+    isRegister.value = false
+    // 清空表單數據
+    clearRegisterData()
   }else{
     ElMessage.error(result.msg ? result.msg : '註冊失敗')
   }
 }  
 // 登入函數
-const router = useRouter()
-const tokenStore = useTokenStore()
-const roleStore = useRoleStore()
 const login = async () => {
   let result = await loginApi(registerData.value)
   if (result.code === 1) {
@@ -89,16 +109,6 @@ const login = async () => {
     router.push('/')
   }else{
     ElMessage.error(result.msg ? result.msg : '登入失敗')
-  }
-}
-// 定義清空數據模型的函數
-const clearRegisterData = () => {
-  registerData.value = {
-    name: '',
-    account: '',
-    password: '',
-    rePassword: '',
-    phone: ''
   }
 }
 
@@ -128,6 +138,13 @@ const clearRegisterData = () => {
 
         <el-form-item label="手機號碼" prop="phone">
           <el-input :prefix-icon="Phone" v-model="registerData.phone" placeholder="請輸入手機號碼"></el-input>
+        </el-form-item>
+
+        <el-form-item label="性別" prop="sex">
+          <el-radio-group v-model="registerData.sex">
+            <el-radio label="1">男</el-radio>
+            <el-radio label="0">女</el-radio>
+          </el-radio-group>
         </el-form-item>
 
         <el-form-item>

@@ -51,7 +51,6 @@ public class AuthController {
             user = new User();
             BeanUtils.copyProperties(registerRequestDTO, user);
             user.setRole(1);
-            user.setSex("0");
             user.setBalance(new BigDecimal("5000.00")); // 默認5000元
             authService.register(user);
             return Result.success();

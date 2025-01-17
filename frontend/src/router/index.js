@@ -8,6 +8,7 @@ import OrderView from '@/views/admin/order/index.vue'
 import CategoryView from '@/views/admin/category/index.vue'
 import EmpView from '@/views/admin/emp/index.vue'
 import MealView from '@/views/admin/meal/index.vue'
+import InfoView from '@/views/info/index.vue'
 
 
 const routes = [
@@ -16,16 +17,12 @@ const routes = [
   { path: '/', name: 'layout', component: LayoutView, redirect: '/index', // 重定向
     children: [
       { path: '/index', name: 'index', component: IndexView},
-      { path: '/dashboard', name: 'dashboard', component: DashboardView},
-      { path: '/amdin/dashboard', name: 'dashboard', component: DashboardView},
-      { path: '/order', name: 'order', component: OrderView},
+      { path: '/admin/dashboard', name: 'dashboard', component: DashboardView},
       { path: '/admin/order', name: 'order', component: OrderView},
-      { path: '/category', name: 'category', component: CategoryView},
       { path: '/admin/category', name: 'category', component: CategoryView},
-      { path: '/employee', name: 'employee', component: EmpView},
       { path: '/admin/employee', name: 'employee', component: EmpView},
-      { path: '/meal', name: 'meal', component: MealView},
       { path: '/admin/meal', name: 'meal', component: MealView},
+      { path: '/user/info', name: 'info', component: InfoView},
     ]
   }
 ]

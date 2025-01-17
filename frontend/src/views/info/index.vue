@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  餐點管理
+  個人中心
 </template>
 
 <style scoped>
