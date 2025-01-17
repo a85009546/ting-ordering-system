@@ -10,3 +10,8 @@ export const pageQueryApi = (name, account, phene, sex, page, pageSize) => {
 export const addApi = (employee) => {
   return request.post('/admin/employee', employee)
 }
+
+// 根據id查詢
+export const queryInfoApi = (id) => {
+  return request.get(`/admin/employee/${id}`)
+}

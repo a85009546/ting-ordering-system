@@ -1,16 +1,16 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { pageQueryApi, addApi } from '@/api/emp'
+import { pageQueryApi, addApi, queryInfoApi } from '@/api/emp'
 import { ElMessage } from 'element-plus'
 
 // 性別列表數據
-const sexes = ref([{ name: '女', value: 0}, { name: '男', value: 1}])
+const sexes = ref([{ name: '女', value: '0'}, { name: '男', value: '1'}])
 
+// 接收查詢結果的數據
 const empList = ref([])
-
 // 搜尋表單條件
 const searchEmp = ref({name:'', account:'', phone:'', sex:''})
-
+// 鉤子
 onMounted(() => {
   search()
 })
@@ -23,19 +23,16 @@ const search = async () => {
     total.value = result.data.total
   }
 }
-
 // 清空
 const clear = () => {
   searchEmp.value = {name:'', account:'', phone:'', sex:''}
   search()
 }
-
 // 分頁相關
 const currentPage = ref(1) 
 const pageSize = ref(5) 
 const background = ref(true)
 const total = ref(0)
-
 // 每頁展示紀錄數變化
 const handleSizeChange = (val) => {
   console.log(`每頁展示 ${val} 項紀錄`)
@@ -46,7 +43,6 @@ const handleCurrentChange = (val) => {
   console.log(`當前頁碼: ${val}`)
   search()
 }
-
 // 新增員工彈出對話框
 const addEmp = () => {
   dialogVisible.value = true
@@ -119,6 +115,15 @@ const rules = {
   ]
 }
 
+// 編輯
+const edit = async (id) => {
+  const result = await queryInfoApi(id)
+  if(result.code){
+    dialogVisible.value = true
+    dialogTitle.value = '編輯員工'
+    employee.value = result.data
+  }
+} 
 </script>
 
 <template>
@@ -172,7 +177,7 @@ const rules = {
       <el-table-column prop="updateTime" label="最後操作時間"  align="center"/>
       <el-table-column label="操作" align="center">
         <template #default="scope">
-          <el-button type="primary" size="small" @click="handleEdit(scope.row)"><el-icon><Edit /></el-icon>編輯</el-button>
+          <el-button type="primary" size="small" @click="edit(scope.row.id)"><el-icon><Edit /></el-icon>編輯</el-button>
           <el-button type="danger" size="small" @click="handleDelete(scope.row)"><el-icon><Delete /></el-icon>刪除</el-button>
         </template>
       </el-table-column>
