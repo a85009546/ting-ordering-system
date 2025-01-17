@@ -20,3 +20,8 @@ export const queryInfoApi = (id) => {
 export const updateApi = (category) => {
   return request.put('/admin/category', category)
 }
+
+// 刪除分類
+export const deleteApi = (id) => {
+  return request.delete(`/admin/category?id=${id}`)
+}

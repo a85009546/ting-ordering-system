@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { pageQueryApi, addApi, queryInfoApi, updateApi } from '@/api/category'
+import { pageQueryApi, addApi, queryInfoApi, updateApi, deleteApi } from '@/api/category'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
 // 接收查詢結果的數據
@@ -107,7 +107,23 @@ const edit = async (id) => {
     category.value= result.data
   }
 } 
-
+// 刪除
+const deleteById = (id) => {
+  // 彈出確認框
+  ElMessageBox.confirm('確定刪除此分類嗎？', '提示', 
+    { confirmButtonText: '確定', cancelButtonText: '取消', type: 'warning' }
+  ).then(async () => { // 確定
+    const result = await deleteApi(id)
+    if(result.code){
+      ElMessage.success('刪除成功')
+      search()
+    }else{
+      ElMessage.error(result.msg)
+    }
+  }).catch(() => { // 取消
+    ElMessage.info('取消刪除')
+  })
+}
 
 </script>
 
@@ -153,7 +169,7 @@ const edit = async (id) => {
         <template #default="scope">
           <el-button type="primary" size="small" @click="edit(scope.row.id)"><el-icon><Edit /></el-icon>編輯</el-button>
           <el-button type="danger" size="small" @click="deleteById(scope.row.id)"><el-icon><Delete /></el-icon>刪除</el-button>
-          <el-button type="danger" size="small" @click="deleteById(scope.row.id)"><el-icon><Delete /></el-icon>禁用</el-button>
+          <el-button type="danger" size="small" @click="changeStatus(scope.row.id)"><el-icon><Delete /></el-icon>禁用</el-button>
         </template>
       </el-table-column>
     </el-table>
