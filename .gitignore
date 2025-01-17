@@ -1,41 +1,39 @@
-# 後端
-/backend/**/target/
-/backend/**/.idea
-/backend/**/*.iml
-/backend/**/*.class
-/backend/**/*Test.java
-/backend/**/test/
-
-# 忽略 application-dev.yml
-/backend/**/application-dev.yml
-
-
 # 前端
-# Logs
-/fontend/**/logs
-/fontend/**/*.log
-/fontend/**/npm-debug.log*
-/fontend/**/yarn-debug.log*
-/fontend/**/yarn-error.log*
-/fontend/**/pnpm-debug.log*
-/fontend/**/lerna-debug.log*
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
 
-/fontend/**/node_modules
-/fontend/**/.DS_Store
-/fontend/**/dist
-/fontend/**/dist-ssr
-/fontend/**/coverage
-/fontend/**/*.local
+node_modules
+.DS_Store
+dist
+dist-ssr
+coverage
+*.local
 
-/fontend/**/cypress/videos/
-/fontend/**/screenshots/
+/cypress/videos/
+/cypress/screenshots/
 
 # Editor directories and files
-/fontend/**/.vscode/*
-!/fontend/**/.vscode/extensions.json
-/fontend/**/.idea
-/fontend/**/*.suo
-/fontend/**/*.ntvs*
-/fontend/**/*.njsproj
-/fontend/**/*.sln
-/fontend/**/*.sw?
+.vscode/*
+!.vscode/extensions.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# 後端
+**/target/
+.idea
+*.iml
+*.class
+*Test.java
+**/test/
+
+# 忽略 application-dev.yml
+application-dev.yml
