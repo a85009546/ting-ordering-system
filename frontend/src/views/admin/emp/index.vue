@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { pageQueryApi, addApi, queryInfoApi, updateApi } from '@/api/emp'
-import { ElMessage } from 'element-plus'
+import { pageQueryApi, addApi, queryInfoApi, updateApi, deleteApi } from '@/api/emp'
+import { ElMessage, ElMessageBox } from 'element-plus'
 
 // 性別列表數據
 const sexes = ref([{ name: '女', value: '0'}, { name: '男', value: '1'}])
@@ -98,9 +98,6 @@ const save = async () => {
     }
   })
 }
-
-
-
 // 校驗規則
 const rules = {
   name: [
@@ -129,6 +126,24 @@ const edit = async (id) => {
     employee.value = result.data
   }
 } 
+// 刪除
+const deleteById = (id) => {
+  // 彈出確認框
+  ElMessageBox.confirm('確定刪除此員工嗎？', '提示', 
+    { confirmButtonText: '確定', cancelButtonText: '取消', type: 'warning' }
+  ).then(async () => { // 確定
+    const result = await deleteApi(id)
+    if(result.code){
+      ElMessage.success('刪除成功')
+      search()
+    }else{
+      ElMessage.error(result.msg)
+    }
+  }).catch(() => { // 取消
+    ElMessage.info('取消刪除')
+  })
+}
+
 </script>
 
 <template>
@@ -183,7 +198,7 @@ const edit = async (id) => {
       <el-table-column label="操作" align="center">
         <template #default="scope">
           <el-button type="primary" size="small" @click="edit(scope.row.id)"><el-icon><Edit /></el-icon>編輯</el-button>
-          <el-button type="danger" size="small" @click="handleDelete(scope.row)"><el-icon><Delete /></el-icon>刪除</el-button>
+          <el-button type="danger" size="small" @click="deleteById(scope.row.id)"><el-icon><Delete /></el-icon>刪除</el-button>
         </template>
       </el-table-column>
     </el-table>

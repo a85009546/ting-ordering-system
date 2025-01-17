@@ -20,3 +20,8 @@ export const queryInfoApi = (id) => {
 export const updateApi = (employee) => {
   return request.put('/admin/employee', employee)
 }
+
+// 刪除員工
+export const deleteApi = (id) => {
+  return request.delete(`/admin/employee?id=${id}`)
+}
