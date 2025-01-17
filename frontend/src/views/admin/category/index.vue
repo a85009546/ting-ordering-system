@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { pageQueryApi, addApi } from '@/api/category'
+import { pageQueryApi, addApi, queryInfoApi, updateApi } from '@/api/category'
+import { ElMessage, ElMessageBox } from 'element-plus'
 
 // 接收查詢結果的數據
 const categoryList = ref([])
@@ -60,7 +61,7 @@ const addCategory = () => {
 }
 // 控制彈窗
 const dialogVisible = ref(false)
-const dialogTitle = ref('新增員工')
+const dialogTitle = ref('新增分類')
 // 表單引入
 const categoryFormRef = ref()
 // 保存分類
@@ -96,6 +97,17 @@ const rules = {
   { min: 1, max: 16, message: '長度為 1 到 16 位非空字符', trigger: 'blur' }
   ]
 }
+// 編輯
+const edit = async (id) => {
+  const result = await queryInfoApi(id)
+  if(result.code){
+    console.log(result.data)
+    dialogVisible.value = true
+    dialogTitle.value = '編輯分類'
+    category.value= result.data
+  }
+} 
+
 
 </script>
 
@@ -167,7 +179,7 @@ const rules = {
 
         <el-row>
           <el-col :span="18">
-            <el-form-item label="分類名稱" prop="account">
+            <el-form-item label="分類名稱" prop="name">
               <el-input v-model="category.name" placeholder="請輸入分類名稱，1-16 位"></el-input>
             </el-form-item>
           </el-col>

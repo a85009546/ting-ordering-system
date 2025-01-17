@@ -8,6 +8,7 @@ import com.github.mattwei.mapper.CategoryMapper;
 import com.github.mattwei.mapper.MealMapper;
 import com.github.mattwei.result.PageResult;
 import com.github.mattwei.service.CategoryService;
+import com.github.mattwei.vo.CategoryVO;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,9 +75,13 @@ public class CategoryServiceImpl implements CategoryService {
      * @return
      */
     @Override
-    public String getNameById(Long id) {
+    public CategoryVO getById(Long id) {
         Category category = categoryMapper.getById(id);
-        return category.getName();
+        CategoryVO categoryVO = CategoryVO.builder()
+                .id(category.getId())
+                .name(category.getName())
+                .build();
+        return categoryVO;
     }
 
     /**

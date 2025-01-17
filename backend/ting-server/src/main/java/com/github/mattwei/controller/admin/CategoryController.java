@@ -5,6 +5,7 @@ import com.github.mattwei.entity.Category;
 import com.github.mattwei.result.PageResult;
 import com.github.mattwei.result.Result;
 import com.github.mattwei.service.CategoryService;
+import com.github.mattwei.vo.CategoryVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -68,10 +69,10 @@ public class CategoryController {
      * @return
      */
     @GetMapping("/{id}")
-    public Result<String> getNameById(@PathVariable Long id){
+    public Result<CategoryVO> getNameById(@PathVariable Long id){
         log.info("根據id查詢分類名稱，參數為: {}", id);
-        String name = categoryService.getNameById(id);
-        return Result.success(name);
+        CategoryVO categoryVO = categoryService.getById(id);
+        return Result.success(categoryVO);
     }
 
     /**

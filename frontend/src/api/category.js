@@ -10,3 +10,13 @@ export const pageQueryApi = (name, status, page, pageSize) => {
 export const addApi = (category) => {
   return request.post('/admin/category', category)
 }
+
+// 根據id查詢
+export const queryInfoApi = (id) => {
+  return request.get(`/admin/category/${id}`)
+}
+
+// 編輯分類
+export const updateApi = (category) => {
+  return request.put('/admin/category', category)
+}

@@ -3,6 +3,7 @@ package com.github.mattwei.service;
 import com.github.mattwei.dto.CategoryPageQueryDTO;
 import com.github.mattwei.entity.Category;
 import com.github.mattwei.result.PageResult;
+import com.github.mattwei.vo.CategoryVO;
 
 /**
  * Description:
@@ -36,7 +37,7 @@ public interface CategoryService {
      * @param id
      * @return
      */
-    String getNameById(Long id);
+    CategoryVO getById(Long id);
 
     /**
      * 修改分類
