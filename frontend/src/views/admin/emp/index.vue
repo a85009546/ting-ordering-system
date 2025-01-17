@@ -1,23 +1,23 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { pageQueryApi } from '@/api/emp'
 
-const empList = ref([
-  {
-      "name": "湯姆12",
-      "account": "Tom12",
-      "phone": "0937492741",
-      "sex": "1",
-      "updateTime": "2025-01-14 11:24"
-  }
-])
+const empList = ref([])
 
 // 搜尋表單條件
 const searchEmp = ref({name:'', account:'', phone:'', sex:''})
 
+onMounted(() => {
+  search()
+})
 // 查詢
-const search = () => {
-  console.log(searchEmp.value)
+const search = async () => {
+  const result = await pageQueryApi(searchEmp.value.name, searchEmp.value.account, searchEmp.value.phone, 
+                                    searchEmp.value.sex,currentPage.value, pageSize.value)
+  if(result.code === 1){
+    empList.value = result.data.records
+    total.value = result.data.total
+  }
 }
 
 // 清空
@@ -27,18 +27,20 @@ const clear = () => {
 }
 
 // 分頁相關
-const currentPage = ref(4) 
-const pageSize = ref(100) 
+const currentPage = ref(1) 
+const pageSize = ref(5) 
 const background = ref(true)
 const total = ref(0)
 
 // 每頁展示紀錄數變化
 const handleSizeChange = (val) => {
   console.log(`每頁展示 ${val} 項紀錄`)
+  search()
 }
 // 頁碼變化時觸發
 const handleCurrentChange = (val) => {
   console.log(`當前頁碼: ${val}`)
+  search()
 }
 
 </script>
@@ -88,7 +90,7 @@ const handleCurrentChange = (val) => {
       <el-table-column prop="phone" label="手機" width="250" align="center"/>
       <el-table-column label="性別" width="100" align="center">
         <template #default="scope">
-          {{ scope.row.sex === 1 ? '男' : '女' }}
+          {{ scope.row.sex === '1' ? '男' : '女' }}
         </template>
       </el-table-column>
       <el-table-column prop="updateTime" label="最後操作時間"  align="center"/>
@@ -114,6 +116,9 @@ const handleCurrentChange = (val) => {
       @current-change="handleCurrentChange"
     />
   </div>
+
+  <!-- 新增員工/編輯員工 彈出框 -->
+  
 </template>
 
 <style scoped>
