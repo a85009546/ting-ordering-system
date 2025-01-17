@@ -34,7 +34,8 @@ instance.interceptors.response.use(
     if(response.data.code === 1){
       return response.data
     }
-    // 操作失敗
+    // 操作失敗，顯示後端回傳的錯誤訊息
+    ElMessage.error(response.data.msg)
     return Promise.reject(err)
   },
   err => { // 如果響應錯誤做什麼

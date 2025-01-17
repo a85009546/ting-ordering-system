@@ -46,20 +46,20 @@ const checkRePassword = (rule, value, callback) => {
   }
 }
 // 校驗手機號的函數
-const checkPhone = (rule, value, callback) => {
-  const phoneRegex = /^09\d{8}$/; // 以09開頭，後面8位數字
-  if (!phoneRegex.test(value)) {
-    callback(new Error('手機號碼必須為 09 開頭的 10 位數字'));
-  } else {
-    callback();
-  }
-}
+// const checkPhone = (rule, value, callback) => {
+//   const phoneRegex = /^09\d{8}$/; // 以09開頭，後面8位數字
+//   if (!phoneRegex.test(value)) {
+//     callback(new Error('手機號碼必須為 09 開頭的 10 位數字'));
+//   } else {
+//     callback();
+//   }
+// }
 
 // 定義註冊表單校驗規則
 const rules = {
   name: [
   { required: true, message: '請輸入姓名', trigger: 'blur' },
-  { min: 1, max: 16, message: '長度為 1 到 16 位非空字符', trigger: 'blur' }
+  { min: 2, max: 16, message: '長度為 2 到 16 位非空字符', trigger: 'blur' }
   ],
   account: [
     { required: true, message: '請輸入帳號', trigger: 'blur' },
@@ -74,29 +74,39 @@ const rules = {
   ],
   phone: [
     { required: true, message: '請輸入手機號碼', trigger: 'blur' },
-    { validator: checkPhone, trigger: 'blur',}
+    { pattern: /^09\d{8}$/, message: '手機號碼必須為09 開頭的 10 位數字', trigger: 'blur'}
   ],
   sex:  [
     { required: true, message: '請選擇性別', trigger: 'change' } // 性別校驗
   ]
 }
 
+const registerFormRef = ref()
 // 註冊函數
 const register = async () => {
-  let result = await registerApi(registerData.value)
-  if (result.code === 1) {
-    ElMessage.success(result.msg ? result.msg : '註冊成功') 
-    // 跳轉到登入頁面
-    isRegister.value = false
-    // 清空表單數據
-    clearRegisterData()
-  }else{
-    ElMessage.error(result.msg ? result.msg : '註冊失敗')
-  }
+  // 表單校驗
+  if(!registerFormRef.value) return
+  registerFormRef.value.validate(async (valid) => {
+    if(valid){ // 校驗通過，去註冊
+      let result = await registerApi(registerData.value)
+      if (result.code === 1) {
+        ElMessage.success(result.msg ? result.msg : '註冊成功') 
+        // 跳轉到登入頁面
+        isRegister.value = false
+        // 清空表單數據
+        clearRegisterData()
+      }else{
+        ElMessage.error(result.msg ? result.msg : '註冊失敗')
+      }
+    }else{
+      ElMessage.error('表單校驗不通過')
+    }
+  })
 }  
 // 登入函數
 const login = async () => {
   let result = await loginApi(registerData.value)
+  console.log(result)
   if (result.code === 1) {
     ElMessage.success(result.msg ? result.msg : '登入成功') 
     // 把token存到pinia
@@ -107,8 +117,6 @@ const login = async () => {
 
     // 跳轉到首頁
     router.push('/')
-  }else{
-    ElMessage.error(result.msg ? result.msg : '登入失敗')
   }
 }
 
@@ -118,7 +126,7 @@ const login = async () => {
   <div id="container">
     <div class="login-form">
       <!-- 註冊 表單 -->
-      <el-form label-width="80px" v-if="isRegister" :model="registerData" :rules="rules">
+      <el-form label-width="80px" v-if="isRegister" :model="registerData" :rules="rules" ref="registerFormRef">
         <p class="title">註冊</p>
         <el-form-item label="姓名" prop="name">
           <el-input :prefix-icon="Avatar" v-model="registerData.name" placeholder="請輸入姓名"></el-input>
