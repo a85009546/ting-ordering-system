@@ -25,3 +25,8 @@ export const updateApi = (category) => {
 export const deleteApi = (id) => {
   return request.delete(`/admin/category?id=${id}`)
 }
+
+// 修改分類狀態
+export const updateStatusApi = (id, status) => {
+  return request.post(`/admin/category/status/${status}?id=${id}`)
+}

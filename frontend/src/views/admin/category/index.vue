@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { pageQueryApi, addApi, queryInfoApi, updateApi, deleteApi } from '@/api/category'
+import { pageQueryApi, addApi, queryInfoApi, updateApi, deleteApi, updateStatusApi } from '@/api/category'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
 // 接收查詢結果的數據
@@ -124,6 +124,18 @@ const deleteById = (id) => {
     ElMessage.info('取消刪除')
   })
 }
+// 修改狀態
+const changeStatusById = (id, currentStatus) => {
+  const newStatus = currentStatus === 1 ? 0 : 1; // 根據當前狀態切換
+  updateStatusApi(id, newStatus).then(result => {
+    if(result.code){
+      ElMessage.success('修改狀態成功')
+      search() // 重新查詢並刷新表格
+    } else {
+      ElMessage.error(result.msg)
+    }
+  })
+}
 
 </script>
 
@@ -161,15 +173,27 @@ const deleteById = (id) => {
       <el-table-column prop="name" label="分類名稱" width="180" align="center"/>
       <el-table-column label="狀態" width="100" align="center">
         <template #default="scope">
-          {{ scope.row.status === 1 ? '啟用' : '禁用' }}
+          <span :style="{
+            color: scope.row.status === 1 ? '#67C23A' : '#F56C6C',
+            fontWeight: 'bold'
+          }">
+            {{ scope.row.status === 1 ? '啟用' : '禁用' }}
+          </span>
         </template>
       </el-table-column>
+
       <el-table-column prop="updateTime" label="最後操作時間"  align="center"/>
       <el-table-column label="操作" align="center">
         <template #default="scope">
           <el-button type="primary" size="small" @click="edit(scope.row.id)"><el-icon><Edit /></el-icon>編輯</el-button>
           <el-button type="danger" size="small" @click="deleteById(scope.row.id)"><el-icon><Delete /></el-icon>刪除</el-button>
-          <el-button type="danger" size="small" @click="changeStatus(scope.row.id)"><el-icon><Delete /></el-icon>禁用</el-button>
+          <el-button 
+            :type="scope.row.status === 1 ? 'danger' : 'success'"
+            size="small"
+            @click="changeStatusById(scope.row.id, scope.row.status)"
+          >
+            {{ scope.row.status === 1 ? '禁用' : '啟用' }}
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
