@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { pageQueryApi, addApi, queryInfoApi } from '@/api/emp'
+import { pageQueryApi, addApi, queryInfoApi, updateApi } from '@/api/emp'
 import { ElMessage } from 'element-plus'
 
 // 性別列表數據
@@ -78,8 +78,13 @@ const save = async () => {
   // 表單校驗
   if(!empFormRef.value) return
   empFormRef.value.validate(async (valid) => { // valid = true 表示校驗通過
-    if(valid){ // 校驗通過，新增員工
-      const result = await addApi(employee.value)
+    if(valid){ // 校驗通過，新增員工 or 編輯員工
+      let result
+      if(employee.value.id){ // 編輯員工
+        result = await updateApi(employee.value)
+      }else{ // 新增員工
+        result = await addApi(employee.value)
+      }
       if(result.code){
         ElMessage.success('保存成功')
         // 關閉彈框
@@ -100,7 +105,7 @@ const save = async () => {
 const rules = {
   name: [
   { required: true, message: '請輸入姓名', trigger: 'blur' },
-  { min: 1, max: 16, message: '長度為 1 到 16 位非空字符', trigger: 'blur' }
+  { min: 2, max: 16, message: '長度為 2 到 16 位非空字符', trigger: 'blur' }
   ],
   account: [
     { required: true, message: '請輸入帳號', trigger: 'blur' },

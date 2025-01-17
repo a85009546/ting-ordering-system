@@ -15,3 +15,8 @@ export const addApi = (employee) => {
 export const queryInfoApi = (id) => {
   return request.get(`/admin/employee/${id}`)
 }
+
+// 編輯員工
+export const updateApi = (employee) => {
+  return request.put('/admin/employee', employee)
+}
