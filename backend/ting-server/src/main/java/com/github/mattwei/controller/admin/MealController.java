@@ -87,4 +87,17 @@ public class MealController {
         mealService.updateWithFlavor(mealDTO);
         return Result.success();
     }
+
+    /**
+     * 變更餐點分類狀態
+     * @param status
+     * @param id
+     * @return
+     */
+    @PostMapping("/status/{status}")
+    public Result changeStatus(@PathVariable Integer status, Long id){
+        log.info("修改分類狀態，id: {}, status: {}", id, status);
+        mealService.changeStatus(status, id);
+        return Result.success();
+    }
 }

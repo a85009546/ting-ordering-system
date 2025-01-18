@@ -4,6 +4,7 @@ import com.github.mattwei.constant.MessageConstant;
 import com.github.mattwei.constant.StatusConstant;
 import com.github.mattwei.dto.MealDTO;
 import com.github.mattwei.dto.MealPageQueryDTO;
+import com.github.mattwei.entity.Category;
 import com.github.mattwei.entity.Meal;
 import com.github.mattwei.entity.MealFlavor;
 import com.github.mattwei.exception.DeletionNotAllowedException;
@@ -19,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -142,5 +144,21 @@ public class MealServiceImpl implements MealService {
             // 向口味表插入 n 條數據
             mealFlavorMapper.insertBatch(flavors);
         }
+    }
+
+
+    /**
+     * 變更餐點分類狀態
+     * @param status
+     * @param id
+     */
+    @Override
+    public void changeStatus(Integer status, Long id) {
+        Meal meal = Meal.builder()
+                .id(id)
+                .status(status)
+                .updateTime(LocalDateTime.now())
+                .build();
+        mealMapper.update(meal);
     }
 }

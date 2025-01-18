@@ -24,7 +24,7 @@
                 and m.status = #{status}
             </if>
         </where>
-        order by m.create_time desc
+        order by m.update_time desc
     </select>
 
     <delete id="deleteByIds">

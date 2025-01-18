@@ -45,4 +45,11 @@ public interface MealService {
      * @param mealDTO
      */
     void updateWithFlavor(MealDTO mealDTO);
+
+    /**
+     * 變更餐點分類狀態
+     * @param status
+     * @param id
+     */
+    void changeStatus(Integer status, Long id);
 }

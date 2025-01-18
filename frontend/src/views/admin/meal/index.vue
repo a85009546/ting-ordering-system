@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { queryListApi as queryCategoryListApi } from '@/api/category'
-import { pageQueryApi } from '@/api/meal'
+import { pageQueryApi, updateStatusApi } from '@/api/meal'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
 // 分類列表數據
@@ -53,6 +53,19 @@ const queryCategorys = async () => {
     categorys.value = result.data
   }
 }
+
+// 修改狀態
+const changeStatusById = (id, currentStatus) => {
+  const newStatus = currentStatus === 1 ? 0 : 1; // 根據當前狀態切換
+  updateStatusApi(id, newStatus).then(result => {
+    if(result.code){
+      ElMessage.success('修改狀態成功')
+      search() // 重新查詢並刷新表格
+    } else {
+      ElMessage.error(result.msg)
+    }
+  })
+}
 </script>
 
 <template>
@@ -95,12 +108,22 @@ const queryCategorys = async () => {
   <!-- 表格 -->
   <div class="container">
     <el-table :data="mealList" border style="width: 100%">
-      <el-table-column type="index" label="序號" width="100" align="center"/>
+      <el-table-column type="selection" width="55" align="center"/>
+      <el-table-column type="index" label="序號" width="55" align="center"/>
       <el-table-column prop="name" label="餐點名稱" width="150" align="center"/>
       <el-table-column prop="image" label="圖片" width="150" align="center"/>
       <el-table-column prop="categoryName" label="分類" width="150" align="center"/>
-      <el-table-column prop="price" label="價格" width="150" align="center"/>
-      <el-table-column prop="status" label="狀態" width="150" align="center"/>
+      <el-table-column prop="price" label="價格 (元)" width="150" align="center"/>
+      <el-table-column prop="status" label="狀態" width="150" align="center">
+        <template #default="scope">
+            <span :style="{
+              color: scope.row.status === 1 ? '#67C23A' : '#F56C6C',
+              fontWeight: 'bold'
+            }">
+              {{ scope.row.status === 1 ? '上架中' : '已下架' }}
+            </span>
+        </template>
+      </el-table-column>
       <el-table-column prop="updateTime" label="最後修改時間"  align="center"/>
       <el-table-column label="操作" align="center">
         <template #default="scope">
@@ -109,9 +132,9 @@ const queryCategorys = async () => {
           <el-button 
             :type="scope.row.status === 1 ? 'danger' : 'success'"
             size="small"
-            
+            @click="changeStatusById(scope.row.id, scope.row.status)"
           >
-            {{ scope.row.status === 1 ? '上架中' : '已下架' }}
+            {{ scope.row.status === 1 ? '下架' : '上架' }}
           </el-button>
         </template>
       </el-table-column>
