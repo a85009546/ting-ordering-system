@@ -10,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * Description:
  *  分類管理
@@ -64,12 +66,12 @@ public class CategoryController {
     }
 
     /**
-     * 根據id查詢分類
+     * 根據id查詢分類，用在編輯分類時的數據回顯
      * @param id
      * @return
      */
     @GetMapping("/{id}")
-    public Result<CategoryVO> getNameById(@PathVariable Long id){
+    public Result<CategoryVO> getById(@PathVariable Long id){
         log.info("根據id查詢分類名稱，參數為: {}", id);
         CategoryVO categoryVO = categoryService.getById(id);
         return Result.success(categoryVO);
@@ -96,6 +98,15 @@ public class CategoryController {
         log.info("刪除餐點分類，餐點id: {}", id);
         categoryService.deleteById(id);
         return Result.success();
+    }
+
+    /**
+     * 獲取分類列表，用在搜索餐點時的分類下拉框，需要顯示所有啟用中的分類名
+     * @return
+     */
+    @GetMapping
+    public Result<List<CategoryVO>> list(){
+        return Result.success(categoryService.list());
     }
 
 

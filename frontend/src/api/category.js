@@ -30,3 +30,8 @@ export const deleteApi = (id) => {
 export const updateStatusApi = (id, status) => {
   return request.post(`/admin/category/status/${status}?id=${id}`)
 }
+
+// 獲取啟用中的分類列表
+export const queryListApi = () => {
+  return request.get('/admin/category')
+}

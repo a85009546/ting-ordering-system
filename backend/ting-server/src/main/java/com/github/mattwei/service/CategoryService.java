@@ -5,6 +5,8 @@ import com.github.mattwei.entity.Category;
 import com.github.mattwei.result.PageResult;
 import com.github.mattwei.vo.CategoryVO;
 
+import java.util.List;
+
 /**
  * Description:
  *
@@ -50,4 +52,10 @@ public interface CategoryService {
      * @param id
      */
     void deleteById(Long id);
+
+    /**
+     * 獲取分類列表
+     * @return
+     */
+    List<CategoryVO> list();
 }

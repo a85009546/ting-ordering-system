@@ -4,11 +4,14 @@ import com.github.mattwei.annotation.AutoFill;
 import com.github.mattwei.dto.CategoryPageQueryDTO;
 import com.github.mattwei.entity.Category;
 import com.github.mattwei.enumeration.OperationType;
+import com.github.mattwei.vo.CategoryVO;
 import com.github.pagehelper.Page;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
 
 /**
  * Description:
@@ -57,4 +60,11 @@ public interface CategoryMapper {
      */
     @Delete("delete from category where id = #{id}")
     void deleteById(Long id);
+
+    /**
+     * 獲取啟用中的所有分類
+     * @return
+     */
+    @Select("select * from category where status = 1")
+    List<CategoryVO> list();
 }

@@ -144,12 +144,12 @@ const changeStatusById = (id, currentStatus) => {
   <!-- 搜索欄 -->
   <div class="container">
     <el-form :inline="true" :model="searchCategory" class="demo-form-inline">
-      <el-form-item label="分類名稱">
-        <el-input v-model="searchCategory.name" placeholder="請輸入分類名稱" clearable width="100"/>
+      <el-form-item label="分類名稱" :style="{width: '25%', marginRight: '10px'}">
+        <el-input v-model="searchCategory.name" placeholder="請輸入分類名稱" clearable/>
       </el-form-item>
 
-      <el-form-item label="狀態">
-        <el-select v-model="searchCategory.status" placeholder="請選擇" clearable width="50">
+      <el-form-item label="狀態" :style="{width: '20%'}">
+        <el-select v-model="searchCategory.status" placeholder="請選擇" clearable>
           <el-option label="禁用" value=0 />
           <el-option label="啟用" value=1 />
         </el-select>

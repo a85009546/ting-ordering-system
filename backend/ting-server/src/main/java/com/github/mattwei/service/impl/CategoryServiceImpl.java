@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * Description:
@@ -108,5 +109,14 @@ public class CategoryServiceImpl implements CategoryService {
         }
         // 若沒有拋出異常，則刪除
         categoryMapper.deleteById(id);
+    }
+
+    /**
+     * 獲取分類列表
+     * @return
+     */
+    @Override
+    public List<CategoryVO> list() {
+        return categoryMapper.list();
     }
 }

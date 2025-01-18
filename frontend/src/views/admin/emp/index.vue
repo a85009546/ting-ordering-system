@@ -5,11 +5,10 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 
 // 性別列表數據
 const sexes = ref([{ name: '女', value: '0'}, { name: '男', value: '1'}])
-
-// 接收查詢結果的數據
-const empList = ref([])
-// 搜尋表單條件
+// 搜尋員工條件
 const searchEmp = ref({name:'', account:'', phone:'', sex:''})
+// 接收員工列表的查詢結果
+const empList = ref([])
 // 鉤子
 onMounted(() => {
   search()
@@ -151,20 +150,20 @@ const deleteById = (id) => {
   <!-- 搜索欄 -->
   <div class="container">
     <el-form :inline="true" :model="searchEmp" class="demo-form-inline">
-      <el-form-item label="姓名">
-        <el-input v-model="searchEmp.name" placeholder="請輸入員工姓名" clearable width="100"/>
+      <el-form-item label="姓名" :style="{width: '15%', marginRight: '10px'}">
+        <el-input v-model="searchEmp.name" placeholder="請輸入員工姓名" clearable/>
       </el-form-item>
 
-      <el-form-item label="帳號">
-        <el-input v-model="searchEmp.account" placeholder="請輸入員工帳號" clearable width="100"/>
+      <el-form-item label="帳號" :style="{width: '18%', marginRight: '10px'}">
+        <el-input v-model="searchEmp.account" placeholder="請輸入員工帳號" clearable/>
       </el-form-item>
 
-      <el-form-item label="手機">
-        <el-input v-model="searchEmp.phone" placeholder="請輸入員工手機" clearable width="150"/>
+      <el-form-item label="手機" :style="{width: '20%', marginRight: '10px'}">
+        <el-input v-model="searchEmp.phone" placeholder="請輸入員工手機" clearable/>
       </el-form-item>
 
-      <el-form-item label="性別">
-        <el-select v-model="searchEmp.sex" placeholder="請選擇" width="50">
+      <el-form-item label="性別" :style="{width: '12%'}">
+        <el-select v-model="searchEmp.sex" placeholder="請選擇">
           <el-option label="男" value="1" />
           <el-option label="女" value="0" />
         </el-select>
