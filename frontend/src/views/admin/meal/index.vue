@@ -111,17 +111,21 @@ const changeStatusById = (id, currentStatus) => {
       <el-table-column type="selection" width="55" align="center"/>
       <el-table-column type="index" label="序號" width="55" align="center"/>
       <el-table-column prop="name" label="餐點名稱" width="150" align="center"/>
-      <el-table-column prop="image" label="圖片" width="150" align="center"/>
+      <el-table-column prop="image" label="圖片" width="150" align="center">
+        <template #default="scope">
+          <img :src="scope.row.image" height="40px">
+        </template>
+      </el-table-column>
       <el-table-column prop="categoryName" label="分類" width="150" align="center"/>
       <el-table-column prop="price" label="價格 (元)" width="150" align="center"/>
       <el-table-column prop="status" label="狀態" width="150" align="center">
         <template #default="scope">
-            <span :style="{
-              color: scope.row.status === 1 ? '#67C23A' : '#F56C6C',
-              fontWeight: 'bold'
-            }">
-              {{ scope.row.status === 1 ? '上架中' : '已下架' }}
-            </span>
+          <span :style="{
+            color: scope.row.status === 1 ? '#67C23A' : '#F56C6C',
+            fontWeight: 'bold'
+          }">
+            {{ scope.row.status === 1 ? '上架中' : '已下架' }}
+          </span>
         </template>
       </el-table-column>
       <el-table-column prop="updateTime" label="最後修改時間"  align="center"/>
