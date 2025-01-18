@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { queryListApi as queryCategoryListApi } from '@/api/category'
-import { pageQueryApi, updateStatusApi } from '@/api/meal'
+import { pageQueryApi, updateStatusApi, addApi } from '@/api/meal'
 import { ElMessage, ElMessageBox } from 'element-plus'
 // 鉤子
 onMounted(() => {
@@ -29,6 +29,13 @@ const meal = ref({
   image:'',
   description:''
 })
+// 定義口味選項
+const flavorOptions = ref([
+      { name: '溫度', value: "['熱飲', '常溫', '去冰', '少冰', '多冰']"},
+      { name: '甜度', value: "['無糖', '少糖', '半糖', '多糖', '全糖']"},
+      { name: '忌口', value: "['不要蔥', '不要蒜', '不要香菜']"},
+      { name: '辣度', value: "['不辣', '微辣', '中辣', '大辣']"}
+])
 // 控制彈窗
 const dialogVisible = ref(false)
 const dialogTitle = ref('新增餐點')
@@ -40,13 +47,6 @@ const queryCategorys = async () => {
   const result = await queryCategoryListApi()
   if(result.code){
     categorys.value = result.data
-  }
-}
-// 查詢所有口味數據
-const queryFlavors = async () => {
-  const result = await queryFlavorsApi()
-  if(result.code){
-    flavors.value = result.data
   }
 }
 // 查詢
@@ -77,6 +77,7 @@ const handleCurrentChange = (val) => {
 const addMeal = () => {
   dialogVisible.value = true
   dialogTitle.value = '新增餐點'
+  // 清空數據
   meal.value = {
     name: '',
     categoryId: '',
@@ -124,7 +125,54 @@ const beforeAvatarUpload = (rawFile) => {
 const addFlavorItem = () => {
   meal.value.mealFlavors.push({name: '', value: ''})
 }
-
+// 刪除口味數據
+const removeFlavorItem = (index) => {
+  meal.value.mealFlavors.splice(index, 1)
+}
+// 當口味改變時自動更新標籤
+const handleFlavorChange = (index) => {
+  const selectedFlavor = meal.value.mealFlavors[index].name
+  const matchingOption = flavorOptions.value.find(option => option.name === selectedFlavor)
+  if(matchingOption){
+    meal.value.mealFlavors[index].value = matchingOption.value
+  }
+}
+// 保存餐點，
+const save = async () => {
+  // 表單校驗
+  mealFormRef.value.validate(async valid => {
+    if(valid){
+      const result = await addApi(meal.value)
+      if(result.code){
+        ElMessage.success('保存成功')
+        // 關閉彈框
+        dialogVisible.value = false
+        search() // 重新查詢並刷新表格
+      }else{
+        ElMessage.error(result.msg)
+      }
+    }else{
+      ElMessage.error('表單校驗不通過')
+    }
+  })
+}
+// 表單校驗規則
+const rules = {
+  name: [
+    { required: true, message: '請輸入餐點名稱', trigger: 'blur' },
+    { min: 2, max: 16, message: '餐點名稱長度應為2~16個字符', trigger: 'blur' },
+  ],
+  categoryId: [
+    { required: true, message: '請選擇分類', trigger: 'change' },
+  ],
+  price: [
+    { required: true, message: '請輸入價格', trigger: 'blur' },
+    { pattern: /^[1-9]\d*(\.\d{1,2})?$/, message: '請輸入有效的價格，例如: 1 或 1.99', trigger: 'blur' },
+  ],
+  image: [
+    { required: true, message: '請上傳圖片', trigger: 'change' },
+  ],
+};
 </script>
 
 <template>
@@ -220,10 +268,10 @@ const addFlavorItem = () => {
 
   <!-- 新增餐點/編輯餐點 彈出框 -->
   <el-dialog v-model="dialogVisible" :title="dialogTitle" width="40%">
-      <el-form :model="meal" :rules="rules" ref="mealFormRef" label-width="80px">
+      <el-form :model="meal" :rules="rules" ref="mealFormRef" label-width="150px">
         <!-- 餐點名稱 -->
         <el-row>
-          <el-col :span="24">
+          <el-col :span="12">
             <el-form-item label="餐點名稱" prop="name">
               <el-input v-model="meal.name" placeholder="請輸入餐點名稱"></el-input>
             </el-form-item>
@@ -241,7 +289,7 @@ const addFlavorItem = () => {
         </el-row>
         <!-- 價格 -->
         <el-row>
-          <el-col :span="24">
+          <el-col :span="12">
             <el-form-item label="價格 (元)" prop="price">
               <el-input v-model="meal.price" placeholder="請輸入餐點價格"></el-input>
             </el-form-item>
@@ -260,13 +308,15 @@ const addFlavorItem = () => {
                     <!-- 口味名 -->
                     <el-col :span="6">
                       <el-form-item label="口味" label-width="40px">
-                        <el-input placeholder="請選擇" v-model="flavor.name"></el-input>
+                        <el-select v-model="flavor.name" placeholder="請選擇" @change="handleFlavorChange(index)">
+                          <el-option v-for="option in flavorOptions" :key="option.value.name" :label="option.value.name" :value="option.name"/> 
+                        </el-select>
                       </el-form-item>
                     </el-col>
                     <!-- 口味標籤 -->
                     <el-col :span="16">
                       <el-form-item label="標籤" label-width="40px">
-                        <el-input placeholder="口味標籤" v-model="flavor.value"></el-input>
+                        <el-input placeholder="口味標籤" v-model="flavor.value" :readonly="true"/>
                       </el-form-item>
                     </el-col>
                     <!-- 刪除按鈕 -->
@@ -306,15 +356,14 @@ const addFlavorItem = () => {
           </el-col>
         </el-row>
         <!-- 底部按钮 -->
-        <template #footer>
-          <span class="dialog-footer">
-            <el-button @click="dialogVisible = false">取消</el-button>
-            <el-button type="primary" @click="save">保存</el-button>
-          </span>
-        </template>
+        <span class="dialog-footer" style="display: flex; justify-content: flex-end; gap: 8px;">
+          <el-button @click="dialogVisible = false">取消</el-button>
+          <el-button type="primary" @click="save">保存</el-button>
+        </span>
 
       </el-form>
   </el-dialog>
+
 </template>
 
 <style scoped>
