@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { queryListApi as queryCategoryListApi } from '@/api/category'
-import { pageQueryApi, updateStatusApi, addApi, queryInfoApi, updateApi } from '@/api/meal'
+import { pageQueryApi, updateStatusApi, addApi, queryInfoApi, updateApi, deleteApi } from '@/api/meal'
 import { ElMessage, ElMessageBox } from 'element-plus'
 // 鉤子
 onMounted(() => {
@@ -188,6 +188,46 @@ const edit = async (id) => {
     meal.value = result.data
   }
 }
+
+// 刪除單個餐點
+const deleteById = async (id) => {
+  ElMessageBox.confirm('確定刪除此餐點嗎？', '提示',
+    { confirmButtonText: '確定', cancelButtonText: '取消', type: 'warning',}
+  ).then(async () => { // 確定
+    const result = await deleteApi(id)
+    if(result.code){
+      ElMessage.success('刪除成功')
+      search() // 重新查詢並刷新表格
+    }
+  })
+}
+// 記錄勾選的id
+const selectedIds = ref([])
+// 複選框勾選發生變化時觸發 - selection: 當前選中的紀錄 (數組)
+const handleSelectionChange = (selection) => {
+  selectedIds.value = selection.map(item => {
+    return item.id
+  })
+}
+// 批次刪除餐點
+const deleteBatch = () => {
+  ElMessageBox.confirm('確定刪除這些餐點嗎？', '提示',
+    { confirmButtonText: '確定', cancelButtonText: '取消', type: 'warning',}
+  ).then(async () => { // 確定
+    console.log(selectedIds.value)
+    if(selectedIds.value && selectedIds.value.length > 0){ 
+      const result = await deleteApi(selectedIds.value)
+      if(result.code){
+      ElMessage.success('刪除成功')
+      search() // 重新查詢並刷新表格
+      }
+    }else{
+      ElMessage.info('您沒有選擇要刪除的餐點')
+    }
+  }).catch(() => { // 取消
+    ElMessage.info('取消刪除')
+  })
+}
 </script>
 
 <template>
@@ -229,7 +269,8 @@ const edit = async (id) => {
 
   <!-- 表格 -->
   <div class="container">
-    <el-table :data="mealList" border style="width: 100%">
+    {{ selectedIds }}
+    <el-table :data="mealList" border style="width: 100%" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
       <el-table-column type="index" label="序號" width="55" align="center"/>
       <el-table-column prop="name" label="餐點名稱" width="150" align="center"/>
@@ -254,7 +295,7 @@ const edit = async (id) => {
       <el-table-column label="操作" align="center">
         <template #default="scope">
           <el-button type="primary" size="small" @click="edit(scope.row.id)"><el-icon><Edit /></el-icon>編輯</el-button>
-          <el-button type="danger" size="small" ><el-icon><Delete /></el-icon>刪除</el-button>
+          <el-button type="danger" size="small" @click="deleteById(scope.row.id)"><el-icon><Delete /></el-icon>刪除</el-button>
           <el-button 
             :type="scope.row.status === 1 ? 'danger' : 'success'"
             size="small"

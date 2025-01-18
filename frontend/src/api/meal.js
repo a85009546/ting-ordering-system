@@ -19,6 +19,10 @@ export const updateApi = (meal) => {
   return request.put('/admin/meal', meal)
 }
 
+// 批次刪除餐點
+export const deleteApi = (ids) => {
+  return request.delete(`/admin/meal?ids=${ids}`)
+}
 // 修改餐點狀態
 export const updateStatusApi = (id, status) => {
   return request.post(`/admin/meal/status/${status}?id=${id}`)
