@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { queryListApi as queryCategoryListApi } from '@/api/category'
-import { pageQueryApi, updateStatusApi, addApi } from '@/api/meal'
+import { pageQueryApi, updateStatusApi, addApi, queryInfoApi, updateApi } from '@/api/meal'
 import { ElMessage, ElMessageBox } from 'element-plus'
 // 鉤子
 onMounted(() => {
@@ -141,8 +141,13 @@ const handleFlavorChange = (index) => {
 const save = async () => {
   // 表單校驗
   mealFormRef.value.validate(async valid => {
-    if(valid){
-      const result = await addApi(meal.value)
+    if(valid){ // 校驗通過，新增餐點 or 編輯餐點
+      let result
+      if(meal.value.id){ // 編輯餐點
+        result = await updateApi(meal.value)
+      }else{ // 新增餐點
+        result = await addApi(meal.value)
+      }
       if(result.code){
         ElMessage.success('保存成功')
         // 關閉彈框
@@ -172,7 +177,17 @@ const rules = {
   image: [
     { required: true, message: '請上傳圖片', trigger: 'change' },
   ],
-};
+}
+
+// 編輯
+const edit = async (id) => {
+  const result = await queryInfoApi(id)
+  if(result.code){
+    dialogVisible.value = true
+    dialogTitle.value = '編輯餐點'
+    meal.value = result.data
+  }
+}
 </script>
 
 <template>
@@ -238,7 +253,7 @@ const rules = {
       <el-table-column prop="updateTime" label="最後修改時間"  align="center"/>
       <el-table-column label="操作" align="center">
         <template #default="scope">
-          <el-button type="primary" size="small" ><el-icon><Edit /></el-icon>編輯</el-button>
+          <el-button type="primary" size="small" @click="edit(scope.row.id)"><el-icon><Edit /></el-icon>編輯</el-button>
           <el-button type="danger" size="small" ><el-icon><Delete /></el-icon>刪除</el-button>
           <el-button 
             :type="scope.row.status === 1 ? 'danger' : 'success'"

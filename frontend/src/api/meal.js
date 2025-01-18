@@ -9,6 +9,15 @@ export const pageQueryApi = (name, categoryId, status, page, pageSize) => {
 export const addApi = (meal) => {
   return request.post('/admin/meal', meal)
 }
+// 根據id查詢
+export const queryInfoApi = (id) => {
+  return request.get(`/admin/meal/${id}`)
+}
+
+// 修改餐點
+export const updateApi = (meal) => {
+  return request.put('/admin/meal', meal)
+}
 
 // 修改餐點狀態
 export const updateStatusApi = (id, status) => {

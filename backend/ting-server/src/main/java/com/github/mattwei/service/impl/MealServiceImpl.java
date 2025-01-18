@@ -118,7 +118,7 @@ public class MealServiceImpl implements MealService {
         // 將查詢結果封裝到 MealVO 中
         MealVO mealVO = new MealVO();
         BeanUtils.copyProperties(meal, mealVO);
-        mealVO.setFlavors(flavors);
+        mealVO.setMealFlavors(flavors);
         return mealVO;
     }
 

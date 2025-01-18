@@ -43,5 +43,5 @@ public class MealVO implements Serializable {
 
     private String categoryName;
 
-    private List<MealFlavor> flavors = new ArrayList<>();
+    private List<MealFlavor> mealFlavors = new ArrayList<>();
 }
