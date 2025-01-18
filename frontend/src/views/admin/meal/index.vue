@@ -20,7 +20,7 @@ const currentPage = ref(1)
 const pageSize = ref(5) 
 const background = ref(true)
 const total = ref(0)
-//新增/修改表单
+//新增/修改表单 餐點數據模型
 const meal = ref({
   name: '',
   categoryId: '',
@@ -40,6 +40,13 @@ const queryCategorys = async () => {
   const result = await queryCategoryListApi()
   if(result.code){
     categorys.value = result.data
+  }
+}
+// 查詢所有口味數據
+const queryFlavors = async () => {
+  const result = await queryFlavorsApi()
+  if(result.code){
+    flavors.value = result.data
   }
 }
 // 查詢
@@ -112,6 +119,10 @@ const beforeAvatarUpload = (rawFile) => {
     return false
   }
   return true
+}
+// 添加口味數據
+const addFlavorItem = () => {
+  meal.value.mealFlavors.push({name: '', value: ''})
 }
 
 </script>
@@ -208,19 +219,19 @@ const beforeAvatarUpload = (rawFile) => {
   </div>
 
   <!-- 新增餐點/編輯餐點 彈出框 -->
-  <el-dialog v-model="dialogVisible" :title="dialogTitle" width="30%">
+  <el-dialog v-model="dialogVisible" :title="dialogTitle" width="40%">
       <el-form :model="meal" :rules="rules" ref="mealFormRef" label-width="80px">
-        <!-- 第一行 -->
+        <!-- 餐點名稱 -->
         <el-row>
-          <el-col :span="20">
+          <el-col :span="24">
             <el-form-item label="餐點名稱" prop="name">
               <el-input v-model="meal.name" placeholder="請輸入餐點名稱"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
-        <!-- 第二行 -->
+        <!-- 分類 -->
         <el-row>
-          <el-col :span="20">
+          <el-col :span="24">
             <el-form-item label="分類" prop="categoryId">
               <el-select v-model="meal.categoryId" placeholder="請選擇">
                 <el-option v-for="c in categorys" :key="c.id" :label="c.name" :value="c.id"/>
@@ -228,23 +239,47 @@ const beforeAvatarUpload = (rawFile) => {
             </el-form-item>
           </el-col>
         </el-row>
-        <!-- 第三行 -->
+        <!-- 價格 -->
         <el-row>
-          <el-col :span="20">
+          <el-col :span="24">
             <el-form-item label="價格 (元)" prop="price">
               <el-input v-model="meal.price" placeholder="請輸入餐點價格"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
-        <!-- 第四行 -->
+        <!-- 口味配置 -->
         <el-row>
-          <el-col :span="20">
+          <el-col :span="24">
             <el-form-item label="口味配置" prop="mealFlavors">
-              <el-button type="success" size="small" >+ 新增口味配置</el-button>
+              <!-- 新增按鈕 -->
+              <el-button type="success" size="small" @click="addFlavorItem">+ 新增口味配置</el-button>
+              <!-- 動態生成的口味名與標籤 -->
+              <div style="margin-top: 10px;">
+                <div v-for="(flavor, index) in meal.mealFlavors" :key="flavor.id" style="margin-bottom: 8px;">
+                  <el-row :gutter="8">
+                    <!-- 口味名 -->
+                    <el-col :span="6">
+                      <el-form-item label="口味" label-width="40px">
+                        <el-input placeholder="請選擇" v-model="flavor.name"></el-input>
+                      </el-form-item>
+                    </el-col>
+                    <!-- 口味標籤 -->
+                    <el-col :span="16">
+                      <el-form-item label="標籤" label-width="40px">
+                        <el-input placeholder="口味標籤" v-model="flavor.value"></el-input>
+                      </el-form-item>
+                    </el-col>
+                    <!-- 刪除按鈕 -->
+                    <el-col :span="2">
+                      <el-button type="danger" icon="Delete" size="mini" @click="removeFlavorItem(index)"></el-button>
+                    </el-col>
+                  </el-row>
+                </div>
+              </div>
             </el-form-item>
           </el-col>
         </el-row>
-        <!-- 第五行 -->
+        <!-- 圖片 -->
         <el-row>
           <el-cow :span="20">
             <el-form-item label="餐點圖片" prop="image">
@@ -262,7 +297,7 @@ const beforeAvatarUpload = (rawFile) => {
             </el-form-item>
           </el-cow>
         </el-row>
-        <!-- 第六行 -->
+        <!-- 餐點簡介 -->
         <el-row>
           <el-col :span="20">
             <el-form-item label="餐點簡介" prop="description">
