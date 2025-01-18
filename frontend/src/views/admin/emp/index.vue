@@ -150,19 +150,19 @@ const deleteById = (id) => {
   <!-- 搜索欄 -->
   <div class="container">
     <el-form :inline="true" :model="searchEmp" class="demo-form-inline">
-      <el-form-item label="姓名" :style="{width: '15%', marginRight: '10px'}">
+      <el-form-item label="姓名" :style="{width: '15%', marginRight: '15px'}">
         <el-input v-model="searchEmp.name" placeholder="請輸入員工姓名" clearable/>
       </el-form-item>
 
-      <el-form-item label="帳號" :style="{width: '18%', marginRight: '10px'}">
+      <el-form-item label="帳號" :style="{width: '15%', marginRight: '15px'}">
         <el-input v-model="searchEmp.account" placeholder="請輸入員工帳號" clearable/>
       </el-form-item>
 
-      <el-form-item label="手機" :style="{width: '20%', marginRight: '10px'}">
+      <el-form-item label="手機" :style="{width: '15%', marginRight: '15px'}">
         <el-input v-model="searchEmp.phone" placeholder="請輸入員工手機" clearable/>
       </el-form-item>
 
-      <el-form-item label="性別" :style="{width: '12%'}">
+      <el-form-item label="性別" :style="{width: '12%', marginRight: '15px'}">
         <el-select v-model="searchEmp.sex" placeholder="請選擇">
           <el-option label="男" value="1" />
           <el-option label="女" value="0" />

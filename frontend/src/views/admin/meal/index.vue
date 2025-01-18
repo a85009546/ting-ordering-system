@@ -235,25 +235,23 @@ const deleteBatch = () => {
   <!-- 搜索欄 -->
   <div class="container">
     <el-form :inline="true" :model="searchMeal" class="demo-form-inline">
-      <el-form-item label="餐點名稱" :style="{width: '20%', marginRight: '10px'}">
+      <el-form-item label="餐點名稱" :style="{width: '15%', marginRight: '15px'}">
         <el-input v-model="searchMeal.name" placeholder="請輸入餐點名稱" clearable/>
       </el-form-item>
 
-      <el-form-item label="分類" :style="{width: '20%', marginRight: '10px'}">
+      <el-form-item label="分類" :style="{width: '15%', marginRight: '15px'}">
         <el-select v-model="searchMeal.categoryId" placeholder="請選擇">
           <el-option v-for="c in categorys" :key="c.id" :label="c.name" :value="c.id" />
         </el-select>
       </el-form-item>
 
-      <el-form-item label="狀態" :style="{width: '20%'}"> 
+      <el-form-item label="狀態" :style="{width: '15%', marginRight: '15px'}"> 
         <el-select v-model="searchMeal.status" placeholder="請選擇" clearable>
           <el-option label="已下架" value=0 />
           <el-option label="上架中" value=1 />
         </el-select>
       </el-form-item>
 
-      
-      
       <el-form-item>
         <el-button type="primary" @click="search">查詢</el-button>
         <el-button type="info" @click="clear">清空</el-button>
@@ -269,7 +267,6 @@ const deleteBatch = () => {
 
   <!-- 表格 -->
   <div class="container">
-    {{ selectedIds }}
     <el-table :data="mealList" border style="width: 100%" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
       <el-table-column type="index" label="序號" width="55" align="center"/>

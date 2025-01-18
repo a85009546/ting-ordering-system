@@ -5,8 +5,8 @@ import { useRoleStore } from '@/stores/role'
 
 // 獲取選單接口
 export const getMenuApi = () => {
+  // 獲取身分
   const roleStore = useRoleStore()
-  console.log(roleStore.role);
 
   return request.get('/menu', { params: { role: roleStore.role } })
 }
