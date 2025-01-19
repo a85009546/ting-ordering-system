@@ -59,4 +59,12 @@ public interface MealService {
      * @return
      */
     PageResult pageQueryWithFlavor(MealPageQueryDTO mealPageQueryDTO);
+
+
+    /**
+     * 根據分類id查詢餐點及其口味數據
+     * @param categoryId
+     * @return
+     */
+    List<MealVO> listWithFlavor(Long categoryId);
 }

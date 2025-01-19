@@ -394,7 +394,7 @@ const deleteBatch = () => {
                 :before-upload="beforeAvatarUpload"
                 >
                 <img v-if="meal.image" :src="meal.image" class="iamge"
-                style="width: 100px; height: 100px; object-fit: cover;"/>
+                style="width: 200px; height: 120px; object-fit: cover;"/>
                 <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
               </el-upload>
             </el-form-item>

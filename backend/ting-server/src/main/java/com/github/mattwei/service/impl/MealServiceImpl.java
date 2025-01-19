@@ -194,4 +194,26 @@ public class MealServiceImpl implements MealService {
         // 封裝為 PageResult 返回
         return new PageResult(pageInfo.getTotal(), pageInfo.getList());
     }
+
+    /**
+     * 根據分類id查詢餐點及其口味數據
+     * @param categoryId
+     * @return
+     */
+    @Override
+    public List<MealVO> listWithFlavor(Long categoryId) {
+        // 根據分類 id 分頁查詢餐點
+        List<Meal> mealList = mealMapper.getByCategoryId(categoryId);
+
+        // 使用 Stream API 將 Meal 轉換為 MealVO
+        List<MealVO> mealVOList = mealList.stream().map(meal -> {
+            MealVO mealVO = new MealVO();
+            BeanUtils.copyProperties(meal, mealVO);
+            // 查詢口味數據
+            List<MealFlavor> mealFlavorsList = mealFlavorMapper.getByMealId(meal.getId());
+            mealVO.setMealFlavors(mealFlavorsList);
+            return mealVO;
+        }).collect(Collectors.toList());
+        return mealVOList;
+    }
 }
