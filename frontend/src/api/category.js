@@ -35,3 +35,8 @@ export const updateStatusApi = (id, status) => {
 export const queryListApi = () => {
   return request.get('/admin/category')
 }
+
+// 顧客端 - 獲取分類列表
+export const queryListForCustomerApi = () => {
+  return request.get('/customer/category')
+}

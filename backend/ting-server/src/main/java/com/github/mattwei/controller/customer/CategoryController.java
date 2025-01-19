@@ -18,7 +18,7 @@ import java.util.List;
  * @Create 2025/1/19 上午 10:30
  */
 @RestController("customerCategoryController")
-@RequestMapping("/admin/category")
+@RequestMapping("/customer/category")
 @Slf4j
 public class CategoryController {
 
@@ -26,7 +26,7 @@ public class CategoryController {
     private CategoryService categoryService;
 
     /**
-     * 獲取分類列表，用在餐點瀏覽時，顯示所有分類
+     * 獲取啟用中的分類列表，用在餐點瀏覽時，顯示所有分類
      * @return
      */
     @GetMapping

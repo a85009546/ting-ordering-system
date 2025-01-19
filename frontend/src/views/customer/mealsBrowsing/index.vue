@@ -1,44 +1,64 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { queryByCategoryIdApi, getmealesApi } from '@/api/meal'
+import { queryListForCustomerApi } from '@/api/category' 
+import { pageQueryByCategoryIdApi} from '@/api/meal'
 
 // 餐點分類和餐點列表
 const categories = ref([]) // 餐點分類列表
-const meales = ref([]) // 餐點列表
+const meals = ref([]) // 餐點列表
 const selectedCategory = ref('') // 當前選中的分類
 
-// // 初始化數據
-// onMounted(async () => {
-//   await fetchCategories()
-//   if (categories.value.length > 0) {
-//     selectedCategory.value = categories.value[0].id // 默認選中第一個分類
-//     await fetchmeales(selectedCategory.value)
-//   }
-// })
+// 分頁相關
+const currentPage = ref(1) 
+const pageSize = ref(5) 
+const background = ref(true)
+const total = ref(0)
+
+// 初始化數據
+onMounted(async () => {
+  await getCategories()
+  if (categories.value.length > 0) {
+    selectedCategory.value = categories.value[0].id // 默認選中第一個分類
+    await getMeals(selectedCategory.value)
+  }
+})
 
 // 獲取餐點分類
-const fetchCategories = async () => {
-  const response = await queryByCategoryIdApi()
+const getCategories = async () => {
+  const response = await queryListForCustomerApi()
   categories.value = response.data
 }
 
-// // 獲取餐點
-// const fetchmeales = async (categoryId) => {
-//   const response = await getmealesApi(categoryId)
-//   meales.value = response.data
-// }
-
-// 選擇分類
-const selectCategory = async (categoryId) => {
-  selectedCategory.value = categoryId
-  await fetchmeales(categoryId)
+// 獲取餐點數據
+const getMeals = async (categoryId) => {
+  const response = await pageQueryByCategoryIdApi(categoryId, currentPage.value, pageSize.value)
+  console.log(response)
+  meals.value = response.data.records
+  total.value = response.data.total
 }
 
-// // 調整口味
-// const adjustFlavor = (meal) => {
-//   console.log(`調整口味: ${meal.name}`)
-//   // 彈窗或其他操作
-// }
+// 切換分類
+const selectCategory = async (categoryId) => {
+  selectedCategory.value = categoryId
+  currentPage.value = 1 // 切換分類時重置到第一頁
+  await getMeals(categoryId)
+}
+
+// 調整口味
+const adjustFlavor = (meal) => {
+  console.log(`調整口味: ${meal.name}`)
+  // 彈窗或其他操作
+}
+// 處理分頁事件
+const handleSizeChange = async (newSize) => {
+  pageSize.value = newSize
+  await getMeals(selectedCategory.value) // 加載當前分類的新分頁數據
+}
+
+const handleCurrentChange = async (newPage) => {
+  currentPage.value = newPage
+  await getMeals(selectedCategory.value) // 加載當前分類的新分頁數據
+}
 </script>
 
 
@@ -55,11 +75,11 @@ const selectCategory = async (categoryId) => {
         {{ category.name }}
       </el-button>
     </el-row>
-
+    {{meals}}
     <!-- 餐點卡片 -->
-    <el-row class="meal-list" gutter="20">
+    <el-row class="meal-list" v-if="meals.length > 0" gutter="20">
       <el-col
-        v-for="meal in meales"
+        v-for="meal in meals"
         :key="meal.id"
         :xs="24"
         :sm="12"
@@ -83,7 +103,24 @@ const selectCategory = async (categoryId) => {
         </el-card>
       </el-col>
     </el-row>
+
+    <p v-else>目前沒有餐點資料。</p>
   </div>
+
+  <!-- 分頁條 -->
+  <div class="container">
+    <el-pagination
+      v-model:current-page="currentPage"
+      v-model:page-size="pageSize"
+      :page-sizes="[5, 10, 20, 30, 40]"
+      :background="background"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="total"
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+    />
+  </div>
+
 </template>
 
 
