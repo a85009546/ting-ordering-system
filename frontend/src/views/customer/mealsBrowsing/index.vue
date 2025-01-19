@@ -1,12 +1,15 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { queryListForCustomerApi } from '@/api/category' 
-import { pageMealListByCategoryIdApi} from '@/api/meal'
+import { queryMealListByCategoryIdApi} from '@/api/meal'
 
 // 餐點分類和餐點列表
 const categories = ref([]) // 餐點分類列表
 const meals = ref([]) // 餐點列表
 const selectedCategory = ref('') // 當前選中的分類
+const selectedMeal = ref(null) // 當前選中的餐點
+const flavorDialogVisible = ref(false) // 調整口味控制彈框是否可見
+const selectedFlavor = ref([]) // 當前選中的口味
 
 // 初始化數據
 onMounted(async () => {
@@ -21,21 +24,61 @@ const getCategories = async () => {
   const response = await queryListForCustomerApi()
   categories.value = response.data
 }
-
 // 獲取餐點數據
 const getMeals = async (categoryId) => {
-  const response = await pageMealListByCategoryIdApi(categoryId)
-  console.log(response)
-  meals.value = response.data
+  const response = await queryMealListByCategoryIdApi(categoryId)
+  // 解析每個餐點的 flavor value
+  meals.value = response.data.map((meal) => ({
+    ...meal,
+    mealFlavors: meal.mealFlavors.map((flavor) => ({
+      ...flavor,
+      parsedValues: parseFlavorValue(flavor.value), // 將 value 轉換為陣列
+    })),
+  }))
 }
-
 // 切換分類
 const selectCategory = async (categoryId) => {
   selectedCategory.value = categoryId
   // currentPage.value = 1 // 切換分類時重置到第一頁
   await getMeals(categoryId)
 }
+// 解析口味數據
+const parseFlavorValue = (value) => {
+  try {
+    // 替換單引號為雙引號，使其成為合法的 JSON 格式
+    const jsonString = value.replace(/'/g, '"');
+    return JSON.parse(jsonString); // 使用 JSON.parse 解析為陣列
+  } catch (error) {
+    console.error('解析口味失敗:', value, error);
+    return []; // 如果解析失敗，返回空陣列
+  }
+}
+// 打開彈框
+const openFlavorDialog = (meal) => {
+  selectedMeal.value = meal
+  flavorDialogVisible.value = true
+  selectedFlavor.value = [] // 預設選中為空
+}
+// 處理選擇口味的邏輯
+const toggleFlavor = (option) => {
+  if (selectedFlavor.value.includes(option)) {
+    // 如果已經選中，則移除
+    selectedFlavor.value = selectedFlavor.value.filter((flavor) => flavor !== option);
+  } else {
+    // 如果未選中，則新增
+    selectedFlavor.value.push(option);
+  }
+}
+// 加入購物車
+const addToCart = () => {
+  const flavorString = selectedFlavor.value.join(', ');
 
+  console.log('加入購物車', {
+    mealId: selectedMeal.value.id,
+    mealFlavor: flavorString, // 傳遞拼接後的字符串
+  })
+  flavorDialogVisible.value = false // 關閉彈框
+}
 </script>
 
 <template>
@@ -82,12 +125,12 @@ const selectCategory = async (categoryId) => {
             </div>
             <div class="info-right">
               <template v-if="meal.mealFlavors && meal.mealFlavors.length > 0">
-                <el-button type="success" size="mini" @click="addFlavor(meal)">
+                <el-button type="success" size="small" @click="openFlavorDialog(meal)">
                   調整口味
                 </el-button>
               </template>
               <template v-else>
-                <el-button type="primary" size="mini" @click="addMeal(meal)">
+                <el-button type="primary" size="small" @click="addMeal(meal)">
                   +
                 </el-button>
               </template>
@@ -96,13 +139,41 @@ const selectCategory = async (categoryId) => {
         </el-card>
       </div>
     </el-row>
-
     <p v-else>目前沒有餐點資料。</p>
+
+    <!-- 調整口味彈框 -->
+    <el-dialog
+      v-model="flavorDialogVisible"
+      :title="selectedMeal?.name || ''"
+      width="500px"
+    >
+      <!-- 口味選擇 -->
+      {{ selectedFlavor }}
+      <div
+        v-for="(flavor, index) in selectedMeal?.mealFlavors"
+        :key="index"
+      > 
+        <p>{{flavor.name}}：</p>
+        <div class="flavors">
+          <el-button
+            v-for="option in flavor.parsedValues || []"
+            :key="option"
+            :type="selectedFlavor.includes(option) ? 'primary' : 'default'"
+            @click="toggleFlavor(option)"
+          >
+            {{ option }}
+          </el-button>
+        </div>
+      </div>
+
+      <div class="dialog-footer">
+        <span>費用：{{ selectedMeal?.price || 0 }} 元</span>
+        <el-button type="primary" @click="addToCart">加入購物車</el-button>
+      </div>
+    </el-dialog>
+
   </div>
-
-  <!-- 口味調整彈框 -->
   
-
 </template>
 
 
@@ -127,6 +198,23 @@ const selectCategory = async (categoryId) => {
 .meal-card-container {
   flex: 0 0 calc(20% - 10px); /* 每行展示 5 張卡片 */
   box-sizing: border-box;
+}
+@media (max-width: 1200px) {
+  .meal-card-container {
+    flex: 0 0 calc(33.33% - 10px); /* 每行顯示 3 個 */
+  }
+}
+
+@media (max-width: 768px) {
+  .meal-card-container {
+    flex: 0 0 calc(50% - 10px); /* 每行顯示 2 個 */
+  }
+}
+
+@media (max-width: 480px) {
+  .meal-card-container {
+    flex: 0 0 calc(100% - 10px); /* 每行顯示 1 個 */
+  }
 }
 
 .meal-card {
@@ -157,6 +245,19 @@ const selectCategory = async (categoryId) => {
   max-height: 100%;
   object-fit: cover; /* 確保圖片缩放时不變形 */
   border-radius: 4px;
+}
+
+.flavors {
+  display: flex;
+  gap: 10px;
+  margin: 10px 0;
+}
+
+.dialog-footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+  align-items: center;
 }
 
 .placeholder-image {
@@ -204,4 +305,3 @@ const selectCategory = async (categoryId) => {
 }
 
 </style>
-

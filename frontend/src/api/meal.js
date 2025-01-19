@@ -29,9 +29,6 @@ export const updateStatusApi = (id, status) => {
 }
 
 // 顧客端 - 根據分類id查詢上架中的餐點
-export const pageMealListByCategoryIdApi = (categoryId) => {
+export const queryMealListByCategoryIdApi = (categoryId) => {
   return request.get(`/customer/meal/list`, { params: {categoryId} })
 }
-// export const pageQueryByCategoryIdApi = (categoryId, page, pageSize) => {
-//   return request.get(`/customer/meal/page`, { params: {categoryId, page, pageSize } })
-// }

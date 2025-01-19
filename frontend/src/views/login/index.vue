@@ -45,15 +45,6 @@ const checkRePassword = (rule, value, callback) => {
     callback()
   }
 }
-// 校驗手機號的函數
-// const checkPhone = (rule, value, callback) => {
-//   const phoneRegex = /^09\d{8}$/; // 以09開頭，後面8位數字
-//   if (!phoneRegex.test(value)) {
-//     callback(new Error('手機號碼必須為 09 開頭的 10 位數字'));
-//   } else {
-//     callback();
-//   }
-// }
 
 // 定義註冊表單校驗規則
 const rules = {
@@ -111,10 +102,10 @@ const login = async () => {
     ElMessage.success(result.msg ? result.msg : '登入成功') 
     // 把token存到pinia
     tokenStore.setToken(result.data.token)
-
+    console.log(tokenStore.token)
     // 角色狀態存到 pinia
     roleStore.setRole(result.data.role)
-
+    console.log(roleStore.role)
     // 跳轉到首頁
     router.push('/')
   }

@@ -13,7 +13,7 @@ import MealsBrowsingView from '@/views/customer/mealsBrowsing/index.vue'
 
 
 const routes = [
-  { path: '/login', name: 'login', component: LoginView},
+  { path: '/auth/login', name: 'login', component: LoginView},
 
   { path: '/', name: 'layout', component: LayoutView, redirect: '/index', // 重定向
     children: [

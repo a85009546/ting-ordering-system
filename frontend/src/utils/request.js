@@ -16,7 +16,8 @@ instance.interceptors.request.use(
     const tokenStore = useTokenStore()
     // 判斷有沒有token
     if(tokenStore.token){
-      config.headers.Authorization = tokenStore.token
+      // headers.token 這裡的 token 要看是定義叫什麼，有些叫Authentication
+      config.headers.token = tokenStore.token
     }
     return config
   },
