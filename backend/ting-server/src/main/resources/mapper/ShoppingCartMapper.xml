@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.github.mattwei.mapper.ShoppingCartMapper">
+
+    <select id="list" resultType="com.github.mattwei.entity.ShoppingCart">
+        select * from shopping_cart
+        <where>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+            <if test="mealId != null">
+                and meal_id = #{mealId}
+            </if>
+            <if test="mealFlavor != null">
+                and meal_flavor = #{mealFlavor}
+            </if>
+        </where>
+    </select>
+</mapper>

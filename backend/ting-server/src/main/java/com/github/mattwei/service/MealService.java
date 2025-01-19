@@ -2,6 +2,7 @@ package com.github.mattwei.service;
 
 import com.github.mattwei.dto.MealDTO;
 import com.github.mattwei.dto.MealPageQueryDTO;
+import com.github.mattwei.entity.Meal;
 import com.github.mattwei.result.PageResult;
 import com.github.mattwei.vo.MealVO;
 
@@ -53,18 +54,11 @@ public interface MealService {
      */
     void changeStatus(Integer status, Long id);
 
-    /**
-     * 根據分類id分頁查詢餐點及其對應的口味
-     * @param mealPageQueryDTO
-     * @return
-     */
-    PageResult pageQueryWithFlavor(MealPageQueryDTO mealPageQueryDTO);
-
 
     /**
      * 根據分類id查詢餐點及其口味數據
-     * @param categoryId
+     * @param meal
      * @return
      */
-    List<MealVO> listWithFlavor(Long categoryId);
+    List<MealVO> listWithFlavor(Meal meal);
 }
