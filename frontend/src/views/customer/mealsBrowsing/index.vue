@@ -139,7 +139,7 @@ const handleCurrentChange = async (newPage) => {
 
 .meal-browser {
   padding: 20px;
-  margin-bottom: 50px;
+  margin-bottom: 30px;
 }
 
 .category-row {

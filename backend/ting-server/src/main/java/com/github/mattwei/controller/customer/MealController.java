@@ -1,6 +1,7 @@
 package com.github.mattwei.controller.customer;
 
 import com.github.mattwei.dto.MealPageQueryDTO;
+import com.github.mattwei.mapper.MealMapper;
 import com.github.mattwei.result.PageResult;
 import com.github.mattwei.result.Result;
 import com.github.mattwei.service.MealService;
@@ -29,6 +30,8 @@ public class MealController {
     private MealService mealService;
     @Autowired
     private RedisTemplate redisTemplate;
+    @Autowired
+    private MealMapper mealMapper;
 
     /**
      * 根據分類id分頁查詢餐點及其對應的口味，並且只顯示上架中的
@@ -45,7 +48,10 @@ public class MealController {
         if(list != null && list.size() > 0){
             // 如果存在，直接返回，無須查詢DB
             PageResult pageResult = new PageResult();
-            pageResult.setTotal((long) list.size()); // 總數設為當前列表的大小
+            // 要去查詢當前分類的總數，不能以list大小當作總條數
+            // 根據分類id查詢餐點數量
+            Integer total = mealMapper.countByCategoryId(mealPageQueryDTO.getCategoryId());
+            pageResult.setTotal(total.longValue());
             pageResult.setRecords(list); // 將列表設為當前頁的數據
             return Result.success(pageResult);
         }
