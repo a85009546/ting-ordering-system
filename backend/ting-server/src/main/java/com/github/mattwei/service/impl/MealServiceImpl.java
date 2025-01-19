@@ -15,13 +15,16 @@ import com.github.mattwei.service.MealService;
 import com.github.mattwei.vo.MealVO;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Description:
@@ -76,7 +79,7 @@ public class MealServiceImpl implements MealService {
     public PageResult pageQuery(MealPageQueryDTO mealPageQueryDTO) {
         PageHelper.startPage(mealPageQueryDTO.getPage(), mealPageQueryDTO.getPageSize());
 
-        Page<MealVO> page = mealMapper.pageQuery(mealPageQueryDTO);
+        Page<MealVO> page =  mealMapper.pageQuery(mealPageQueryDTO);
 
         return new PageResult(page.getTotal(), page.getResult());
     }
@@ -160,5 +163,35 @@ public class MealServiceImpl implements MealService {
                 .updateTime(LocalDateTime.now())
                 .build();
         mealMapper.update(meal);
+    }
+
+    /**
+     * 根據分類id分頁查詢餐點及其對應的口味
+     * @param mealPageQueryDTO
+     * @return
+     */
+    @Override
+    public PageResult pageQueryWithFlavor(MealPageQueryDTO mealPageQueryDTO) {
+        // 啟動分頁
+        PageHelper.startPage(mealPageQueryDTO.getPage(), mealPageQueryDTO.getPageSize());
+
+        // 根據分類 id 分頁查詢餐點
+        List<Meal> mealList = mealMapper.getByCategoryId(mealPageQueryDTO.getCategoryId());
+
+        // 使用 Stream API 將 Meal 轉換為 MealVO
+        List<MealVO> mealVOList = mealList.stream().map(meal -> {
+            MealVO mealVO = new MealVO();
+            BeanUtils.copyProperties(meal, mealVO);
+            // 查詢口味數據
+            List<MealFlavor> mealFlavorsList = mealFlavorMapper.getByMealId(meal.getId());
+            mealVO.setMealFlavors(mealFlavorsList);
+            return mealVO;
+        }).collect(Collectors.toList());
+
+        // 使用 PageHelper 提供的靜態方法自動封裝 PageInfo
+        PageInfo<MealVO> pageInfo = new PageInfo<>(mealVOList);
+
+        // 封裝為 PageResult 返回
+        return new PageResult(pageInfo.getTotal(), pageInfo.getList());
     }
 }

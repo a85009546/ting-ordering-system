@@ -61,4 +61,12 @@ public interface MealMapper {
      * @param meal
      */
     void update(Meal meal);
+
+    /**
+     * 根據分類id分頁查詢餐點
+     * @param categoryId
+     * @return
+     */
+    @Select("select * from meal where category_id = #{categoryId}")
+    List<Meal> getByCategoryId(Long categoryId);
 }

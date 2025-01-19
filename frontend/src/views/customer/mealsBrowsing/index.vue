@@ -49,6 +49,11 @@ const adjustFlavor = (meal) => {
   console.log(`調整口味: ${meal.name}`)
   // 彈窗或其他操作
 }
+// 新增口味
+const addFlavor = (meal) => {
+  console.log(`新增口味: ${meal.name}`)
+  // 彈出新增口味的窗口，或者跳轉到相關頁面
+}
 // 處理分頁事件
 const handleSizeChange = async (newSize) => {
   pageSize.value = newSize
@@ -89,15 +94,28 @@ const handleCurrentChange = async (newPage) => {
         <el-card class="meal-card" shadow="always">
           <img :src="meal.image" alt="meal image" class="meal-image" />
           <h3 class="meal-name">{{ meal.name }}</h3>
+          <p>簡介: {{ meal.description }}</p>
           <div class="meal-info">
             <div class="info-left">
               <p>費用：{{ meal.price }} 元</p>
               <p>月銷量：{{ meal.sales }} 份</p>
             </div>
             <div class="info-right">
-              <el-button type="success" size="mini" @click="adjustFlavor(meal)">
+              <template v-if="meal.mealFlavors && meal.mealFlavors.length > 0">
+                <!-- 有口味數據時顯示調整按鈕 -->
+                <el-button type="success" size="mini" @click="adjustFlavor(meal)">
+                  調整口味
+                </el-button>
+              </template>
+              <template v-else>
+                <!-- 沒有口味數據時顯示 + 按鈕 -->
+                <el-button type="primary" size="mini" @click="addFlavor(meal)">
+                  +
+                </el-button>
+              </template>
+              <!-- <el-button type="success" size="mini" @click="adjustFlavor(meal)">
                 調整口味
-              </el-button>
+              </el-button> -->
             </div>
           </div>
         </el-card>
@@ -172,6 +190,7 @@ const handleCurrentChange = async (newPage) => {
 .info-right {
   display: flex;
   align-items: center;
+  margin-top: 30px;
 }
 </style>
 

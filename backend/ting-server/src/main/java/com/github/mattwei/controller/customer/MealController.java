@@ -26,7 +26,7 @@ public class MealController {
     private MealService mealService;
 
     /**
-     * 餐點根據分類id分頁查詢，並且只顯示上架中的
+     * 根據分類id分頁查詢餐點及其對應的口味，並且只顯示上架中的
      * @param mealPageQueryDTO
      * @return
      */
@@ -35,7 +35,7 @@ public class MealController {
         log.info("根據分類id查詢餐點: {}", mealPageQueryDTO);
         // 查詢上架中的
         mealPageQueryDTO.setStatus(1);
-        PageResult pageResult = mealService.pageQuery(mealPageQueryDTO);
+        PageResult pageResult = mealService.pageQueryWithFlavor(mealPageQueryDTO);
         return Result.success(pageResult);
     }
 }

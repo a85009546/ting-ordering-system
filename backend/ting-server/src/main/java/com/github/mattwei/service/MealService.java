@@ -52,4 +52,11 @@ public interface MealService {
      * @param id
      */
     void changeStatus(Integer status, Long id);
+
+    /**
+     * 根據分類id分頁查詢餐點及其對應的口味
+     * @param mealPageQueryDTO
+     * @return
+     */
+    PageResult pageQueryWithFlavor(MealPageQueryDTO mealPageQueryDTO);
 }
