@@ -20,7 +20,7 @@ import java.util.List;
  * @Create 2025/1/14 下午 10:51
  */
 
-@RestController
+@RestController("adminMealController")
 @RequestMapping("/admin/meal")
 @Slf4j
 public class MealController {
@@ -48,6 +48,7 @@ public class MealController {
     @GetMapping("/page")
     public Result<PageResult> page(MealPageQueryDTO mealPageQueryDTO){
         log.info("餐點分頁查詢: {}", mealPageQueryDTO);
+
         PageResult pageResult = mealService.pageQuery(mealPageQueryDTO);
         return Result.success(pageResult);
     }

@@ -31,6 +31,8 @@ public class MealVO implements Serializable {
 
     private Long categoryId;
 
+    private String categoryName;
+
     private BigDecimal price;
 
     private String image;
@@ -40,8 +42,6 @@ public class MealVO implements Serializable {
     private Integer status;
 
     private LocalDateTime updateTime;
-
-    private String categoryName;
 
     private List<MealFlavor> mealFlavors = new ArrayList<>();
 }

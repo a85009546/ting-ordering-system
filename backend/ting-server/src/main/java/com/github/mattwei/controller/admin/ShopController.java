@@ -35,13 +35,4 @@ public class ShopController {
         return Result.success();
     }
 
-    /**
-     * 查詢店家的營業狀態
-     */
-//    @GetMapping("/status")
-//    public Result<Integer> getStatus(){
-//        Integer status = (Integer) redisTemplate.opsForValue().get(KEY);
-//        log.info("獲取到店家的營業狀態為: {}", status == 1 ? "營業中" : "休息中");
-//        return Result.success(status);
-//    }
 }
