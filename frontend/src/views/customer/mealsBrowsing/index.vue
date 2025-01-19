@@ -44,26 +44,16 @@ const selectCategory = async (categoryId) => {
   await getMeals(categoryId)
 }
 
-// 調整口味
-const adjustFlavor = (meal) => {
-  console.log(`調整口味: ${meal.name}`)
-  // 彈窗或其他操作
-}
-// 新增口味
-const addFlavor = (meal) => {
-  console.log(`新增口味: ${meal.name}`)
-  // 彈出新增口味的窗口，或者跳轉到相關頁面
-}
 // 處理分頁事件
 const handleSizeChange = async (newSize) => {
   pageSize.value = newSize
   await getMeals(selectedCategory.value) // 加載當前分類的新分頁數據
 }
-
 const handleCurrentChange = async (newPage) => {
   currentPage.value = newPage
   await getMeals(selectedCategory.value) // 加載當前分類的新分頁數據
 }
+
 </script>
 
 
@@ -80,7 +70,7 @@ const handleCurrentChange = async (newPage) => {
         {{ category.name }}
       </el-button>
     </el-row>
-    {{meals}}
+
     <!-- 餐點卡片 -->
     <el-row class="meal-list" v-if="meals.length > 0" gutter="20">
       <el-col
@@ -103,13 +93,13 @@ const handleCurrentChange = async (newPage) => {
             <div class="info-right">
               <template v-if="meal.mealFlavors && meal.mealFlavors.length > 0">
                 <!-- 有口味數據時顯示調整按鈕 -->
-                <el-button type="success" size="mini" @click="adjustFlavor(meal)">
+                <el-button type="success" size="mini" @click="addFlavor(meal)">
                   調整口味
                 </el-button>
               </template>
               <template v-else>
                 <!-- 沒有口味數據時顯示 + 按鈕 -->
-                <el-button type="primary" size="mini" @click="addFlavor(meal)">
+                <el-button type="primary" size="mini" @click="addMeal(meal)">
                   +
                 </el-button>
               </template>
@@ -139,6 +129,9 @@ const handleCurrentChange = async (newPage) => {
     />
   </div>
 
+  <!-- 口味調整彈框 -->
+  
+
 </template>
 
 
@@ -146,6 +139,7 @@ const handleCurrentChange = async (newPage) => {
 
 .meal-browser {
   padding: 20px;
+  margin-bottom: 50px;
 }
 
 .category-row {
