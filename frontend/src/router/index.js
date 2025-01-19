@@ -9,6 +9,7 @@ import CategoryView from '@/views/admin/category/index.vue'
 import EmpView from '@/views/admin/emp/index.vue'
 import MealView from '@/views/admin/meal/index.vue'
 import InfoView from '@/views/info/index.vue'
+import MealsBrowsingView from '@/views/customer/mealsBrowsing/index.vue'
 
 
 const routes = [
@@ -23,6 +24,7 @@ const routes = [
       { path: '/admin/employee', name: 'employee', component: EmpView},
       { path: '/admin/meal', name: 'meal', component: MealView},
       { path: '/user/info', name: 'info', component: InfoView},
+      { path: '/customer/meal', name: 'mealsBrowsing', component: MealsBrowsingView},
     ]
   }
 ]

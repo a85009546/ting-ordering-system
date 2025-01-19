@@ -19,7 +19,7 @@ import java.util.List;
  * @Create 2025/1/14 下午 02:27
  */
 
-@RestController
+@RestController("adminCategoryController")
 @RequestMapping("/admin/category")
 @Slf4j
 public class CategoryController {

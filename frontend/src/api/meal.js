@@ -27,3 +27,8 @@ export const deleteApi = (ids) => {
 export const updateStatusApi = (id, status) => {
   return request.post(`/admin/meal/status/${status}?id=${id}`)
 }
+
+// 顧客端 - 根據分類id查詢上架中的餐點
+export const queryByCategoryIdApi = (categoryId) => {
+  return request.get(`/customer/meal/${categoryId}`)
+}
