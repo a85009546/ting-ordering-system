@@ -6,10 +6,12 @@ import { Avatar, User, Lock, Phone } from '@element-plus/icons-vue'
 import { useRouter } from 'vue-router'
 import { useTokenStore } from '@/stores/token'
 import { useRoleStore } from '@/stores/role'
+import { useAccountStore } from '@/stores/account'
 
 const router = useRouter()
 const tokenStore = useTokenStore()
 const roleStore = useRoleStore()
+const accountStore = useAccountStore()
 
 // 控制登入與註冊表單的切換
 const isRegister = ref(false)
@@ -22,7 +24,6 @@ let registerData = ref({
   rePassword:'',
   phone:''
 })
-
 // 定義清空數據模型的函數
 const clearRegisterData = () => {
   registerData.value = {
@@ -34,7 +35,6 @@ const clearRegisterData = () => {
     sex: ''
   }
 }
-
 // 校驗密碼的函數
 const checkRePassword = (rule, value, callback) => {
   if (value === '') {
@@ -102,10 +102,13 @@ const login = async () => {
     ElMessage.success(result.msg ? result.msg : '登入成功') 
     // 把token存到pinia
     tokenStore.setToken(result.data.token)
-    console.log(tokenStore.token)
+    console.log('存入token至pinia:', tokenStore.token)
     // 角色狀態存到 pinia
     roleStore.setRole(result.data.role)
-    console.log(roleStore.role)
+    console.log('存入role至pinia:',roleStore.role)
+    // 帳號存到 pinia
+    accountStore.setAccount(result.data.account)
+    console.log('存入account至pinia:',accountStore.account)
     // 跳轉到首頁
     router.push('/')
   }

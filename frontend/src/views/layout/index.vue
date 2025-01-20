@@ -3,6 +3,7 @@ import { ref, onMounted, computed, provide, inject, reactive } from 'vue'
 import { getMenuApi } from '@/api/menu'
 import { updateStatusApi, queryStatusApi } from '@/api/shop'
 import { useRoleStore } from '@/stores/role'
+import { useAccountStore } from '@/stores/account'
 import { getCartApi, clearCartApi } from '@/api/shoppingCart'
 import { ElMessage } from 'element-plus'
 
@@ -14,14 +15,16 @@ const menuList = ref([])
 const activeMenuItem = ref('/meal')
 const shoppingCartItems = reactive([]) // 購物車內容
 const roleStore = useRoleStore()
+const accountStore = useAccountStore()
 
 // 提供購物車數據和操作方法
 provide('shoppingCartItems', shoppingCartItems);
-provide('updateCart', (items) => (shoppingCartItems.value = items));
+// 提供營業狀態數據和操作方法
+provide('isOpen', isOpen);
 
 // 計算總金額
 const totalAmount = computed(() =>
-  shoppingCartItems.value.reduce((sum, item) => sum + item.amount * item.number, 0)
+  shoppingCartItems.reduce((sum, item) => sum + item.amount * item.number, 0)
 )
 // 鉤子
 onMounted(async () => {
@@ -41,10 +44,10 @@ const getShopStatus = async () => {
 }
 // 獲取購物車內容
 const getCartItems = async () => {
-  const result = await getCartApi()
-  console.log(result)
-  shoppingCartItems.value = result.data
-}
+  const result = await getCartApi();
+  console.log(result);
+  shoppingCartItems.splice(0, shoppingCartItems.length, ...result.data); // 清空原數據並插入新數據
+};
 // 打開營業狀態彈框
 const openStatusDialog = () => {
   if (roleStore.role >= 2) {
@@ -63,21 +66,14 @@ const openCartDialog = () => {
   isCartDialogVisible.value = true
 }
 // 清空購物車
-const clearCart = () => {
+const clearCart = async () => {
   shoppingCartItems.length = 0;
-  // 確保更新購物車顯示
-  const updateCart = inject('updateCart')
-  if (updateCart) {
-    updateCart(shoppingCartItems) // 更新購物車顯示
-  }
-  
-  const result = clearCartApi()
+  // 調用後端清空API
+  const result = await clearCartApi()
+  console.log('清空購物車', result)
   if (result.code) {
-    ElMessage.info('購物車已清空')
+    ElMessage.success('購物車已清空')
   }
-  // 手動刷新餐點頁面數據，保證顯示正確的餐點
-  getMenu()
-  
 }
 // 去結算邏輯
 const proceedToCheckout = () => {
@@ -106,8 +102,16 @@ const proceedToCheckout = () => {
 
         <!-- Header 右側區域 -->
         <span class="right_tool">
+          <!-- 帳號和身份顯示 -->
+          <span class="account-info">
+            帳號：<strong>{{ accountStore.account }}</strong>
+          </span>
+          <span class="role-info">
+            身份：<strong>{{ roleStore.role === 1 ? '顧客' : roleStore.role === 2 ? '員工' : '管理員' }}</strong>
+          </span>
+          &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
           <!-- 購物車圖標 -->
-          <template v-if="roleStore.role === 3">
+          <template v-if="roleStore.role <= 3">
             <el-badge :value="shoppingCartItems.length" class="cart-icon" :offset="[2, 10]">
               <img
                 src="@/assets/images/shopping-cart.png"
@@ -323,11 +327,10 @@ const proceedToCheckout = () => {
   margin-left: 5px;
   font-size: 16px;
 }
-/* .clear-cart-icon {
-  font-size: 20px;
-  cursor: pointer;
-  float: right;
-  margin-bottom: 10px;
-  color: #f56c6c;
-} */
+.account-info,
+.role-info {
+  color: white;
+  margin-right: 20px;
+  font-weight: bold;
+}
 </style>

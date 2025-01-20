@@ -5,7 +5,8 @@ import { queryMealListByCategoryIdApi} from '@/api/meal'
 import { addToCartApi } from '@/api/shoppingCart'
 import { ElMessage } from 'element-plus'
 
-const shoppingCartItems = inject('shoppingCartItems');
+const shoppingCartItems = inject('shoppingCartItems')
+const isOpen = inject('isOpen')
 
 // 餐點分類和餐點列表
 const categories = ref([]) // 餐點分類列表
@@ -18,7 +19,9 @@ const selectedFlavor = ref([]) // 當前選中的口味
 
 watch(shoppingCartItems, (newCartItems) => {
   console.log('購物車更新了:', newCartItems)
-  // 可以在此執行其他操作，如重新載入餐點數據
+})
+watch(isOpen, (newStatus) => {
+  console.log('營業狀態更新了:', newStatus)
 })
 
 // 初始化數據
@@ -138,7 +141,6 @@ const addToCart = async () => {
         {{ category.name }}
       </el-button>
     </el-row>
-
     <!-- 餐點卡片 -->
     <el-row class="meal-list" v-if="meals.length > 0" gutter="10" justify="start">
       <div
@@ -168,16 +170,19 @@ const addToCart = async () => {
               <p>月銷量：{{ meal.sales }} 份</p>
             </div>
             <div class="info-right">
-              <template v-if="meal.mealFlavors && meal.mealFlavors.length > 0">
-                <el-button type="success" size="small" @click="openFlavorDialog(meal)">
-                  調整口味
-                </el-button>
+              <template v-if="isOpen">
+                <template v-if="meal.mealFlavors && meal.mealFlavors.length > 0">
+                  <el-button type="success" size="small" @click="openFlavorDialog(meal)">
+                    調整口味
+                  </el-button>
+                </template>
+                <template v-else>
+                  <el-button type="primary" size="small" @click="openConfirmDialog(meal)">
+                    +
+                  </el-button>
+                </template>
               </template>
-              <template v-else>
-                <el-button type="primary" size="small" @click="openConfirmDialog(meal)">
-                  +
-                </el-button>
-              </template>
+              
             </div>
           </div>
         </el-card>
