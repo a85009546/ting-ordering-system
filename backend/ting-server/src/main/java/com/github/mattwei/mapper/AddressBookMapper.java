@@ -42,4 +42,11 @@ public interface AddressBookMapper {
      */
     @Delete("delete from address_book where id = #{id}")
     void deleteById(Long id);
+
+    /**
+     * 根據id查詢地址
+     * @param id
+     */
+    @Select("select * from address_book where id = #{id}")
+    AddressBook getById(Long id);
 }

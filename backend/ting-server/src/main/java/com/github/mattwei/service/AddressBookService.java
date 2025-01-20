@@ -35,4 +35,11 @@ public interface AddressBookService {
      * @param id
      */
     void deleteById(Long id);
+
+    /**
+     * 根據id查詢地址
+     * @param id
+     * @return
+     */
+    AddressBook getById(Long id);
 }

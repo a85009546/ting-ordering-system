@@ -87,4 +87,15 @@ public class AddressBookController {
         addressBookService.deleteById(id);
         return Result.success();
     }
+
+    /**
+     * 根據id查詢地址
+     * @param id
+     * @return
+     */
+    @GetMapping("/{id}")
+    public Result<AddressBook> getById(@PathVariable Long id){
+        AddressBook addressBook = addressBookService.getById(id);
+        return Result.success(addressBook);
+    }
 }

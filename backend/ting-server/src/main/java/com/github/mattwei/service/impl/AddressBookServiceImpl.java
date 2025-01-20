@@ -62,5 +62,15 @@ public class AddressBookServiceImpl implements AddressBookService {
     public void deleteById(Long id) {
         addressBookMapper.deleteById(id);
     }
+
+    /**
+     * 根據id查詢地址
+     * @param id
+     * @return
+     */
+    @Override
+    public AddressBook getById(Long id) {
+        return addressBookMapper.getById(id);
+    }
 }
 
