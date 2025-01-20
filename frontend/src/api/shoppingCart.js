@@ -4,3 +4,8 @@ import request from '@/utils/request'
 export const addToCartApi = (cart) => {
   return request.post('/customer/shoppingCart/add', cart)
 }
+
+// 查看購物車
+export const getCartApi = () => {
+  return request.get('/customer/shoppingCart/list')
+}
