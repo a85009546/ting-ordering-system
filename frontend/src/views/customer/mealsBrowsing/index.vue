@@ -2,6 +2,8 @@
 import { ref, onMounted } from 'vue'
 import { queryListForCustomerApi } from '@/api/category' 
 import { queryMealListByCategoryIdApi} from '@/api/meal'
+import { addToCartApi } from '@/api/shoppingCart'
+import { ElMessage } from 'element-plus'
 
 // 餐點分類和餐點列表
 const categories = ref([]) // 餐點分類列表
@@ -9,7 +11,16 @@ const meals = ref([]) // 餐點列表
 const selectedCategory = ref('') // 當前選中的分類
 const selectedMeal = ref(null) // 當前選中的餐點
 const flavorDialogVisible = ref(false) // 調整口味控制彈框是否可見
+const plusDialogVisible = ref(false) // 加號彈框是否可見
 const selectedFlavor = ref([]) // 當前選中的口味
+const shoppingCart = ref({ // 購物車數據
+  name:'',
+  image:'',
+  mealId:'',
+  mealFlavor:'',
+  number:'',
+  amount:''
+})
 
 // 初始化數據
 onMounted(async () => {
@@ -53,11 +64,16 @@ const parseFlavorValue = (value) => {
     return []; // 如果解析失敗，返回空陣列
   }
 }
-// 打開彈框
+// 點擊調整口味按鈕後，打開口味彈框
 const openFlavorDialog = (meal) => {
   selectedMeal.value = meal
   flavorDialogVisible.value = true
   selectedFlavor.value = [] // 預設選中為空
+}
+// 點擊加號按鈕後，打開確認彈框
+const openConfirmDialog = (meal) => {
+  selectedMeal.value = meal
+  plusDialogVisible.value = true
 }
 // 處理選擇口味的邏輯
 const toggleFlavor = (option) => {
@@ -69,15 +85,38 @@ const toggleFlavor = (option) => {
     selectedFlavor.value.push(option);
   }
 }
-// 加入購物車
-const addToCart = () => {
-  const flavorString = selectedFlavor.value.join(', ');
 
+// 加入購物車
+const addToCart = async () => {
+  const flavorString = selectedFlavor.value.join(', ');
   console.log('加入購物車', {
     mealId: selectedMeal.value.id,
     mealFlavor: flavorString, // 傳遞拼接後的字符串
   })
-  flavorDialogVisible.value = false // 關閉彈框
+  console.log('flavorString: ', {flavorString})
+  shoppingCart.value = {
+    name: selectedMeal.value.name,
+    image: selectedMeal.value.image,
+    mealId: selectedMeal.value.id,
+    mealFlavor: flavorString, // 傳遞拼接後的字符串
+    number: 1,
+    amount: selectedMeal.value.price
+  }
+  // 調用 addToCartApi
+  const result = await addToCartApi(shoppingCart.value)
+  if(result.code){
+    ElMessage.success('成功加入購物車')
+  }
+  // 關閉彈框
+  if(flavorString === ''){
+    plusDialogVisible.value = false
+  }else{
+    flavorDialogVisible.value = false 
+  }
+  // 清空數據
+  selectedFlavor.value = [],
+  selectedMeal.value = null
+  
 }
 </script>
 
@@ -130,7 +169,7 @@ const addToCart = () => {
                 </el-button>
               </template>
               <template v-else>
-                <el-button type="primary" size="small" @click="addMeal(meal)">
+                <el-button type="primary" size="small" @click="openConfirmDialog(meal)">
                   +
                 </el-button>
               </template>
@@ -168,6 +207,22 @@ const addToCart = () => {
       <div class="dialog-footer">
         <span>費用：{{ selectedMeal?.price || 0 }} 元</span>
         <el-button type="primary" @click="addToCart">加入購物車</el-button>
+      </div>
+    </el-dialog>
+
+    <!-- 加號彈框 -->
+    <el-dialog
+      v-model="plusDialogVisible"
+      title="確認加入購物車"
+      width="400px"
+    >
+      <p>是否新增一份 <b>{{ selectedMeal?.name }}</b> 至購物車？</p>
+      <div class="dialog-footer">
+        <span>金額：{{ selectedMeal?.price || 0 }} 元</span>
+        <div>
+          <el-button @click="plusDialogVisible = false">否</el-button>
+          <el-button type="primary" @click="addToCart">是</el-button>
+        </div>
       </div>
     </el-dialog>
 
