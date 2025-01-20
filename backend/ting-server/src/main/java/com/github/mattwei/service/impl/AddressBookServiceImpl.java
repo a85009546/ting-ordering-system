@@ -42,5 +42,16 @@ public class AddressBookServiceImpl implements AddressBookService {
         return addressBookMapper.list(addressBook);
 
     }
+
+    /**
+     * 根據id修改地址
+     * @param addressBook
+     */
+    @Override
+    public void update(AddressBook addressBook) {
+        addressBook.setUserId(BaseContext.getCurrentId());
+        addressBook.setIsDefault(0);
+        addressBookMapper.update(addressBook);
+    }
 }
 
