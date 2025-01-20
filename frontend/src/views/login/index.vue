@@ -7,11 +7,15 @@ import { useRouter } from 'vue-router'
 import { useTokenStore } from '@/stores/token'
 import { useRoleStore } from '@/stores/role'
 import { useAccountStore } from '@/stores/account'
+import { useBalanceStore } from '@/stores/balance'
+import { useAvatarStore } from '@/stores/avatar'
 
 const router = useRouter()
 const tokenStore = useTokenStore()
 const roleStore = useRoleStore()
 const accountStore = useAccountStore()
+const balanceStore = useBalanceStore()
+const avatarStore = useAvatarStore()
 
 // 控制登入與註冊表單的切換
 const isRegister = ref(false)
@@ -109,6 +113,14 @@ const login = async () => {
     // 帳號存到 pinia
     accountStore.setAccount(result.data.account)
     console.log('存入account至pinia:',accountStore.account)
+    // 頭像存到 pinia
+    avatarStore.setAvatar(result.data.avatar)
+    console.log('存入avatar至pinia:',avatarStore.avatar)
+    if(roleStore.role === 1){
+      // 身分為顧客:餘額存到 pinia
+      balanceStore.setBalance(result.data.balance)
+      console.log('存入balance至pinia:',balanceStore.balance)
+    }
     // 跳轉到首頁
     router.push('/')
   }

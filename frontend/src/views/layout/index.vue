@@ -4,6 +4,8 @@ import { getMenuApi } from '@/api/menu'
 import { updateStatusApi, queryStatusApi } from '@/api/shop'
 import { useRoleStore } from '@/stores/role'
 import { useAccountStore } from '@/stores/account'
+import { useBalanceStore } from '@/stores/balance'
+import { useAvatarStore } from '@/stores/avatar'
 import { getCartApi, clearCartApi } from '@/api/shoppingCart'
 import { ElMessage } from 'element-plus'
 
@@ -16,6 +18,8 @@ const activeMenuItem = ref('/meal')
 const shoppingCartItems = reactive([]) // 購物車內容
 const roleStore = useRoleStore()
 const accountStore = useAccountStore()
+const balanceStore = useBalanceStore()
+const avatarStore = useAvatarStore()
 
 // 提供購物車數據和操作方法
 provide('shoppingCartItems', shoppingCartItems);
@@ -108,6 +112,9 @@ const proceedToCheckout = () => {
           </span>
           <span class="role-info">
             身份：<strong>{{ roleStore.role === 1 ? '顧客' : roleStore.role === 2 ? '員工' : '管理員' }}</strong>
+          </span>
+          <span v-if="roleStore.role === 1 ? true : false" class="balance-info">
+            餘額：<strong>{{ balanceStore.balance }}</strong>
           </span>
           &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
           <!-- 購物車圖標 -->

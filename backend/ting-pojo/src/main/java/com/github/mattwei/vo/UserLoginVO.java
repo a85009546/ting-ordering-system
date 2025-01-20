@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +30,10 @@ public class UserLoginVO implements Serializable {
     private String name;
 
     private String account;
+
+    private BigDecimal balance;
+
+    private String avatar;
 
     private String token;
 
