@@ -7,6 +7,7 @@ import { useAccountStore } from '@/stores/account'
 import { useBalanceStore } from '@/stores/balance'
 import { useAvatarStore } from '@/stores/avatar'
 import { getCartApi, clearCartApi } from '@/api/shoppingCart'
+import { getAddressListApi, setDefaultAddressApi, deleteAddressApi } from '@/api/addressBook'
 import { ElMessage } from 'element-plus'
 
 
@@ -20,6 +21,10 @@ const roleStore = useRoleStore()
 const accountStore = useAccountStore()
 const balanceStore = useBalanceStore()
 const avatarStore = useAvatarStore()
+
+const selectedAddress = ref('尚未選擇地址') // 當前選擇的地址
+const isAddressDialogVisible = ref(false) // 控制地址彈窗顯示
+const addressList = reactive([]) // 地址列表
 
 // 提供購物車數據和操作方法
 provide('shoppingCartItems', shoppingCartItems);
@@ -52,6 +57,11 @@ const getCartItems = async () => {
   console.log(result);
   shoppingCartItems.splice(0, shoppingCartItems.length, ...result.data); // 清空原數據並插入新數據
 };
+// 獲取地址列表
+const fetchAddresses = async () => {
+  const response = await getAddressListApi()
+  addressList.splice(0, addressList.length, ...response.data)
+}
 // 打開營業狀態彈框
 const openStatusDialog = () => {
   if (roleStore.role >= 2) {
@@ -68,6 +78,32 @@ const confirmStatusChange = async () => {
 const openCartDialog = () => {
   console.log("購物車", {shoppingCartItems})
   isCartDialogVisible.value = true
+}
+// 打開地址彈窗
+const openAddressDialog = () => {
+  fetchAddresses()
+  isAddressDialogVisible.value = true
+}
+// 設置默認地址
+const setDefaultAddress = async (address) => {
+  const result = await setDefaultAddressApi(selectedAddress.value.id)
+  if(result.code){
+    ElMessage.success(`當前地址已設置為: ${address.detail}`)
+  }
+  
+}
+// 編輯地址
+const editAddress = (address) => {
+  console.log('編輯地址:', address)
+  // 在這裡可以開啟一個編輯地址的彈框或頁面
+}
+// 刪除地址
+const deleteAddress = async (id) => {
+  const response = await deleteAddressApi(id)
+  if (response.code === 200) {
+    ElMessage.success('地址已刪除')
+    fetchAddresses()
+  }
 }
 // 清空購物車
 const clearCart = async () => {
@@ -91,32 +127,55 @@ const proceedToCheckout = () => {
     <el-container>
       <!-- Header 區域 -->
       <el-header class="header">
-        <span class="title">Ting 點餐系統</span>
+        <!-- Header 左側區域 -->
+        <span class="header-left-content">
+          <span class="title">Ting 點餐系統</span>
+          <!-- 營業狀態按鈕 -->
+          <el-button
+            :type="isOpen ? 'success' : 'info'"
+            :plain="!isOpen"
+            :disabled="roleStore.role < 2"
+            class="status-button"
+            @click="openStatusDialog"
+          >
+            {{ isOpen ? '營業中' : '休息中' }}
+          </el-button>
 
-        <!-- 營業狀態按鈕 -->
-        <el-button
-          :type="isOpen ? 'success' : 'info'"
-          :plain="!isOpen"
-          :disabled="roleStore.role < 2"
-          class="status-button"
-          @click="openStatusDialog"
-        >
-          {{ isOpen ? '營業中' : '休息中' }}
-        </el-button>
+          <!-- 地址顯示框 -->
+          <span class="address-display" @click="openAddressDialog">
+            <img
+                  src="@/assets/images/location.png"
+                  alt="Location"
+                  class="location-icon-image"
+                  @click="openCartDialog"
+            />
+            <span>{{ selectedAddress }}</span>
+          </span>
+        </span>
+        
 
         <!-- Header 右側區域 -->
-        <span class="right_tool">
+        <span class="header-right-content">
           <!-- 帳號和身份顯示 -->
+          <span class="avatar-info">
+            <img
+              :src="avatarStore.avatar || '@/assets/images/default-avatar.png'"
+              alt="User Avatar"
+              class="user-avatar"
+            />
+          </span>
           <span class="account-info">
             帳號：<strong>{{ accountStore.account }}</strong>
           </span>
+          &nbsp;&nbsp; | &nbsp;&nbsp;
           <span class="role-info">
             身份：<strong>{{ roleStore.role === 1 ? '顧客' : roleStore.role === 2 ? '員工' : '管理員' }}</strong>
           </span>
-          <span v-if="roleStore.role === 1 ? true : false" class="balance-info">
+          &nbsp;&nbsp; | &nbsp;&nbsp;
+          <span v-if="roleStore.role === 3 ? true : false" class="balance-info">
             餘額：<strong>{{ balanceStore.balance }}</strong>
           </span>
-          &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+          &nbsp;&nbsp; | &nbsp;&nbsp;
           <!-- 購物車圖標 -->
           <template v-if="roleStore.role <= 3">
             <el-badge :value="shoppingCartItems.length" class="cart-icon" :offset="[2, 10]">
@@ -128,9 +187,11 @@ const proceedToCheckout = () => {
               />
             </el-badge>
           </template>
+          |  &nbsp;&nbsp;
           <a href="">
-            <el-icon><EditPen /></el-icon> 修改密碼 &nbsp;&nbsp;&nbsp; |  &nbsp;&nbsp;&nbsp;
+            <el-icon><EditPen /></el-icon> 修改密碼 
           </a>
+          &nbsp;&nbsp; |  &nbsp;&nbsp;
           <a href="">
             <el-icon><SwitchButton /></el-icon> 退出登入
           </a>
@@ -230,25 +291,53 @@ const proceedToCheckout = () => {
         <el-button type="primary" @click="confirmStatusChange">確認</el-button>
       </div>
     </el-dialog>
+
+    <!-- 地址選擇彈窗 -->
+    <el-dialog v-model="isAddressDialogVisible" title="地址" width="600px">
+      <div v-for="address in addressList" :key="address.id" class="address-card">
+        <el-icon :class="address.isDefault ? 'default-location-icon' : 'location-icon'">
+          <Location />
+        </el-icon>
+        <div class="address-content">
+          <p class="address-detail">{{ address.detail }}</p>
+          <p class="address-region">{{ address.city }} · {{ address.district }}</p>
+        </div>
+        <div class="address-actions">
+          <el-button type="primary" size="small" @click="editAddress(address)">編輯</el-button>
+          <el-button type="danger" size="small" @click="deleteAddress(address.id)">刪除</el-button>
+        </div>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <style scoped>
-  .header {
-    background-image: linear-gradient(to right, #00547d, #007fa4, #00aaa0, #00d072, #a8eb12);
-  }
-  .title {
-    color: white;
-    font-size: 40px;
-    font-family: 楷体;
-    line-height: 60px;
-    font-weight: bolder;
-  }
-  .right_tool{
-    float: right;
-    line-height: 60px;
-  }
-  .status-button {
+.header {
+  background-image: linear-gradient(to right, #00547d, #007fa4, #00aaa0, #00d072, #a8eb12);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  height: 60px;
+}
+.header-left-content {
+  display: flex; /* 根據需求，控制左側內容的排列 */
+  align-items: center;
+}
+.header-right-content {
+  display: flex; /* 右側按鈕或圖標的排列 */
+  align-items: center;
+  gap: 0; /* 元素間距 */
+}
+.title {
+  color: white;
+  font-size: 40px;
+  font-family: 楷體;
+  line-height: 60px;
+  font-weight: bolder;
+}
+.status-button {
+  margin-top: 15px;
   margin-left: 50px;
   margin-bottom: 20px;
   font-weight: bold;
@@ -270,26 +359,35 @@ const proceedToCheckout = () => {
   border-color: #d9d9d9; /* 灰色邊框，表示未選中 */
   background-color: #ffffff; /* 白色背景 */
 }
-  a {
-    color: white;
-    text-decoration: none;
-  }
-  .aside {
-    width: 220px;
-    border-right: 1px solid #ccc;
-    height: 730px;
-  }
-  /*  */
-  .cart-icon {
-  font-size: 20px;
-  cursor: pointer;
-  margin-top: 12px;
-  margin-right: 40px;
-  }
-  .cart-item {
-  display: flex;
-  align-items: center;
-  margin-bottom: 15px;
+a {
+  color: white;
+  text-decoration: none;
+}
+.aside {
+  width: 220px;
+  border-right: 1px solid #ccc;
+  height: 730px;
+}
+.user-avatar {
+  width: 40px; 
+  height: 40px; 
+  border-radius: 50%; /* 使圖片成為圓形 */
+  margin-right: 12px; 
+  border: 2px solid white; /* 添加白色邊框 */
+  object-fit: cover; /* 確保圖片不會變形 */
+  cursor: pointer; /* 鼠標懸停時顯示指針 */
+}
+.cart-icon {
+font-size: 20px;
+cursor: pointer;
+margin-left: 5px;
+margin-top: 12px;
+margin-right: 28px;
+}
+.cart-item {
+display: flex;
+align-items: center;
+margin-bottom: 15px;
 }
 .cart-item-image {
   width: 80px;
@@ -310,7 +408,7 @@ const proceedToCheckout = () => {
 }
 /* 購物車圖標 */
 .cart-icon-image {
-  width: 24px; /* 根據需要調整圖標大小 */
+  width: 24px;
   height: 24px;
   cursor: pointer;
 }
@@ -335,9 +433,29 @@ const proceedToCheckout = () => {
   font-size: 16px;
 }
 .account-info,
-.role-info {
+.role-info,
+.balance-info {
   color: white;
-  margin-right: 20px;
+  margin-right: 10px;
   font-weight: bold;
 }
+/* Location圖標 */
+.location-icon-image {
+  width: 20px; 
+  height: 20px;
+  margin-right: 5px;
+  cursor: pointer;
+}
+.address-display {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  color: #fff;
+  margin-left: 20px;
+  font-weight: bold;
+}
+.address-display:hover {
+  text-decoration: underline;
+}
+
 </style>
