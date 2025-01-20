@@ -148,7 +148,6 @@ const addToCart = () => {
       width="500px"
     >
       <!-- 口味選擇 -->
-      {{ selectedFlavor }}
       <div
         v-for="(flavor, index) in selectedMeal?.mealFlavors"
         :key="index"

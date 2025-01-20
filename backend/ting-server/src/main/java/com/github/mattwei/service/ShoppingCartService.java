@@ -1,6 +1,9 @@
 package com.github.mattwei.service;
 
 import com.github.mattwei.dto.ShoppingCartDTO;
+import com.github.mattwei.entity.ShoppingCart;
+
+import java.util.List;
 
 /**
  * Description:
@@ -15,4 +18,10 @@ public interface ShoppingCartService {
      * @param shoppingCartDTO
      */
     void addShoppingCart(ShoppingCartDTO shoppingCartDTO);
+
+
+    /**
+     * 查看購物車
+     */
+    List<ShoppingCart> showShoppingCart();
 }
