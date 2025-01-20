@@ -46,4 +46,14 @@ public class ShoppingCartController {
         List<ShoppingCart> shoppingCartList = shoppingCartService.showShoppingCart();
         return Result.success(shoppingCartList);
     }
+
+    /**
+     * 清空購物車
+     * @return
+     */
+    @DeleteMapping("/clean")
+    public Result clean(){
+        shoppingCartService.clean();
+        return Result.success();
+    }
 }

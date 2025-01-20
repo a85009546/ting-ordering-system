@@ -1,6 +1,7 @@
 package com.github.mattwei.mapper;
 
 import com.github.mattwei.entity.ShoppingCart;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Update;
@@ -37,4 +38,11 @@ public interface ShoppingCartMapper {
     @Insert("insert into shopping_cart (name, image, user_id, meal_id, meal_flavor, number, amount, create_time) " +
             "values (#{name}, #{image}, #{userId}, #{mealId}, #{mealFlavor}, #{number}, #{amount}, #{createTime})")
     void insert(ShoppingCart shoppingCart);
+
+    /**
+     * 根據 userId 刪除購物車數據
+     * @param userId
+     */
+    @Delete("delete from shopping_cart where user_id = #{userId}")
+    void deleteByUserId(Long userId);
 }

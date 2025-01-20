@@ -24,4 +24,9 @@ public interface ShoppingCartService {
      * 查看購物車
      */
     List<ShoppingCart> showShoppingCart();
+
+    /**
+     * 清空購物車
+     */
+    void clean();
 }
