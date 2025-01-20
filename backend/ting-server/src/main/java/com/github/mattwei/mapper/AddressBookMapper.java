@@ -1,6 +1,7 @@
 package com.github.mattwei.mapper;
 
 import com.github.mattwei.entity.AddressBook;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -34,4 +35,11 @@ public interface AddressBookMapper {
      * @param addressBook
      */
     void update(AddressBook addressBook);
+
+    /**
+     * 根據id刪除地址
+     * @param id
+     */
+    @Delete("delete from address_book where id = #{id}")
+    void deleteById(Long id);
 }
