@@ -180,7 +180,7 @@ const proceedToCheckout = () => {
         </div>
         <div class="cart-footer">
           <span>總金額：{{ totalAmount }} 元</span>
-          <el-button type="primary" @click="proceedToCheckout">去結算</el-button>
+          <el-button v-if="isOpen" type="primary" @click="proceedToCheckout">去結算</el-button>
         </div>
       </div>
       <div v-else>
