@@ -46,4 +46,22 @@ public class AddressBookController {
         List<AddressBook> addressBookList =   addressBookService.list(addressBook);
         return Result.success(addressBookList);
     }
+
+    /**
+     * 查詢默認地址
+     * @return
+     */
+    @GetMapping("/default")
+    public Result<AddressBook> getDefault(){
+        // SQL: select * from address_book where user_id = ? and is_default = 1
+        AddressBook addressBook = new AddressBook();
+        addressBook.setUserId(BaseContext.getCurrentId());
+        addressBook.setIsDefault(1);
+        List<AddressBook> list = addressBookService.list(addressBook);
+        // 判斷有無默認地址
+        if (list != null && list.size() > 0) {
+            return Result.success(list.get(0));
+        }
+        return Result.error("没有查詢到默認地址");
+    }
 }
