@@ -9,3 +9,8 @@ export const addToCartApi = (cart) => {
 export const getCartApi = () => {
   return request.get('/customer/shoppingCart/list')
 }
+
+// 清空購物車
+export const clearCartApi = () => {
+  return request.delete('/customer/shoppingCart/clean')
+}

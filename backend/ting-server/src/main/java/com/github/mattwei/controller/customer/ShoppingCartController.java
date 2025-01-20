@@ -53,6 +53,7 @@ public class ShoppingCartController {
      */
     @DeleteMapping("/clean")
     public Result clean(){
+        log.info("清空購物車");
         shoppingCartService.clean();
         return Result.success();
     }

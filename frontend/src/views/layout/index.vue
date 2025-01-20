@@ -1,9 +1,10 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, provide, inject, reactive } from 'vue'
 import { getMenuApi } from '@/api/menu'
 import { updateStatusApi, queryStatusApi } from '@/api/shop'
 import { useRoleStore } from '@/stores/role'
-import { getCartApi } from '@/api/shoppingCart'
+import { getCartApi, clearCartApi } from '@/api/shoppingCart'
+import { ElMessage } from 'element-plus'
 
 
 const isOpen = ref(true) // 營業狀態 (true: 營業中, false: 休息中)
@@ -11,8 +12,12 @@ const isShopDialogVisible = ref(false) // 控制選框的顯示
 const isCartDialogVisible = ref(false) // 控制購物車彈框的顯示
 const menuList = ref([])
 const activeMenuItem = ref('/meal')
-const shoppingCartItems = ref([]) // 購物車內容
+const shoppingCartItems = reactive([]) // 購物車內容
 const roleStore = useRoleStore()
+
+// 提供購物車數據和操作方法
+provide('shoppingCartItems', shoppingCartItems);
+provide('updateCart', (items) => (shoppingCartItems.value = items));
 
 // 計算總金額
 const totalAmount = computed(() =>
@@ -34,7 +39,7 @@ const getShopStatus = async () => {
   const statusResponse = await queryStatusApi()
   isOpen.value = statusResponse.data
 }
-// 獲取購物車內容 (假設有對應的 API)
+// 獲取購物車內容
 const getCartItems = async () => {
   const result = await getCartApi()
   console.log(result)
@@ -56,6 +61,23 @@ const confirmStatusChange = async () => {
 const openCartDialog = () => {
   console.log("購物車", {shoppingCartItems})
   isCartDialogVisible.value = true
+}
+// 清空購物車
+const clearCart = () => {
+  shoppingCartItems.length = 0;
+  // 確保更新購物車顯示
+  const updateCart = inject('updateCart')
+  if (updateCart) {
+    updateCart(shoppingCartItems) // 更新購物車顯示
+  }
+  
+  const result = clearCartApi()
+  if (result.code) {
+    ElMessage.info('購物車已清空')
+  }
+  // 手動刷新餐點頁面數據，保證顯示正確的餐點
+  getMenu()
+  
 }
 // 去結算邏輯
 const proceedToCheckout = () => {
@@ -136,6 +158,14 @@ const proceedToCheckout = () => {
       width="500px"
     >
       <div v-if="shoppingCartItems.length > 0">
+        <!-- 清空購物車按鈕 -->
+        <div class="clear-cart" @click="clearCart">
+          <el-icon class="clear-cart-icon">
+            <Delete />
+          </el-icon>
+          <span class="clear-cart-text">清空</span>
+        </div>
+        
         <div v-for="item in shoppingCartItems" :key="item.id" class="cart-item">
           <img :src="item.image" alt="meal image" class="cart-item-image" />
           <div class="cart-item-details">
@@ -273,4 +303,31 @@ const proceedToCheckout = () => {
   height: 24px;
   cursor: pointer;
 }
+/* 清空購物車圖標 */
+.clear-cart {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end; /* 向右對齊 */
+  cursor: pointer;
+  color: #f56c6c; /* 紅色 */
+  margin-bottom: 10px;
+  user-select: none; /* 禁止選中文字 */
+}
+.clear-cart-icon {
+  font-size: 20px;
+}
+.clear-cart:hover {
+  color: #ff7875; /* 淺紅色 */
+}
+.clear-cart-text {
+  margin-left: 5px;
+  font-size: 16px;
+}
+/* .clear-cart-icon {
+  font-size: 20px;
+  cursor: pointer;
+  float: right;
+  margin-bottom: 10px;
+  color: #f56c6c;
+} */
 </style>

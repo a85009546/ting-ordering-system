@@ -1,9 +1,15 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, inject, watch } from 'vue'
 import { queryListForCustomerApi } from '@/api/category' 
 import { queryMealListByCategoryIdApi} from '@/api/meal'
 import { addToCartApi } from '@/api/shoppingCart'
 import { ElMessage } from 'element-plus'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+const shoppingCartItems = inject('shoppingCartItems');
+const updateCart = inject('updateCart');
 
 // 餐點分類和餐點列表
 const categories = ref([]) // 餐點分類列表
@@ -13,13 +19,10 @@ const selectedMeal = ref(null) // 當前選中的餐點
 const flavorDialogVisible = ref(false) // 調整口味控制彈框是否可見
 const plusDialogVisible = ref(false) // 加號彈框是否可見
 const selectedFlavor = ref([]) // 當前選中的口味
-const shoppingCart = ref({ // 購物車數據
-  name:'',
-  image:'',
-  mealId:'',
-  mealFlavor:'',
-  number:'',
-  amount:''
+
+watch(shoppingCartItems, (newCartItems) => {
+  console.log('購物車更新了:', newCartItems)
+  // 可以在此執行其他操作，如重新載入餐點數據
 })
 
 // 初始化數據
@@ -85,7 +88,6 @@ const toggleFlavor = (option) => {
     selectedFlavor.value.push(option);
   }
 }
-
 // 加入購物車
 const addToCart = async () => {
   const flavorString = selectedFlavor.value.join(', ');
@@ -94,16 +96,21 @@ const addToCart = async () => {
     mealFlavor: flavorString, // 傳遞拼接後的字符串
   })
   console.log('flavorString: ', {flavorString})
-  shoppingCart.value = {
+  const newCartItem = {
     name: selectedMeal.value.name,
     image: selectedMeal.value.image,
     mealId: selectedMeal.value.id,
-    mealFlavor: flavorString, // 傳遞拼接後的字符串
+    mealFlavor: flavorString,
     number: 1,
-    amount: selectedMeal.value.price
-  }
+    amount: selectedMeal.value.price,
+  };
+  // 將新餐點加入購物車
+  shoppingCartItems.push(newCartItem);
+
+  // 更新購物車
+  updateCart(shoppingCartItems);
   // 調用 addToCartApi
-  const result = await addToCartApi(shoppingCart.value)
+  const result = await addToCartApi(newCartItem)
   if(result.code){
     ElMessage.success('成功加入購物車')
   }
@@ -116,7 +123,6 @@ const addToCart = async () => {
   // 清空數據
   selectedFlavor.value = [],
   selectedMeal.value = null
-  
 }
 </script>
 
