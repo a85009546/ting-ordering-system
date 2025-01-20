@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue'
 import { queryListApi as queryCategoryListApi } from '@/api/category'
 import { pageQueryApi, updateStatusApi, addApi, queryInfoApi, updateApi, deleteApi } from '@/api/meal'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { uploadApi } from '@/api/upload'
 // 鉤子
 onMounted(() => {
   search()
@@ -105,9 +106,15 @@ const changeStatusById = (id, currentStatus) => {
   })
 }
 //文件上傳
-// 圖片上傳成功後觸發
-const handleAvatarSuccess = (response) => {
-  meal.value.image = response.data
+const imageUpload = async (options) => {
+  const formData = new FormData();
+  formData.append('file', options.file);
+
+  const result = await uploadApi(formData)
+  if(result.code) {
+    meal.value.image = result.data
+    ElMessage.success('上傳成功')
+  }
 }
 // 文件上傳之前觸發
 const beforeAvatarUpload = (rawFile) => {
@@ -178,7 +185,6 @@ const rules = {
     { required: true, message: '請上傳圖片', trigger: 'change' },
   ],
 }
-
 // 編輯
 const edit = async (id) => {
   const result = await queryInfoApi(id)
@@ -188,7 +194,6 @@ const edit = async (id) => {
     meal.value = result.data
   }
 }
-
 // 刪除單個餐點
 const deleteById = async (id) => {
   ElMessageBox.confirm('確定刪除此餐點嗎？', '提示',
@@ -388,9 +393,8 @@ const deleteBatch = () => {
             <el-form-item label="餐點圖片" prop="image">
               <el-upload
                 class="avatar-uploader"
-                action="/api/upload"
+                :http-request="imageUpload"
                 :show-file-list="false"
-                :on-success="handleAvatarSuccess"
                 :before-upload="beforeAvatarUpload"
                 >
                 <img v-if="meal.image" :src="meal.image" class="iamge"
