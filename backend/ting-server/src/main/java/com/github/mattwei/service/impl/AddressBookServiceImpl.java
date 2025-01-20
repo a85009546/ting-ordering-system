@@ -7,6 +7,8 @@ import com.github.mattwei.service.AddressBookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * Description:
  *
@@ -29,4 +31,16 @@ public class AddressBookServiceImpl implements AddressBookService {
         addressBook.setIsDefault(0);
         addressBookMapper.insert(addressBook);
     }
+
+    /**
+     * 根據用戶id查詢地址列表
+     * @param addressBook
+     * @return
+     */
+    @Override
+    public List<AddressBook> list(AddressBook addressBook) {
+        return addressBookMapper.list(addressBook);
+
+    }
 }
+

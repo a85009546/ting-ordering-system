@@ -2,6 +2,8 @@ package com.github.mattwei.service;
 
 import com.github.mattwei.entity.AddressBook;
 
+import java.util.List;
+
 /**
  * Description:
  *
@@ -14,4 +16,11 @@ public interface AddressBookService {
      * @param addressBook
      */
     void save(AddressBook addressBook);
+
+    /**
+     * 查詢當前用戶所有地址
+     * @param addressBook
+     * @return
+     */
+    List<AddressBook> list(AddressBook addressBook);
 }
