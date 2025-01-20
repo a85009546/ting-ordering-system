@@ -42,4 +42,10 @@ public interface AddressBookService {
      * @return
      */
     AddressBook getById(Long id);
+
+    /**
+     * 設置默認地址
+     * @param addressBook
+     */
+    void setDefault(AddressBook addressBook);
 }

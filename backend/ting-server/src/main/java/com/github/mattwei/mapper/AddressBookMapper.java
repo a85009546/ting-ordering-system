@@ -1,10 +1,7 @@
 package com.github.mattwei.mapper;
 
 import com.github.mattwei.entity.AddressBook;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -49,4 +46,11 @@ public interface AddressBookMapper {
      */
     @Select("select * from address_book where id = #{id}")
     AddressBook getById(Long id);
+
+    /**
+     * 根據用戶id修改所有地址為非默認
+     * @param addressBook
+     */
+    @Update("update address_book set is_default = #{isDefault} where user_id = #{userId}")
+    void setIsDefaultByUserId(AddressBook addressBook);
 }

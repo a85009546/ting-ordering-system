@@ -98,4 +98,15 @@ public class AddressBookController {
         AddressBook addressBook = addressBookService.getById(id);
         return Result.success(addressBook);
     }
+
+    /**
+     * 設置默認地址
+     * @param addressBook
+     * @return
+     */
+    @PutMapping("/default")
+    public Result setDefault(@RequestBody AddressBook addressBook){
+        addressBookService.setDefault(addressBook);
+        return Result.success();
+    }
 }
