@@ -52,11 +52,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public OrderSubmitVO submitOrder(OrderSumbitDTO orderSumbitDTO) {
         // 1. 處理各種業務異常 (地址簿為空、購物車為空)
-        AddressBook addressBook = addressBookMapper.getById(orderSumbitDTO.getAddressBookId());
-        if(addressBook == null){
-            throw new AddressBookBusinessException(MessageConstant.ADDRESS_BOOK_IS_NULL);
-        }
-        // 查詢當前用戶的購物車
+        // 1.1 查詢當前用戶的購物車是否為空
         ShoppingCart shoppingCart = new ShoppingCart();
         Long userId = BaseContext.getCurrentId();
         shoppingCart.setUserId(userId);
@@ -64,6 +60,15 @@ public class OrderServiceImpl implements OrderService {
         if(shoppingCartList == null || shoppingCartList.size() == 0){
             throw new ShoppingCartBusinessException(MessageConstant.SHOPPING_CART_IS_NULL);
         }
+        // 1.2 購物車不為空，查詢餘額是否足夠
+
+
+        AddressBook addressBook = addressBookMapper.getById(orderSumbitDTO.getAddressBookId());
+        if(addressBook == null){
+            throw new AddressBookBusinessException(MessageConstant.ADDRESS_BOOK_IS_NULL);
+        }
+
+
         // 2. 需要向訂單表插入 1 條數據
         Orders orders = new Orders();
         BeanUtils.copyProperties(orderSumbitDTO, orders);
