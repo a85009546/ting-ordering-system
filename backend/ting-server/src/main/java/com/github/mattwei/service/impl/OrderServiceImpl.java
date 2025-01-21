@@ -69,7 +69,8 @@ public class OrderServiceImpl implements OrderService {
         }
 
         // 2. 根據訂單金額扣除用戶餘額
-
+        user.setBalance(user.getBalance().subtract(orderSumbitDTO.getAmount()));
+        userMapper.update(user);
 
         // 3. 需要向訂單表插入 1 條數據
         Orders orders = new Orders();
