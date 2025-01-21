@@ -26,6 +26,7 @@ const accountStore = useAccountStore()
 const balanceStore = useBalanceStore()
 const avatarStore = useAvatarStore()
 
+const defaultAddress = ref('尚未選擇地址')
 const selectedAddress = ref('尚未選擇地址') // 當前選擇的地址
 const isAddressDialogVisible = ref(false) // 控制地址彈窗顯示
 const isEditAddressDialogVisible = ref(false)
@@ -144,10 +145,14 @@ const rules = {
   ]
 };
 // 設置默認地址
-const setDefaultAddress = async (address) => {
-  const result = await setDefaultAddressApi(selectedAddress.value.id)
+const setDefaultAddress = async (id, detail) => {
+  const result = await setDefaultAddressApi(id)
+  console.log(id, detail)
   if(result.code){
-    ElMessage.success(`當前地址已設置為: ${address.detail}`)
+    ElMessage.success(`成功設置默認地址`)
+    defaultAddress.value = detail
+    // 更新地址列表
+    fetchAddresses()
   }
 }
 // 打開新增地址彈窗
@@ -264,7 +269,7 @@ const proceedToCheckout = () => {
                   class="marker-icon-image"
                   @click="openCartDialog"
             />
-            <span>{{ selectedAddress }}</span>
+            <span>{{ defaultAddress }}</span>
           </span>
         </span>
         
@@ -446,7 +451,7 @@ const proceedToCheckout = () => {
           <el-radio
             v-model="selectedAddress"
             :label="address.id"
-            @change="setDefaultAddress(address.id)"
+            @change="setDefaultAddress(address.id, address.detail)"
           >
             設為預設地址
           </el-radio>

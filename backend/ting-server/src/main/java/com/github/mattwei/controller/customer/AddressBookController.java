@@ -101,12 +101,14 @@ public class AddressBookController {
 
     /**
      * 設置默認地址
-     * @param addressBook
+     * @param id
      * @return
      */
     @PutMapping("/default")
-    public Result setDefault(@RequestBody AddressBook addressBook){
-        log.info("設為默認地址: {}", addressBook.getId());
+    public Result setDefault(Long id){
+        log.info("設為默認地址: {}", id);
+        AddressBook addressBook = new AddressBook();
+        addressBook.setId(id);
         addressBookService.setDefault(addressBook);
         return Result.success();
     }
