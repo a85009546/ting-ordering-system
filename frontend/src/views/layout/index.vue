@@ -147,7 +147,6 @@ const rules = {
 // 設置默認地址
 const setDefaultAddress = async (id, detail) => {
   const result = await setDefaultAddressApi(id)
-  console.log(id, detail)
   if(result.code){
     ElMessage.success(`成功設置默認地址`)
     defaultAddress.value = detail
@@ -262,7 +261,7 @@ const proceedToCheckout = () => {
           </el-button>
 
           <!-- 地址顯示框 -->
-          <span class="address-display" @click="openAddressDialog">
+          <span v-if="roleStore.role <= 3" class="address-display" @click="openAddressDialog">
             <img
                   src="@/assets/images/marker.png"
                   alt="Location"
