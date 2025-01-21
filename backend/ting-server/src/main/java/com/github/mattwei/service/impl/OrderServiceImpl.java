@@ -3,16 +3,11 @@ package com.github.mattwei.service.impl;
 import com.github.mattwei.constant.MessageConstant;
 import com.github.mattwei.context.BaseContext;
 import com.github.mattwei.dto.OrderSumbitDTO;
-import com.github.mattwei.entity.AddressBook;
-import com.github.mattwei.entity.OrderDetail;
-import com.github.mattwei.entity.Orders;
-import com.github.mattwei.entity.ShoppingCart;
+import com.github.mattwei.entity.*;
 import com.github.mattwei.exception.AddressBookBusinessException;
 import com.github.mattwei.exception.ShoppingCartBusinessException;
-import com.github.mattwei.mapper.AddressBookMapper;
-import com.github.mattwei.mapper.OrderDetailMapper;
-import com.github.mattwei.mapper.OrderMapper;
-import com.github.mattwei.mapper.ShoppingCartMapper;
+import com.github.mattwei.exception.UserBusinessException;
+import com.github.mattwei.mapper.*;
 import com.github.mattwei.service.OrderService;
 import com.github.mattwei.vo.OrderSubmitVO;
 import org.springframework.beans.BeanUtils;
@@ -42,6 +37,8 @@ public class OrderServiceImpl implements OrderService {
     private AddressBookMapper addressBookMapper;
     @Autowired
     private ShoppingCartMapper shoppingCartMapper;
+    @Autowired
+    private UserMapper userMapper;
 
     /**
      * 顧客下單
@@ -61,15 +58,20 @@ public class OrderServiceImpl implements OrderService {
             throw new ShoppingCartBusinessException(MessageConstant.SHOPPING_CART_IS_NULL);
         }
         // 1.2 購物車不為空，查詢餘額是否足夠
-
-
+        User user = userMapper.getById(userId);
+        if(user.getBalance().compareTo(orderSumbitDTO.getAmount()) < 0){
+            throw new UserBusinessException(MessageConstant.USER_BALANCE_NOT_ENOUGH);
+        }
+        // 1.3 檢查是否有地址
         AddressBook addressBook = addressBookMapper.getById(orderSumbitDTO.getAddressBookId());
         if(addressBook == null){
             throw new AddressBookBusinessException(MessageConstant.ADDRESS_BOOK_IS_NULL);
         }
 
+        // 2. 根據訂單金額扣除用戶餘額
 
-        // 2. 需要向訂單表插入 1 條數據
+
+        // 3. 需要向訂單表插入 1 條數據
         Orders orders = new Orders();
         BeanUtils.copyProperties(orderSumbitDTO, orders);
         orders.setNumber(String.valueOf(System.currentTimeMillis())); // 使用時間戳當訂單號
@@ -82,7 +84,7 @@ public class OrderServiceImpl implements OrderService {
         orders.setConsignee(addressBook.getConsignee());
 
         orderMapper.insert(orders);
-        // 3. 需要向訂單明細表插入 n 條數據
+        // 4. 需要向訂單明細表插入 n 條數據
         List<OrderDetail> orderDetailList = shoppingCartList.stream()
                 .map(cart -> {
                     OrderDetail orderDetail = new OrderDetail();
@@ -92,9 +94,9 @@ public class OrderServiceImpl implements OrderService {
                 })
                 .collect(Collectors.toList());
         orderDetailMapper.insertBatch(orderDetailList);
-        // 4. 清空當前顧客的購物車
+        // 5. 清空當前顧客的購物車
         shoppingCartMapper.deleteByUserId(userId);
-        // 5. 返回結果
+        // 6. 返回結果
         OrderSubmitVO orderSubmitVO = OrderSubmitVO.builder()
                 .id(orders.getId())
                 .orderNumber(orders.getNumber())

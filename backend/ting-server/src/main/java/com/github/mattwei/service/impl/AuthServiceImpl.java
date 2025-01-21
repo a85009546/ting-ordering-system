@@ -5,6 +5,7 @@ import com.github.mattwei.dto.UserLoginDTO;
 import com.github.mattwei.entity.MenuItem;
 import com.github.mattwei.entity.User;
 import com.github.mattwei.mapper.AuthMapper;
+import com.github.mattwei.mapper.UserMapper;
 import com.github.mattwei.properties.JwtProperties;
 import com.github.mattwei.result.Result;
 import com.github.mattwei.service.AuthService;
@@ -35,6 +36,8 @@ public class AuthServiceImpl implements AuthService {
     private AuthMapper authMapper;
     @Autowired
     private JwtProperties jwtProperties;
+    @Autowired
+    private UserMapper userMapper;
 
     /**
      * 根據用戶名查詢用戶信息
@@ -68,7 +71,7 @@ public class AuthServiceImpl implements AuthService {
     public UserLoginVO login(User user) {
         // 更新用戶最後登入時間
         user.setUpdateTime(LocalDateTime.now());
-        authMapper.update(user);
+        userMapper.update(user);
         // 登入成功，獲取令牌以及路徑資源
         Map<String, Object> claims = new HashMap<>();
         claims.put(JwtClaimsConstant.USER_ID, user.getId());

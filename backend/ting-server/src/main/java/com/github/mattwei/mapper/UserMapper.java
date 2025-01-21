@@ -21,4 +21,10 @@ public interface UserMapper {
      */
     @Select("select * from user where id = #{id}")
     User getById(Long id);
+
+    /**
+     * 更新用戶
+     * @param user
+     */
+    void update(User user);
 }

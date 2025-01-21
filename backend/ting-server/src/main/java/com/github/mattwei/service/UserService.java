@@ -16,4 +16,10 @@ public interface UserService {
      * @return
      */
     User getById(Long id);
+
+    /**
+     * 更新用戶資訊
+     * @param user
+     */
+    void update(User user);
 }
