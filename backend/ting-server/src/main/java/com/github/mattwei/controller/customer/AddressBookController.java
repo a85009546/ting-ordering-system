@@ -106,6 +106,7 @@ public class AddressBookController {
      */
     @PutMapping("/default")
     public Result setDefault(@RequestBody AddressBook addressBook){
+        log.info("設為默認地址: {}", addressBook.getId());
         addressBookService.setDefault(addressBook);
         return Result.success();
     }

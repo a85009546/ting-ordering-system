@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, computed, provide, inject, reactive } from 'vue'
+import { ref, onMounted, computed, provide, inject, reactive} from 'vue'
 import { getMenuApi } from '@/api/menu'
 import { updateStatusApi, queryStatusApi } from '@/api/shop'
 import { useRoleStore } from '@/stores/role'
@@ -7,10 +7,14 @@ import { useAccountStore } from '@/stores/account'
 import { useBalanceStore } from '@/stores/balance'
 import { useAvatarStore } from '@/stores/avatar'
 import { getCartApi, clearCartApi } from '@/api/shoppingCart'
-import { getAddressListApi, setDefaultAddressApi, deleteAddressApi } from '@/api/addressBook'
-import { ElMessage } from 'element-plus'
+import { getAddressListApi, setDefaultAddressApi, deleteAddressApi, getAddressByIdApi, addAddressApi, updateAddressApi } from '@/api/addressBook'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import defaultIcon from '@/assets/images/default-location-icon.png';
+import locationIcon from '@/assets/images/location-icon.png';
+import { useRouter } from 'vue-router'
 
 
+const router = useRouter()
 const isOpen = ref(true) // 營業狀態 (true: 營業中, false: 休息中)
 const isShopDialogVisible = ref(false) // 控制選框的顯示
 const isCartDialogVisible = ref(false) // 控制購物車彈框的顯示
@@ -24,8 +28,45 @@ const avatarStore = useAvatarStore()
 
 const selectedAddress = ref('尚未選擇地址') // 當前選擇的地址
 const isAddressDialogVisible = ref(false) // 控制地址彈窗顯示
+const isEditAddressDialogVisible = ref(false)
+const addressDialogTitle = ref('新增地址')
 const addressList = reactive([]) // 地址列表
-
+const AddressFormRef = ref() // 地址表單物件
+const citys = ref([
+  { name: '基隆', value: 1 },
+  { name: '宜蘭', value: 2 },
+  { name: '台北', value: 3 },
+  { name: '新北', value: 4 },
+  { name: '新竹', value: 5 }, 
+  { name: '桃園', value: 6 }, 
+  { name: '彰化', value: 7 }, 
+  { name: '南投', value: 8 }, 
+  { name: '台中', value: 9 },
+  { name: '雲林', value: 10 },
+  { name: '嘉義', value: 11 },
+  { name: '台南', value: 12 },
+  { name: '高雄', value: 13 },
+  { name: '屏東', value: 14 },
+])
+const districts = ref([
+  { name: '北區', value: 1 },
+  { name: '東區', value: 2 },
+  { name: '西區', value: 3 },
+  { name: '南區', value: 4 }
+])
+const AddressForm = reactive({
+  id: null,
+  consignee: '',
+  phone: '',
+  sex: '',
+  cityCode: '',
+  cityName: '',
+  districtCode: '',
+  districtName: '',
+  detail: '',
+  label: '',
+  isDefault: ''
+})
 // 提供購物車數據和操作方法
 provide('shoppingCartItems', shoppingCartItems);
 // 提供營業狀態數據和操作方法
@@ -41,6 +82,7 @@ onMounted(async () => {
   getShopStatus() // 獲取營業狀態
   getCartItems() // 獲取購物車內容
 })
+const navigate = (path) => router.push(path);
 // 獲得選單列表數據
 const getMenu = async () => {
   const response = await getMenuApi()
@@ -84,26 +126,99 @@ const openAddressDialog = () => {
   fetchAddresses()
   isAddressDialogVisible.value = true
 }
+const rules = {
+  consignee: [
+    { required: true, message: '請輸入收貨人姓名', trigger: 'blur' },
+    { min: 2, max: 16, message: '姓名長度在 2 到 16 個字符之間', trigger: 'blur' },
+  ],
+  phone: [
+    { required: true, message: '請輸入手機號碼', trigger: 'blur' },
+    { pattern: /^09\d{8}$/, message: '手機號碼必須為09 開頭的 10 位數字', trigger: 'blur'}
+  ],
+  address: [
+    { required: true, message: '請輸入詳細地址', trigger: 'blur' },
+    { min: 5, max: 100, message: '地址長度在 5 到 100 個字符之間', trigger: 'blur' },
+  ],
+  city: [
+    { required: true, message: '請選擇城市', trigger: 'change' },
+  ]
+};
 // 設置默認地址
 const setDefaultAddress = async (address) => {
   const result = await setDefaultAddressApi(selectedAddress.value.id)
   if(result.code){
     ElMessage.success(`當前地址已設置為: ${address.detail}`)
   }
-  
 }
+// 打開新增地址彈窗
+const addAddress = () => {
+  isEditAddressDialogVisible.value = true;
+  addressDialogTitle.value = '新增地址';
+  
+  // 逐一重置 AddressForm 的屬性
+  AddressForm.id = null;
+  AddressForm.consignee = '';
+  AddressForm.phone = '';
+  AddressForm.sex = '';
+  AddressForm.cityCode = '';
+  AddressForm.cityName = '';
+  AddressForm.districtCode = '';
+  AddressForm.districtName = '';
+  AddressForm.detail = '';
+  AddressForm.label = '';
+  AddressForm.isDefault = '';
+
+  // 重置表單提示訊息
+  if (AddressFormRef.value) {
+    AddressFormRef.value.resetFields();
+  }
+};
 // 編輯地址
-const editAddress = (address) => {
-  console.log('編輯地址:', address)
-  // 在這裡可以開啟一個編輯地址的彈框或頁面
+const editAddress = async (id) => {
+  const result = await getAddressByIdApi(id)
+  if(result.code){
+    isEditAddressDialogVisible.value = true
+    addressDialogTitle.value = '編輯地址'
+    Object.assign(AddressForm, result.data)
+  }
+}
+// 保存地址
+const saveAddress = async () => {
+  // 表單校驗
+  AddressFormRef.value.validate(async (valid) => {
+    if(valid){
+      let result
+      if(AddressForm.id){ // 編輯地址
+        result = await updateAddressApi(AddressForm)
+      }else{ // 新增地址
+        result = await addAddressApi(AddressForm)
+      }
+      if(result.code){
+        ElMessage.success('保存成功')
+        // 關閉彈框
+        isEditAddressDialogVisible.value = false
+        // 再次獲得地址列表
+        fetchAddresses()
+      }else{
+        ElMessage.error(result.msg)
+      }
+    }else{
+      ElMessage.error('表單校驗不通過')
+    }
+  })
 }
 // 刪除地址
 const deleteAddress = async (id) => {
-  const response = await deleteAddressApi(id)
-  if (response.code === 200) {
-    ElMessage.success('地址已刪除')
-    fetchAddresses()
-  }
+  ElMessageBox.confirm('確定刪除此地址嗎？', '提示',
+    { confirmButtonText: '確定', cancelButtonText: '取消', type: 'warning',}
+  ).then(async () => { // 確定
+    const result = await deleteAddressApi(id)
+    if (result.code) {
+      ElMessage.success('刪除成功')
+      // 獲得地址列表
+      fetchAddresses()
+    }
+  })
 }
 // 清空購物車
 const clearCart = async () => {
@@ -144,9 +259,9 @@ const proceedToCheckout = () => {
           <!-- 地址顯示框 -->
           <span class="address-display" @click="openAddressDialog">
             <img
-                  src="@/assets/images/location.png"
+                  src="@/assets/images/marker.png"
                   alt="Location"
-                  class="location-icon-image"
+                  class="marker-icon-image"
                   @click="openCartDialog"
             />
             <span>{{ selectedAddress }}</span>
@@ -293,25 +408,164 @@ const proceedToCheckout = () => {
     </el-dialog>
 
     <!-- 地址選擇彈窗 -->
-    <el-dialog v-model="isAddressDialogVisible" title="地址" width="600px">
+    <el-dialog v-model="isAddressDialogVisible" width="350px">
+      <template #header>
+        <span class="custom-dialog-title">地址管理</span>
+      </template>
+      <!-- 新增地址按鈕 -->
+      <div class="add-address-button">
+          <el-button type="primary" @click="addAddress">新增地址</el-button>
+      </div>
       <div v-for="address in addressList" :key="address.id" class="address-card">
-        <el-icon :class="address.isDefault ? 'default-location-icon' : 'location-icon'">
-          <Location />
-        </el-icon>
-        <div class="address-content">
-          <p class="address-detail">{{ address.detail }}</p>
-          <p class="address-region">{{ address.city }} · {{ address.district }}</p>
+        <!-- 上半部分 -->
+        <div class="address-card-top">
+          <!-- 左邊：圖標 -->
+          <div class="address-icon">
+            <img
+              :src="address.isDefault ? defaultIcon : locationIcon"
+              alt="Location Icon"
+              class="location-icon"
+            />
+          </div>
+
+          <!-- 中間：詳細地址與市名區名 -->
+          <div class="address-info">
+            <strong class="detail-address">{{ address.detail }}</strong>
+            <p class="city-area">{{ address.cityName }} {{ address.districtName }}</p>
+          </div>
+
+          <!-- 右邊：編輯與刪除按鈕 -->
+          <div class="address-buttons">
+            <el-button type="text" @click="editAddress(address.id)">編輯</el-button>
+            <el-button type="text" @click="deleteAddress(address.id)">刪除</el-button>
+          </div>
         </div>
-        <div class="address-actions">
-          <el-button type="primary" size="small" @click="editAddress(address)">編輯</el-button>
-          <el-button type="danger" size="small" @click="deleteAddress(address.id)">刪除</el-button>
+
+        <!-- 下半部分 -->
+        <div class="address-card-bottom">
+          <el-radio
+            v-model="selectedAddress"
+            :label="address.id"
+            @change="setDefaultAddress(address.id)"
+          >
+            設為預設地址
+          </el-radio>
         </div>
       </div>
     </el-dialog>
+
+    <!-- 新增與編輯地址彈窗 -->
+    <el-dialog
+      v-model="isEditAddressDialogVisible"
+      :title="addressDialogTitle"
+      width="400px"
+    >
+      <el-form :model="AddressForm" :rules="rules" ref="AddressFormRef" label-width="80px">
+        <el-form-item label="聯絡人">
+          <el-input v-model="AddressForm.consignee" placeholder="請輸入聯絡人"></el-input>
+        </el-form-item>
+        <el-form-item label="性別" prop="sex">
+          <el-radio-group v-model="AddressForm.sex">
+            <el-radio label="1">男</el-radio>
+            <el-radio label="0">女</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="手機號碼">
+          <el-input v-model="AddressForm.phone" placeholder="請輸入手機號碼"></el-input>
+        </el-form-item>
+        <el-form-item label="城市" prop="cityName">
+          <el-select v-model="AddressForm.cityName" placeholder="請選擇">
+            <el-option v-for="c in citys" :key="c.value" :label="c.name" :value="c.name"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="區域">
+          <el-select v-model="AddressForm.districtName" placeholder="請選擇">
+            <el-option v-for="d in districts" :key="d.value" :label="d.name" :value="d.name"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="詳細地址">
+          <el-input v-model="AddressForm.detail" placeholder="請輸入詳細地址"></el-input>
+        </el-form-item>
+        <el-form-item label="標籤" prop="label">
+          <el-radio-group v-model="AddressForm.label">
+            <el-radio label="0">家</el-radio>
+            <el-radio label="1">公司</el-radio>
+            <el-radio label="2">學校</el-radio>
+          </el-radio-group>
+        </el-form-item>
+      </el-form>
+      <div style="text-align: right; margin-top: 20px;">
+        <el-button @click="isEditAddressDialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="saveAddress">保存</el-button>
+      </div>
+    </el-dialog>
+
   </div>
 </template>
 
 <style scoped>
+.add-address-button{
+  margin-bottom: 20px;
+}
+.address-card{
+  border: 1px solid #dcdfe6;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.address-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.address-icon {
+  flex-shrink: 0;
+  margin-top: 10px;
+  width: 40px;
+  height: 40px;
+}
+.location-icon {
+  width: 50%;
+  height: 50%;
+}
+.address-info {
+  flex-grow: 1;
+  margin-left: 0px;
+}
+.detail-address {
+  font-size: 16px;
+  font-weight: bold;
+}
+.city-area {
+  font-size: 14px;
+  color: #909399;
+}
+.address-button {
+  display: flex;
+  gap: 10px;
+}
+.address-card-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+.address-card-bottom .el-radio {
+  margin: 0;
+}
+.address-display {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  color: #fff;
+  margin-left: 20px;
+  font-weight: bold;
+}
+.address-display:hover {
+  text-decoration: underline;
+}
 .header {
   background-image: linear-gradient(to right, #00547d, #007fa4, #00aaa0, #00d072, #a8eb12);
   display: flex;
@@ -439,23 +693,19 @@ margin-bottom: 15px;
   margin-right: 10px;
   font-weight: bold;
 }
-/* Location圖標 */
-.location-icon-image {
+/* Marker圖標 */
+.marker-icon-image {
   width: 20px; 
   height: 20px;
   margin-right: 5px;
   cursor: pointer;
 }
-.address-display {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  color: #fff;
-  margin-left: 20px;
-  font-weight: bold;
+.default-location-icon,
+.location-icon {
+  width: 24px; 
+  height: 24px; 
+  margin-right: 10px; /* 與地址文字間距 */
+  object-fit: contain; /* 確保圖片不會變形 */
+  cursor: pointer; /* 鼠標懸停顯示指針 */
 }
-.address-display:hover {
-  text-decoration: underline;
-}
-
 </style>
