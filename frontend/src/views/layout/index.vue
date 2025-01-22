@@ -28,7 +28,7 @@ const accountStore = useAccountStore()
 const balanceStore = useBalanceStore()
 const avatarStore = useAvatarStore()
 
-const defaultAddress = ref('尚未選擇地址')
+const defaultAddress = ref('')
 const selectedAddress = ref('尚未選擇地址') // 當前選擇的地址
 const isAddressDialogVisible = ref(false) // 控制地址彈窗顯示
 const isEditAddressDialogVisible = ref(false)
@@ -90,6 +90,7 @@ onMounted(async () => {
   getMenu() // 獲取選單數據
   getShopStatus() // 獲取營業狀態
   getCartItems() // 獲取購物車內容
+  fetchAddresses() // 獲取地址列表
 })
 const navigate = (path) => router.push(path);
 // 獲得選單列表數據
@@ -112,6 +113,9 @@ const getCartItems = async () => {
 const fetchAddresses = async () => {
   const response = await getAddressListApi()
   addressList.splice(0, addressList.length, ...response.data)
+  // 綁定 defaultAddress
+  defaultAddress.value = addressList.find(address => address.isDefault)
+
 }
 // 打開營業狀態彈框
 const openStatusDialog = () => {
@@ -313,7 +317,7 @@ const beforeAvatarUpload = (rawFile) => {
                   class="marker-icon-image"
                   @click="openCartDialog"
             />
-            <span>{{ defaultAddress }}</span>
+            <span>{{ defaultAddress.detail }}</span>
           </span>
         </span>
         
