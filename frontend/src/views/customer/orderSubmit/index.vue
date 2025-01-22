@@ -1,31 +1,56 @@
 <script setup>
-import {ref, computed, inject, watch, reactive} from 'vue'
+import {ref, computed, inject, watch, reactive, onMounted} from 'vue'
+import { orderSubmitApi } from '@/api/order'
+import { useBalanceStore } from '@/stores/balance'
+import { ElMessage } from 'element-plus'
+import useAddress from '@/composables/useAddress';
 
-
+const balanceStore = useBalanceStore()
 const addressList = inject('addressList', reactive([])) // 地址列表，從父組件傳入
 const shoppingCartItems = inject('shoppingCartItems', reactive([])) // 購物車列表，從父組件傳入
+const isPayDialogVisible = ref(false) // 控制確定支付彈窗
+const orderFormRef = ref()
+const { fetchAddressList } = useAddress();
+
+onMounted(() => {
+  fetchAddressList()
+})
+watch(addressList, (newAddressList) => {
+  console.log('地址列表更新了:', newAddressList)
+})
+
+// 外送費與總金額計算
+const deliveryFee = 30
+const amount = computed(() => {
+  // 直接使用 shoppingCartItems，因為它已經是 reactive
+  const itemsTotal = shoppingCartItems.reduce((sum, item) => {
+    return sum + item.amount * item.number
+  }, 0);
+  return itemsTotal + deliveryFee
+})
 // 訂單數據模型
 const order = ref({
   addressBookId:'',
-  amount:'',
+  amount, 
   remark:'',
   estimatedDeliveryTime:'',
   deliveryStatus:''
 }) 
+// 清空訂單數據
+const clearOrder = () => {
+  order.value = {
+    addressBookId:'',
+    amount: 0, // 初始為 0，但會被 computed 覆蓋
+    remark:'',
+    estimatedDeliveryTime:'',
+    deliveryStatus:''
+  }
+}
+// 餘額計算
+const newBalance = computed(() => {
+  return balanceStore.balance - amount.value
+})
 
-// 外送費與總金額計算
-const deliveryFee = 30;
-const totalPrice = computed(() => {
-  // 直接使用 shoppingCartItems，因為它已經是 reactive
-  const itemsTotal = shoppingCartItems.reduce((sum, item) => {
-    return sum + item.amount * item.number;
-  }, 0);
-  return itemsTotal + deliveryFee;
-});
-// 監聽 totalPrice 的變化，並將其賦值給 order.amount
-watch(totalPrice, (newTotalPrice) => {
-  order.value.amount = newTotalPrice;
-});
 // 格式化時間為 yyyy-MM-dd HH:mm:ss
 function formatDate(date) {
   const yyyy = date.getFullYear();
@@ -46,12 +71,46 @@ watch(() => order.value.deliveryStatus, (newStatus) => {
     order.value.estimatedDeliveryTime = ''; // 如果不是立即送出，則清空預計送達時間
   }
 });
-
-// 支付按鈕操作
+// 定義註冊表單校驗規則
+const rules = {
+  addressBookId: [
+  { required: true, message: '請選擇收貨地址', trigger: 'blur' },
+  ],
+  deliveryStatus: [
+    { required: true, message: '請選擇下單方式', trigger: 'blur' },
+  ]
+}
+// 去支付按鈕操作
 const submitOrder = () => {
-  console.log("支付中...");
-  console.log(order.value)
-};
+  // 表單校驗
+  if(!orderFormRef.value) return
+  orderFormRef.value.validate((valid) => {
+    if(valid){ // 校驗通過
+      // 跳出確定支付彈窗
+      isPayDialogVisible.value = true
+    }else{
+      ElMessage.error('表單校驗不通過')
+    }
+  })
+}
+// 確認支付按鈕操作
+const payOrder = async () => {
+  // 調用支付接口
+  const result = await orderSubmitApi(order.value)
+  if(result.code){
+    ElMessage.success('訂單提交成功')
+    // 更新餘額顯示
+    balanceStore.setBalance(newBalance.value)
+    // 清空訂單信息
+    clearOrder()
+    // 關閉彈窗
+    isPayDialogVisible.value = false
+    // 跳轉到歷史訂單頁面
+    console.log('跳轉到歷史訂單頁面')
+  }else{
+    ElMessage.error(result.msg)
+  }
+}
 </script>
 
 <template>
@@ -60,9 +119,10 @@ const submitOrder = () => {
     {{ order }}
     <el-card class="card">
       <h3>收貨資訊</h3>
-      <el-form label-width="120px" :model="order">
+      {{ addressList}}
+      <el-form label-width="120px" :model="order" :rules="rules" ref="orderFormRef">
         <!-- 收貨地址 -->
-        <el-form-item label="收貨地址">
+        <el-form-item label="收貨地址" prop="addressBookId">
           <el-select v-model="order.addressBookId" placeholder="請選擇收貨地址">
             <el-option
               v-for="address in addressList"
@@ -73,7 +133,7 @@ const submitOrder = () => {
           </el-select>
         </el-form-item>
         <!-- 配送狀態 -->
-        <el-form-item label="下單方式">
+        <el-form-item label="下單方式" prop="deliveryStatus">
           <el-radio-group v-model="order.deliveryStatus">
             <el-radio label="1">立即送出</el-radio>
             <el-radio label="0">選擇其他時間</el-radio>
@@ -121,7 +181,7 @@ const submitOrder = () => {
         </div>
         <div class="summary-row total">
           <span>合計</span>
-          <span>NT$ {{ totalPrice }}</span>
+          <span>NT$ {{ amount }}</span>
         </div>
       </div>
     </el-card>
@@ -144,6 +204,18 @@ const submitOrder = () => {
         去支付
       </el-button>
     </el-card>
+
+
+    <!-- 支付確認彈窗 -->
+    <el-dialog v-model="isPayDialogVisible" title="確定支付" width="400px">
+      <span>扣除費用 {{ amount }} 元，餘額為 {{ newBalance }} 元</span>
+
+      <template #footer>
+        <el-button @click="isPayDialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="payOrder">確定支付</el-button>
+      </template>
+    </el-dialog>
+  
   </div>
 </template>
 
