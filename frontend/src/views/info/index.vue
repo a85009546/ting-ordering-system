@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  個人中心
+  <h1>個人中心</h1>
 </template>
 
 <style scoped>

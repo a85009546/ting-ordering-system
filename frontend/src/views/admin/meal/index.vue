@@ -2,8 +2,9 @@
 import { ref, onMounted } from 'vue'
 import { queryListApi as queryCategoryListApi } from '@/api/category'
 import { pageQueryApi, updateStatusApi, addApi, queryInfoApi, updateApi, deleteApi } from '@/api/meal'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ElMessage, ElMessageBox, useTransitionFallthroughEmits } from 'element-plus'
 import { uploadApi } from '@/api/upload'
+
 // 鉤子
 onMounted(() => {
   search()
@@ -389,7 +390,7 @@ const deleteBatch = () => {
         </el-row>
         <!-- 圖片 -->
         <el-row>
-          <el-cow :span="20">
+          <el-col :span="20">
             <el-form-item label="餐點圖片" prop="image">
               <el-upload
                 class="avatar-uploader"
@@ -402,7 +403,7 @@ const deleteBatch = () => {
                 <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
               </el-upload>
             </el-form-item>
-          </el-cow>
+          </el-col>
         </el-row>
         <!-- 餐點簡介 -->
         <el-row>
@@ -427,10 +428,7 @@ const deleteBatch = () => {
 .container {
   margin: 15px 0px;
 }
-/* 圖片樣式 */
-.avatar {
-  height: 40px;
-}
+
 .avatar-uploader .avatar {
   width: 78px;
   height: 78px;
@@ -443,10 +441,6 @@ const deleteBatch = () => {
   position: relative;
   overflow: hidden;
   transition: var(--el-transition-duration-fast);
-}
-
-.avatar-uploader .el-upload:hover {
-  border-color: var(--el-color-primary);
 }
 
 .el-icon.avatar-uploader-icon {

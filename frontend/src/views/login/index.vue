@@ -116,11 +116,9 @@ const login = async () => {
     // 頭像存到 pinia
     avatarStore.setAvatar(result.data.avatar)
     console.log('存入avatar至pinia:',avatarStore.avatar)
-    if(roleStore.role === 1){
-      // 身分為顧客:餘額存到 pinia
-      balanceStore.setBalance(result.data.balance)
-      console.log('存入balance至pinia:',balanceStore.balance)
-    }
+    // 餘額存到 pinia
+    balanceStore.setBalance(result.data.balance)
+    console.log('存入balance至pinia:',balanceStore.balance)
     // 跳轉到首頁
     router.push('/')
   }

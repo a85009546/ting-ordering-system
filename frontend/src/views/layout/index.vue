@@ -13,6 +13,7 @@ import defaultIcon from '@/assets/images/default-location-icon.png';
 import locationIcon from '@/assets/images/location-icon.png';
 import defaultAvatarIcon from '@/assets/images/default-avatar.png'
 import { useRouter } from 'vue-router'
+import { uploadApi } from '@/api/upload'
 
 
 const router = useRouter()
@@ -31,9 +32,11 @@ const defaultAddress = ref('尚未選擇地址')
 const selectedAddress = ref('尚未選擇地址') // 當前選擇的地址
 const isAddressDialogVisible = ref(false) // 控制地址彈窗顯示
 const isEditAddressDialogVisible = ref(false)
+const isAvatarDialogVisible = ref(false) // 控制頭像彈窗顯示
 const addressDialogTitle = ref('新增地址')
 const addressList = reactive([]) // 地址列表
 const AddressFormRef = ref() // 地址表單物件
+const avatar = ref(avatarStore.avatar)
 const citys = ref([
   { name: '基隆', value: 1 },
   { name: '宜蘭', value: 2 },
@@ -256,6 +259,31 @@ const proceedToCheckout = () => {
   })
 
 }
+// 保存圖片
+const saveAvatar = async (options) => {
+  const formData = new FormData()
+  formData.append('file', options.file)
+
+  const result = await uploadApi(formData)
+  if(result.code){
+    avatar.value = result.data
+    avatarStore.setAvatar(result.data)
+    // isAvatarDialogVisible.value = false
+    ElMessage.success('頭像更新成功')
+  }
+} 
+// 文件上傳之前觸發
+const beforeAvatarUpload = (rawFile) => {
+  // 先判斷文件類型是否是圖片
+  if (rawFile.type !== 'image/jpeg' && rawFile.type !== 'image/png') {
+    ElMessage.error('只支持上傳圖片')
+    return false
+  } else if (rawFile.size / 1024 / 1024 > 10) {
+    ElMessage.error('只能上傳10M以内圖片')
+    return false
+  }
+  return true
+}
 </script>
 
 <template>
@@ -289,17 +317,18 @@ const proceedToCheckout = () => {
           </span>
         </span>
         
-
         <!-- Header 右側區域 -->
         <span class="header-right-content">
-          <!-- 帳號和身份顯示 -->
+          <!-- 頭像顯示 -->
           <span class="avatar-info">
             <img
               :src="avatarStore.avatar || defaultAvatarIcon"
               alt="User Avatar"
               class="user-avatar"
+              @click="isAvatarDialogVisible = true"
             />
           </span>
+          <!-- 帳號和身份顯示 -->
           <span class="account-info">
             帳號：<strong>{{ accountStore.account }}</strong>
           </span>
@@ -522,6 +551,35 @@ const proceedToCheckout = () => {
       </div>
     </el-dialog>
 
+    <!-- 更換頭像的彈框 -->
+    <el-dialog v-model="isAvatarDialogVisible" title="更換頭像" width="400px">
+      <el-row>
+        <el-col :span="20">
+          <el-form-item>
+            <el-upload
+              class="avatar-uploader"
+              :http-request="saveAvatar"
+              :show-file-list="false"
+              :before-upload="beforeAvatarUpload"
+              >
+              <div class="avatar-upload-container">
+                <img v-if="avatar" :src="avatar" class="iamge-preview"
+                style="width: 200px; height: 120px; object-fit: cover;"/>
+                <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
+              </div>
+            </el-upload>
+          </el-form-item>
+        </el-col>
+      </el-row>
+
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="isAvatarDialogVisible = false">關閉</el-button>
+        </div>
+        
+      </template>
+    </el-dialog>
+
   </div>
 </template>
 
@@ -729,5 +787,44 @@ margin-bottom: 15px;
   margin-right: 10px; /* 與地址文字間距 */
   object-fit: contain; /* 確保圖片不會變形 */
   cursor: pointer; /* 鼠標懸停顯示指針 */
+}
+/* .avatar-uploader {
+  width: 78px;
+  height: 78px;
+  display: flex;
+  align-items: center;
+} */
+/* .avatar-uploader .el-upload {
+  border: 1px dashed var(--el-border-color);
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: var(--el-transition-duration-fast);
+} */
+/* .el-icon .avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 78px;
+  height: 78px;
+  text-align: center;
+  border-radius: 10px;
+  border: 1px dashed var(--el-border-color);
+} */
+/* 圖片居中 */
+.avatar-upload-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 120px;
+  margin-left: 65px;
+}
+
+/* 按鈕居中 */
+.dialog-footer {
+  display: flex;
+  justify-content: center;
+  gap: 20px; /* 按鈕之間的間距 */
 }
 </style>
