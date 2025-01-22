@@ -91,31 +91,35 @@ const toggleFlavor = (option) => {
 const addToCart = async () => {
   const flavorString = selectedFlavor.value.join(', ')
   // 查看購物車中是否已經有相同的餐點
+  let res
   const existingItem = shoppingCartItems.find(item =>
     item.mealId === selectedMeal.value.id && item.mealFlavor === flavorString)
     if (existingItem) {
-    // 如果已經存在，則增加數量
-    existingItem.number += 1
-    ElMessage.success('購物車數量已更新')
-  } else {
-    console.log('新增餐點')
-    // 如果不存在，則新增餐點
-    const newCartItem = {
-      name: selectedMeal.value.name,
-      image: selectedMeal.value.image,
-      mealId: selectedMeal.value.id,
-      mealFlavor: flavorString,
-      number: 1,
-      amount: selectedMeal.value.price,
+      // 如果已經存在，則增加數量
+      res = await addToCartApi(existingItem)
+      if(res.code){
+        ElMessage.success('購物車數量已更新')
+        existingItem.number += 1
+      }
+    } else { // 如果不存在，則新增餐點
+      console.log('新增餐點')
+      // 如果不存在，則新增餐點
+      const newCartItem = {
+        name: selectedMeal.value.name,
+        image: selectedMeal.value.image,
+        mealId: selectedMeal.value.id,
+        mealFlavor: flavorString,
+        number: 1,
+        amount: selectedMeal.value.price,
+      }
+      // 將新餐點加入購物車
+      shoppingCartItems.push(newCartItem);
+      // 調用 addToCartApi
+      res = await addToCartApi(newCartItem)
+      if(res.code){
+        ElMessage.success('成功加入購物車')
+      }
     }
-    // 將新餐點加入購物車
-    shoppingCartItems.push(newCartItem);
-    // 調用 addToCartApi
-    const result = await addToCartApi(newCartItem)
-    if(result.code){
-      ElMessage.success('成功加入購物車')
-    }
-  }
   // 關閉彈框
   if(flavorString === ''){
     plusDialogVisible.value = false

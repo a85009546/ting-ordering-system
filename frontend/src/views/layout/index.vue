@@ -138,6 +138,11 @@ const openCartDialog = () => {
 const openAddressDialog = () => {
   fetchAddresses()
   isAddressDialogVisible.value = true
+  // 設置當前選中地址為預設地址，這樣打開彈框，設置預設地址單選框就會聯動
+  console.log('selectedAddress', selectedAddress.value)
+  console.log('defaultAddress', defaultAddress.value)
+
+  selectedAddress.value = defaultAddress.value.id
 }
 const rules = {
   consignee: [
@@ -161,6 +166,7 @@ const rules = {
 };
 // 設置默認地址
 const setDefaultAddress = async (id, detail) => {
+  selectedAddress.value = id // 這一步會讓設為預設地址單選框與當前默認地址聯動
   const result = await setDefaultAddressApi(id)
   if(result.code){
     ElMessage.success(`成功設置默認地址`)
@@ -480,6 +486,7 @@ const beforeAvatarUpload = (rawFile) => {
               :src="address.isDefault ? defaultIcon : locationIcon"
               alt="Location Icon"
               class="location-icon"
+              @click="setDefaultAddress(address.id, address.detail)"
             />
           </div>
 

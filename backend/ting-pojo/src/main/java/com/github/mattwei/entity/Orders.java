@@ -23,17 +23,19 @@ import java.time.LocalDateTime;
 public class Orders implements Serializable {
 
     /**
-     * 訂單狀態 1待接單 2已接單 3派送中 4已完成 5退款
+     * 訂單狀態 1待支付 2待接單 3已接單 4派送中 5已完成 6已取消
      */
-    public static final Integer TO_BE_CONFIRMED = 1;
-    public static final Integer CONFIRMED = 2;
-    public static final Integer DELIVERY_IN_PROGRESS = 3;
-    public static final Integer COMPLETED = 4;
-    public static final Integer CANCELLED = 5;
+    public static final Integer PENDING_PAYMENT = 1;
+    public static final Integer TO_BE_CONFIRMED = 2;
+    public static final Integer CONFIRMED = 3;
+    public static final Integer DELIVERY_IN_PROGRESS = 4;
+    public static final Integer COMPLETED = 5;
+    public static final Integer CANCELLED = 6;
 
     /**
      * 支付狀態 1已支付 2退款
      */
+    public static final Integer UN_PAID = 0;
     public static final Integer PAYED = 1;
     public static final Integer REFUND = 2;
 
@@ -53,6 +55,9 @@ public class Orders implements Serializable {
 
     private LocalDateTime orderTime;
 
+    // 結帳時間
+    private LocalDateTime checkoutTime;
+
     // 支付狀態 1已支付 2退款
     private Integer payStatus;
 
@@ -70,8 +75,14 @@ public class Orders implements Serializable {
 
     private String consignee;
 
+    // 訂單取消原因
+    private String cancelReason;
+
     // 拒單原因
     private String rejectionReason;
+
+    // 訂單取消時間
+    private LocalDateTime cancelTime;
 
     private LocalDateTime estimatedDeliveryTime;
 

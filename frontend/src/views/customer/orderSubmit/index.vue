@@ -10,19 +10,17 @@ const addressList = inject('addressList', reactive([])) // 地址列表，從父
 const shoppingCartItems = inject('shoppingCartItems', reactive([])) // 購物車列表，從父組件傳入
 const isPayDialogVisible = ref(false) // 控制確定支付彈窗
 const orderFormRef = ref()
-const { fetchAddressList } = useAddress();
+const { fetchAddressList } = useAddress()
 
 onMounted(() => {
   fetchAddressList()
-})
-watch(addressList, (newAddressList) => {
-  console.log('地址列表更新了:', newAddressList)
 })
 
 // 外送費與總金額計算
 const deliveryFee = 30
 const amount = computed(() => {
   // 直接使用 shoppingCartItems，因為它已經是 reactive
+  if(shoppingCartItems.length === 0) return 0
   const itemsTotal = shoppingCartItems.reduce((sum, item) => {
     return sum + item.amount * item.number
   }, 0);
@@ -50,7 +48,6 @@ const clearOrder = () => {
 const newBalance = computed(() => {
   return balanceStore.balance - amount.value
 })
-
 // 格式化時間為 yyyy-MM-dd HH:mm:ss
 function formatDate(date) {
   const yyyy = date.getFullYear();
@@ -61,7 +58,6 @@ function formatDate(date) {
   const ss = date.getSeconds().toString().padStart(2, '0');
   return `${yyyy}-${mm}-${dd} ${hh}:${min}:${ss}`;
 }
-
 // 監聽 deliveryStatus 改變，計算預計送達時間
 watch(() => order.value.deliveryStatus, (newStatus) => {
   if (newStatus === '1') { // 如果選擇立即送出
@@ -80,46 +76,52 @@ const rules = {
     { required: true, message: '請選擇下單方式', trigger: 'blur' },
   ]
 }
-// 去支付按鈕操作
+// 提交訂單按鈕操作
 const submitOrder = () => {
   // 表單校驗
   if(!orderFormRef.value) return
-  orderFormRef.value.validate((valid) => {
+  orderFormRef.value.validate(async (valid) => {
     if(valid){ // 校驗通過
-      // 跳出確定支付彈窗
-      isPayDialogVisible.value = true
+      // 調用提交訂單接口
+      const res = await orderSubmitApi(order.value)
+      if(res.code){
+        ElMessage.success('訂單提交成功！')
+        // 清空購物車列表
+        shoppingCartItems.length = 0
+        // 跳轉到訂單頁面，去支付
+      }
     }else{
       ElMessage.error('表單校驗不通過')
     }
   })
 }
 // 確認支付按鈕操作
-const payOrder = async () => {
-  // 調用支付接口
-  const result = await orderSubmitApi(order.value)
-  if(result.code){
-    ElMessage.success('訂單提交成功')
-    // 更新餘額顯示
-    balanceStore.setBalance(newBalance.value)
-    // 清空訂單信息
-    clearOrder()
-    // 關閉彈窗
-    isPayDialogVisible.value = false
-    // 跳轉到歷史訂單頁面
-    console.log('跳轉到歷史訂單頁面')
-  }else{
-    ElMessage.error(result.msg)
-  }
-}
+// const payOrder = async () => {
+//   // 調用支付接口
+//   const result = await orderSubmitApi(order.value)
+//   if(result.code){
+//     ElMessage.success('訂單提交成功')
+//     // 更新餘額顯示
+//     balanceStore.setBalance(newBalance.value)
+//     // 清空訂單信息
+//     clearOrder()
+//     // 關閉彈窗
+//     isPayDialogVisible.value = false
+//     // 跳轉到歷史訂單頁面
+//     console.log('跳轉到歷史訂單頁面')
+//   }else{
+//     ElMessage.error(result.msg)
+//   }
+// }
 </script>
 
 <template>
   <div class="checkout-page">
     <!-- 第一部分：收貨地址和下單方式 -->
     {{ order }}
+    {{ shoppingCartItems }}
     <el-card class="card">
       <h3>收貨資訊</h3>
-      {{ addressList}}
       <el-form label-width="120px" :model="order" :rules="rules" ref="orderFormRef">
         <!-- 收貨地址 -->
         <el-form-item label="收貨地址" prop="addressBookId">
@@ -201,7 +203,7 @@ const payOrder = async () => {
         size="large"
         @click="submitOrder"
       >
-        去支付
+        提交訂單
       </el-button>
     </el-card>
 

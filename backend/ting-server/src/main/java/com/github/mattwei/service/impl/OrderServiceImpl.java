@@ -68,24 +68,23 @@ public class OrderServiceImpl implements OrderService {
             throw new AddressBookBusinessException(MessageConstant.ADDRESS_BOOK_IS_NULL);
         }
 
-        // 2. 根據訂單金額扣除用戶餘額
-        user.setBalance(user.getBalance().subtract(orderSumbitDTO.getAmount()));
-        userMapper.update(user);
+//        // 2. 根據訂單金額扣除用戶餘額
+//        user.setBalance(user.getBalance().subtract(orderSumbitDTO.getAmount()));
+//        userMapper.update(user);
 
-        // 3. 需要向訂單表插入 1 條數據
+        // 2. 需要向訂單表插入 1 條數據
         Orders orders = new Orders();
         BeanUtils.copyProperties(orderSumbitDTO, orders);
         orders.setNumber(String.valueOf(System.currentTimeMillis())); // 使用時間戳當訂單號
-        orders.setStatus(Orders.TO_BE_CONFIRMED); // 待接單
+        orders.setStatus(Orders.PENDING_PAYMENT); // 待支付
         orders.setUserId(userId);
         orders.setOrderTime(LocalDateTime.now());
-        orders.setPayStatus(Orders.PAYED); // 已支付
+        orders.setPayStatus(Orders.UN_PAID); // 未支付
         orders.setPhone(addressBook.getPhone());
-        orders.setPhone(addressBook.getDetail());
         orders.setConsignee(addressBook.getConsignee());
 
         orderMapper.insert(orders);
-        // 4. 需要向訂單明細表插入 n 條數據
+        // 3. 需要向訂單明細表插入 n 條數據
         List<OrderDetail> orderDetailList = shoppingCartList.stream()
                 .map(cart -> {
                     OrderDetail orderDetail = new OrderDetail();
@@ -95,9 +94,9 @@ public class OrderServiceImpl implements OrderService {
                 })
                 .collect(Collectors.toList());
         orderDetailMapper.insertBatch(orderDetailList);
-        // 5. 清空當前顧客的購物車
+        // 4. 清空當前顧客的購物車
         shoppingCartMapper.deleteByUserId(userId);
-        // 6. 返回結果
+        // 5. 返回結果
         OrderSubmitVO orderSubmitVO = OrderSubmitVO.builder()
                 .id(orders.getId())
                 .orderNumber(orders.getNumber())
