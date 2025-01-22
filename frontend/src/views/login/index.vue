@@ -4,6 +4,7 @@ import { ElMessage } from 'element-plus'
 import { registerApi, loginApi } from '@/api/auth'
 import { Avatar, User, Lock, Phone } from '@element-plus/icons-vue'
 import { useRouter } from 'vue-router'
+import { useUserIdStore } from '@/stores/userId'
 import { useTokenStore } from '@/stores/token'
 import { useRoleStore } from '@/stores/role'
 import { useAccountStore } from '@/stores/account'
@@ -11,6 +12,7 @@ import { useBalanceStore } from '@/stores/balance'
 import { useAvatarStore } from '@/stores/avatar'
 
 const router = useRouter()
+const userIdStore = useUserIdStore()
 const tokenStore = useTokenStore()
 const roleStore = useRoleStore()
 const accountStore = useAccountStore()
@@ -104,6 +106,9 @@ const login = async () => {
   console.log(result)
   if (result.code === 1) {
     ElMessage.success(result.msg ? result.msg : '登入成功') 
+    // 把userId存到pinia
+    userIdStore.setUserId(result.data.id)
+    console.log('存入userId至pinia:', userIdStore.userId)
     // 把token存到pinia
     tokenStore.setToken(result.data.token)
     console.log('存入token至pinia:', tokenStore.token)

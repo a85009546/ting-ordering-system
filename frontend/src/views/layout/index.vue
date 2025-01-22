@@ -556,7 +556,7 @@ const beforeAvatarUpload = (rawFile) => {
     </el-dialog>
 
     <!-- 更換頭像的彈框 -->
-    <el-dialog v-model="isAvatarDialogVisible" title="更換頭像" width="400px">
+    <el-dialog v-model="isAvatarDialogVisible" title="更換頭像" width="250px">
       <el-row>
         <el-col :span="20">
           <el-form-item>
@@ -565,11 +565,12 @@ const beforeAvatarUpload = (rawFile) => {
               :http-request="saveAvatar"
               :show-file-list="false"
               :before-upload="beforeAvatarUpload"
-              >
+            >
               <div class="avatar-upload-container">
-                <img v-if="avatar" :src="avatar" class="iamge-preview"
-                style="width: 200px; height: 120px; object-fit: cover;"/>
-                <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
+                <img v-if="avatar" :src="avatar" class="image-preview"/>
+                <div v-else class="placeholder">
+                  <el-icon class="avatar-uploader-icon"><Plus /></el-icon>
+                </div>
               </div>
             </el-upload>
           </el-form-item>
@@ -792,40 +793,42 @@ margin-bottom: 15px;
   object-fit: contain; /* 確保圖片不會變形 */
   cursor: pointer; /* 鼠標懸停顯示指針 */
 }
-/* .avatar-uploader {
+/* .avatar-uploader .avatar{
   width: 78px;
   height: 78px;
-  display: flex;
-  align-items: center;
+  display: block;
 } */
-/* .avatar-uploader .el-upload {
-  border: 1px dashed var(--el-border-color);
-  border-radius: 6px;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-  transition: var(--el-transition-duration-fast);
-} */
-/* .el-icon .avatar-uploader-icon {
-  font-size: 28px;
-  color: #8c939d;
-  width: 78px;
-  height: 78px;
-  text-align: center;
-  border-radius: 10px;
-  border: 1px dashed var(--el-border-color);
-} */
-/* 圖片居中 */
 .avatar-upload-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100%;
-  height: 120px;
-  margin-left: 65px;
+  width: 190px;
+  height: 110px;
+  border: 2px dashed #d9d9d9;
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
 }
-
-/* 按鈕居中 */
+.avatar-upload-container:hover {
+  border-color: #409eff;
+}
+.image-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block; /* 保證圖片作為塊級元素存在 */
+}
+.placeholder {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #c0c4cc;
+  font-size: 24px;
+  width: 100%; /* 保證占位元素充滿容器 */
+  height: 100%;
+}
 .dialog-footer {
   display: flex;
   justify-content: center;

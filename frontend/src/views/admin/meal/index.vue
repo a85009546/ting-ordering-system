@@ -429,7 +429,7 @@ const deleteBatch = () => {
   margin: 15px 0px;
 }
 
-.avatar-uploader .avatar {
+.avatar-uploader .avatar{
   width: 78px;
   height: 78px;
   display: block;

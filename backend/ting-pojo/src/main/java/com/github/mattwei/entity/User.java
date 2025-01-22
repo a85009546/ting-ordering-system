@@ -35,7 +35,7 @@ public class User implements Serializable {
 
     private String password;
 
-    // 餘額，只有customer才有此項
+    // 餘額，只有customer才會顯示此項
     private BigDecimal balance;
 
     private String phone;
