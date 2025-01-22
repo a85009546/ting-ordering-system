@@ -7,7 +7,7 @@ export const getAddressListApi = () => {
 
 // 設置默認地址
 export const setDefaultAddressApi = (id) => {
-  return request.put('/customer/addressBook/default', id)
+  return request.put(`/customer/addressBook/default?id=${id}` )
 }
 
 // 刪除地址

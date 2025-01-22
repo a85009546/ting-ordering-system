@@ -10,10 +10,10 @@ import EmpView from '@/views/admin/emp/index.vue'
 import MealView from '@/views/admin/meal/index.vue'
 import InfoView from '@/views/info/index.vue'
 import MealsBrowsingView from '@/views/customer/mealsBrowsing/index.vue'
-
+import OrderSubmitView from '@/views/customer/orderSubmit/index.vue'
 
 const routes = [
-  { path: '/auth/login', name: 'login', component: LoginView},
+  { path: '/login', name: 'login', component: LoginView},
 
   { path: '/', name: 'layout', component: LayoutView, redirect: '/index', // 重定向
     children: [
@@ -25,6 +25,7 @@ const routes = [
       { path: '/admin/meal', name: 'meal', component: MealView},
       { path: '/user/info', name: 'info', component: InfoView},
       { path: '/customer/meal', name: 'mealsBrowsing', component: MealsBrowsingView},
+      { path: '/customer/order/submit', name: 'checkout', component: OrderSubmitView},
     ]
   }
 ]

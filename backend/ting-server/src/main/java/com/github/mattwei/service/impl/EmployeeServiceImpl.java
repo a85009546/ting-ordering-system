@@ -9,6 +9,7 @@ import com.github.mattwei.entity.User;
 import com.github.mattwei.exception.AccountAlreadyExistException;
 import com.github.mattwei.mapper.AuthMapper;
 import com.github.mattwei.mapper.EmployeeMapper;
+import com.github.mattwei.mapper.UserMapper;
 import com.github.mattwei.result.PageResult;
 import com.github.mattwei.service.EmployeeService;
 import com.github.mattwei.vo.EmployeeVO;
@@ -37,7 +38,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     private EmployeeMapper employeeMapper;
     @Autowired
     private AuthMapper authMapper;
-
+    @Autowired
+    private UserMapper userMapper;
     /**
      * 新增員工
      * @param employeeDTO
@@ -97,7 +99,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         User user = new User();
         BeanUtils.copyProperties(employeeDTO, user);
         user.setUpdateTime(LocalDateTime.now());
-        authMapper.update(user);
+        userMapper.update(user);
     }
 
     /**

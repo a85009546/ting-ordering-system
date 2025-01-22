@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, computed, provide, inject, reactive} from 'vue'
+import { ref, onMounted, computed, provide, inject, reactive, watch} from 'vue'
 import { getMenuApi } from '@/api/menu'
 import { updateStatusApi, queryStatusApi } from '@/api/shop'
 import { useRoleStore } from '@/stores/role'
@@ -11,6 +11,7 @@ import { getAddressListApi, setDefaultAddressApi, deleteAddressApi, getAddressBy
 import { ElMessage, ElMessageBox } from 'element-plus'
 import defaultIcon from '@/assets/images/default-location-icon.png';
 import locationIcon from '@/assets/images/location-icon.png';
+import defaultAvatarIcon from '@/assets/images/default-avatar.png'
 import { useRouter } from 'vue-router'
 
 
@@ -68,10 +69,14 @@ const AddressForm = reactive({
   label: '',
   isDefault: ''
 })
+
 // 提供購物車數據和操作方法
 provide('shoppingCartItems', shoppingCartItems);
 // 提供營業狀態數據和操作方法
 provide('isOpen', isOpen);
+// 提供地址列表數據
+provide('addressList', addressList);
+
 
 // 計算總金額
 const totalAmount = computed(() =>
@@ -132,16 +137,19 @@ const rules = {
     { required: true, message: '請輸入收貨人姓名', trigger: 'blur' },
     { min: 2, max: 16, message: '姓名長度在 2 到 16 個字符之間', trigger: 'blur' },
   ],
+  sex: [
+    { required: true, message: '請選擇性別', trigger: 'blur' },
+  ],
   phone: [
     { required: true, message: '請輸入手機號碼', trigger: 'blur' },
     { pattern: /^09\d{8}$/, message: '手機號碼必須為09 開頭的 10 位數字', trigger: 'blur'}
   ],
-  address: [
+  cityName: [
+    { required: true, message: '請選擇城市', trigger: 'blur' },
+  ],
+  detail: [
     { required: true, message: '請輸入詳細地址', trigger: 'blur' },
     { min: 5, max: 100, message: '地址長度在 5 到 100 個字符之間', trigger: 'blur' },
-  ],
-  city: [
-    { required: true, message: '請選擇城市', trigger: 'change' },
   ]
 };
 // 設置默認地址
@@ -236,8 +244,17 @@ const clearCart = async () => {
 }
 // 去結算邏輯
 const proceedToCheckout = () => {
-  console.log('去結算:', shoppingCartItems.value)
+  console.log('去結算:', shoppingCartItems)
+  // 關閉購物車彈窗
   isCartDialogVisible.value = false
+  // 跳轉訂單結算頁面
+  router.push({
+    name: 'checkout',
+    params: {
+      cartItems: shoppingCartItems,
+    },
+  })
+
 }
 </script>
 
@@ -278,7 +295,7 @@ const proceedToCheckout = () => {
           <!-- 帳號和身份顯示 -->
           <span class="avatar-info">
             <img
-              :src="avatarStore.avatar || '@/assets/images/default-avatar.png'"
+              :src="avatarStore.avatar || defaultAvatarIcon"
               alt="User Avatar"
               class="user-avatar"
             />
@@ -286,12 +303,13 @@ const proceedToCheckout = () => {
           <span class="account-info">
             帳號：<strong>{{ accountStore.account }}</strong>
           </span>
-          &nbsp;&nbsp; | &nbsp;&nbsp;
           <span class="role-info">
+            &nbsp;&nbsp; | &nbsp;&nbsp;
             身份：<strong>{{ roleStore.role === 1 ? '顧客' : roleStore.role === 2 ? '員工' : '管理員' }}</strong>
           </span>
-          &nbsp;&nbsp; | &nbsp;&nbsp;
-          <span v-if="roleStore.role === 3 ? true : false" class="balance-info">
+          
+          <span v-if="roleStore.role <= 3 ? true : false" class="balance-info">
+            &nbsp;&nbsp; | &nbsp;&nbsp;
             餘額：<strong>{{ balanceStore.balance }}</strong>
           </span>
           &nbsp;&nbsp; | &nbsp;&nbsp;
@@ -465,7 +483,7 @@ const proceedToCheckout = () => {
       width="400px"
     >
       <el-form :model="AddressForm" :rules="rules" ref="AddressFormRef" label-width="80px">
-        <el-form-item label="聯絡人">
+        <el-form-item label="聯絡人" prop="consignee">
           <el-input v-model="AddressForm.consignee" placeholder="請輸入聯絡人"></el-input>
         </el-form-item>
         <el-form-item label="性別" prop="sex">
@@ -474,7 +492,7 @@ const proceedToCheckout = () => {
             <el-radio label="0">女</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="手機號碼">
+        <el-form-item label="手機號碼" prop="phone">
           <el-input v-model="AddressForm.phone" placeholder="請輸入手機號碼"></el-input>
         </el-form-item>
         <el-form-item label="城市" prop="cityName">
@@ -487,10 +505,10 @@ const proceedToCheckout = () => {
             <el-option v-for="d in districts" :key="d.value" :label="d.name" :value="d.name"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="詳細地址">
+        <el-form-item label="詳細地址" prop="detail">
           <el-input v-model="AddressForm.detail" placeholder="請輸入詳細地址"></el-input>
         </el-form-item>
-        <el-form-item label="標籤" prop="label">
+        <el-form-item label="標籤">
           <el-radio-group v-model="AddressForm.label">
             <el-radio label="0">家</el-radio>
             <el-radio label="1">公司</el-radio>

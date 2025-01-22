@@ -48,9 +48,4 @@ public interface AuthMapper {
     @Select("select * from menu_item where level <= #{role}")
     List<MenuItem> getMenuItemsByRole(Integer role);
 
-    /**
-     * 更新用戶數據
-     * @param user
-     */
-    void update(User user);
 }
