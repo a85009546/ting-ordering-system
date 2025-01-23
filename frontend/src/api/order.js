@@ -20,3 +20,8 @@ export const orderConfirmApi = (id) => {
 export const orderRejectionApi = (id, rejectionReason) => {
   return request.put('/admin/order/rejection', {id, rejectionReason})
 }
+
+// 管理端 - 取消訂單
+export const orderCancelApi = (id, cancelReason) => {
+  return request.put('/admin/order/cancel', {id, cancelReason})
+}

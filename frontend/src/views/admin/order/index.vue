@@ -4,14 +4,18 @@ import { ElMessage } from "element-plus"
 import { orderConditionPageApi } from '@/api/order'
 import { useUserIdStore } from '@/stores/userId'
 import dayjs from 'dayjs'
-import { orderConfirmApi, orderRejectionApi } from '@/api/order'
+import { orderConfirmApi, orderRejectionApi, orderCancelApi } from '@/api/order'
 
 const userIdStore = useUserIdStore()
 const orderList = reactive([]) // 訂單列表
 const selectedStatus = ref('') // 當前選中的訂單狀態
-const isRejectDialogVisible = ref(false); // 控制彈窗的顯示
-const rejectionReason = ref(''); // 拒單原因輸入框的綁定數據
-const rejectOrderId = ref(null)
+const isDialogVisible = ref(false); // 控制彈窗的顯示
+const isRejection = ref(false)
+const DialogTitle = ref('拒單原因')
+const labelText = ref('拒單原因'); // 動態改變的label
+const placeholderText = ref('請輸入拒單原因'); // 動態改變的placeholder
+const reason = ref(''); // 拒單原因輸入框的綁定數據
+const selectedOrderId = ref(null)
 const searchOrder = ref({
   number:'', phone:'', date:[], beginTime:'', endTime:''
 })
@@ -80,23 +84,41 @@ const confirmOrder = async (id) => {
 }
 // 打開拒單彈窗
 const openRejectDialog = (id) => {
-  isRejectDialogVisible.value = true
-  rejectOrderId.value = id
+  isRejection.value = true
+  isDialogVisible.value = true
+  DialogTitle.value = '拒單原因'
+  labelText.value = '拒單原因'
+  placeholderText.value = '請輸入拒單原因'
+  selectedOrderId.value = id
 }
-// 提交拒單原因並拒單
-const submitRejection = async () => {
-  if (rejectionReason.value.trim() === '') {
-    // 如果拒單原因為空，提醒用戶
-    ElMessage.error('請輸入拒單原因')
+// 打開取消彈窗
+const openCancelDialog = (id) => {
+  isRejection.value = false
+  isDialogVisible.value = true
+  DialogTitle.value = '取消原因'
+  labelText.value = '取消原因'
+  placeholderText.value = '請輸入取消原因'
+  selectedOrderId.value = id
+}
+// 提交拒單/取消 原因並 拒單/取消訂單
+const submitReason = async () => {
+  if (reason.value.trim() === '') {
+    // 如果原因為空，提醒用戶
+    ElMessage.error(`請輸入${labelText.value}`)
     return;
   }
-  console.log('提交拒單原因:', rejectionReason.value)
-  // 調用拒單API
-  const res = await orderRejectionApi(rejectOrderId.value, rejectionReason.value)
+  let res
+  console.log(`提交${labelText.value}:`, reason.value)
+  // 判斷是拒單還是取消並調用API
+  if(isRejection.value){ // 拒單
+    res = await orderRejectionApi(selectedOrderId.value, reason.value)
+  }else{ // 取消
+    res = await orderCancelApi(selectedOrderId.value, reason.value)
+  }
   if(res.code){
-    ElMessage.success('拒單成功！')
+    ElMessage.success('操作成功！')
     // 關閉彈窗
-    isRejectDialogVisible.value = false
+    isDialogVisible.value = false
     // 刷新
     search()
   }else{
@@ -105,7 +127,8 @@ const submitRejection = async () => {
 }
 // 關閉彈窗的處理函數
 const handleClose = () => {
-  rejectionReason.value = '' // 清空拒單原因
+  reason.value = '' // 清空拒單原因
+  selectedOrderId.value = null; // 清空訂單 ID
 }
 </script>
 
@@ -192,6 +215,7 @@ const handleClose = () => {
                 v-else-if="scope.row.status <= 4 "
                 size="small" 
                 type="danger"
+                @click="openCancelDialog(scope.row.id)"
               >取消</el-button>  
               <el-button size="small" type="default" @click="viewOrderDetails(scope.row)">查看</el-button>
         </template>
@@ -212,20 +236,20 @@ const handleClose = () => {
       />
     </div>
 
-    <!-- 拒單彈窗 -->
+    <!-- 拒單/取消彈窗 -->
     <el-dialog
-      v-model="isRejectDialogVisible"
-      title="拒單原因"
-      :close-on-click-modal="false"
-      :before-close="handleClose"
+      v-model="isDialogVisible"
+      :title="DialogTitle"
+      :close-on-click-modal="true"
+      @close="handleClose"
     >
       <el-form>
-        <!-- 拒單原因輸入框 -->
-        <el-form-item label="拒單原因">
+        <!-- 原因輸入框 -->
+        <el-form-item :label="labelText">
           <el-input
             type="textarea"
-            v-model="rejectionReason"
-            placeholder="請輸入拒單原因"
+            v-model="reason"
+            :placeholder="placeholderText"
             rows="4"
           ></el-input>
         </el-form-item>
@@ -233,8 +257,8 @@ const handleClose = () => {
 
       <!-- 按鈕區域 -->
       <div class="dialog-footer">
-        <el-button @click="isRejectDialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="submitRejection">提交原因並拒單</el-button>
+        <el-button @click="isDialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="submitReason">提交</el-button>
       </div>
     </el-dialog>
 
