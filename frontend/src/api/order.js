@@ -15,3 +15,8 @@ export const orderConditionPageApi = (number, phone, status, beginTime, endTime,
 export const orderConfirmApi = (id) => {
   return request.put('/admin/order/confirm', {id})
 }
+
+// 管理端 - 拒單
+export const orderRejectionApi = (id, rejectionReason) => {
+  return request.put('/admin/order/rejection', {id, rejectionReason})
+}

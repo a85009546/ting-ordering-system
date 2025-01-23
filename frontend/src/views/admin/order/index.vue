@@ -4,11 +4,14 @@ import { ElMessage } from "element-plus"
 import { orderConditionPageApi } from '@/api/order'
 import { useUserIdStore } from '@/stores/userId'
 import dayjs from 'dayjs'
-import { orderConfirmApi } from '@/api/order'
+import { orderConfirmApi, orderRejectionApi } from '@/api/order'
 
 const userIdStore = useUserIdStore()
 const orderList = reactive([]) // 訂單列表
 const selectedStatus = ref('') // 當前選中的訂單狀態
+const isRejectDialogVisible = ref(false); // 控制彈窗的顯示
+const rejectionReason = ref(''); // 拒單原因輸入框的綁定數據
+const rejectOrderId = ref(null)
 const searchOrder = ref({
   number:'', phone:'', date:[], beginTime:'', endTime:''
 })
@@ -75,6 +78,35 @@ const confirmOrder = async (id) => {
     search()
   }
 }
+// 打開拒單彈窗
+const openRejectDialog = (id) => {
+  isRejectDialogVisible.value = true
+  rejectOrderId.value = id
+}
+// 提交拒單原因並拒單
+const submitRejection = async () => {
+  if (rejectionReason.value.trim() === '') {
+    // 如果拒單原因為空，提醒用戶
+    ElMessage.error('請輸入拒單原因')
+    return;
+  }
+  console.log('提交拒單原因:', rejectionReason.value)
+  // 調用拒單API
+  const res = await orderRejectionApi(rejectOrderId.value, rejectionReason.value)
+  if(res.code){
+    ElMessage.success('拒單成功！')
+    // 關閉彈窗
+    isRejectDialogVisible.value = false
+    // 刷新
+    search()
+  }else{
+    ElMessage.error(res.msg)
+  }
+}
+// 關閉彈窗的處理函數
+const handleClose = () => {
+  rejectionReason.value = '' // 清空拒單原因
+}
 </script>
 
 <template>
@@ -137,21 +169,31 @@ const confirmOrder = async (id) => {
               <el-button
                 v-if="scope.row.status === 2"
                 size="small" 
-                type="text"
+                type="primary"
                 @click="confirmOrder(scope.row.id)"
               >接單</el-button>
               <el-button
                 v-else-if="scope.row.status === 3"
                 size="small" 
-                type="text"
+                type="primary"
               >派送</el-button>
               <el-button
                 v-else-if="scope.row.status === 4"
                 size="small" 
-                type="text"
+                type="success"
               >完成</el-button>
-              <el-button size="small" type="text">取消</el-button>
-              <el-button size="small" type="text" @click="viewOrderDetails(scope.row)">查看</el-button>
+              <el-button 
+                v-if="scope.row.status === 2"
+                size="small" 
+                type="danger"
+                @click="openRejectDialog(scope.row.id)"
+              >拒單</el-button>
+              <el-button 
+                v-else-if="scope.row.status <= 4 "
+                size="small" 
+                type="danger"
+              >取消</el-button>  
+              <el-button size="small" type="default" @click="viewOrderDetails(scope.row)">查看</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -169,6 +211,32 @@ const confirmOrder = async (id) => {
         @current-change="handleCurrentChange"
       />
     </div>
+
+    <!-- 拒單彈窗 -->
+    <el-dialog
+      v-model="isRejectDialogVisible"
+      title="拒單原因"
+      :close-on-click-modal="false"
+      :before-close="handleClose"
+    >
+      <el-form>
+        <!-- 拒單原因輸入框 -->
+        <el-form-item label="拒單原因">
+          <el-input
+            type="textarea"
+            v-model="rejectionReason"
+            placeholder="請輸入拒單原因"
+            rows="4"
+          ></el-input>
+        </el-form-item>
+      </el-form>
+
+      <!-- 按鈕區域 -->
+      <div class="dialog-footer">
+        <el-button @click="isRejectDialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="submitRejection">提交原因並拒單</el-button>
+      </div>
+    </el-dialog>
 
   </div>
 </template>
@@ -188,5 +256,11 @@ const confirmOrder = async (id) => {
 }
 .pagination{
   margin-top: 20px;
+}
+.dialog-footer{
+  text-align: center;
+}
+.dialog-footer button{
+  margin-left: 30px;
 }
 </style>
