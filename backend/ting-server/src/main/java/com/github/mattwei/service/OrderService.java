@@ -5,6 +5,7 @@ import com.github.mattwei.dto.OrdersPageQueryDTO;
 import com.github.mattwei.result.PageResult;
 import com.github.mattwei.vo.OrderStatisticsVO;
 import com.github.mattwei.vo.OrderSubmitVO;
+import com.github.mattwei.vo.OrderVO;
 
 /**
  * Description:
@@ -32,4 +33,11 @@ public interface OrderService {
      * @return
      */
     OrderStatisticsVO statistics();
+
+    /**
+     * 管理端 - 查詢訂單詳情
+     * @param id
+     * @return
+     */
+    OrderVO details(Long id);
 }

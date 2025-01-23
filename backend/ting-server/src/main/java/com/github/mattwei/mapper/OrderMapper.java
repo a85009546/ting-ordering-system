@@ -54,4 +54,12 @@ public interface OrderMapper {
      */
     @Select("select count(id) from orders where status = #{status}")
     Integer countByStatus(Integer toBeConfirmed);
+
+    /**
+     * 根據訂單id查詢訂單
+     * @param id
+     * @return
+     */
+    @Select("select * from orders where id = #{id}")
+    Orders getById(Long id);
 }

@@ -13,6 +13,7 @@ import com.github.mattwei.result.PageResult;
 import com.github.mattwei.service.OrderService;
 import com.github.mattwei.vo.OrderStatisticsVO;
 import com.github.mattwei.vo.OrderSubmitVO;
+import com.github.mattwei.vo.OrderVO;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.BeanUtils;
@@ -142,6 +143,30 @@ public class OrderServiceImpl implements OrderService {
         orderStatisticsVO.setConfirmed(confirmed);
         orderStatisticsVO.setDeliveryInProgress(deliveryInProgress);
         return orderStatisticsVO;
+    }
+
+    /**
+     * 管理端 - 查詢訂單詳情
+     * @param id
+     * @return
+     */
+    @Override
+    public OrderVO details(Long id) {
+        // 1. 根據訂單id查詢訂單
+        Orders orders = orderMapper.getById(id);
+
+        // 2. 根據訂單id查詢訂單明細
+        List<OrderDetail> orderDetailList = orderDetailMapper.getByOrderId(id);
+
+        // 3. 封裝結果
+        OrderVO orderVO = new OrderVO();
+        BeanUtils.copyProperties(orders, orderVO);
+//        orderVO.setOrderMeals(orderDetailList.stream()
+//                .map(orderDetail -> orderDetail.getName() + "*" + orderDetail.getNumber())
+//                .collect(Collectors.joining(",")));
+        orderVO.setOrderDetailList(orderDetailList);
+
+        return orderVO;
     }
 }
 
