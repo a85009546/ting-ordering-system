@@ -1,14 +1,25 @@
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, watch } from 'vue'
 import { ElMessage } from "element-plus"
 import { orderConditionPageApi } from '@/api/order'
 import { useUserIdStore } from '@/stores/userId'
+import dayjs from 'dayjs'
 
 const userIdStore = useUserIdStore()
-const orderList = ref([]) // 訂單列表
+const orderList = reactive([]) // 訂單列表
 const selectedStatus = ref('') // 當前選中的訂單狀態
 const searchOrder = ref({
-  number:'', phone:'', date:[], beginTime:'', endTime:'', selectedStatus
+  number:'', phone:'', date:[], beginTime:'', endTime:''
+})
+// 監聽searchOrder的date屬性
+watch(() => searchOrder.value.date, (newVal, oldVal) => {
+  if(newVal.length === 2){
+    searchOrder.value.beginTime = dayjs(newVal[0]).format('YYYY-MM-DD HH:mm:ss')
+    searchOrder.value.endTime = dayjs(newVal[1]).format('YYYY-MM-DD HH:mm:ss')
+  }else{
+    searchOrder.value.beginTime = ''
+    searchOrder.value.endTime = ''
+  }
 })
 // 訂單狀態列表
 const orderStatusList = [
@@ -35,15 +46,13 @@ const search = async () => {
     searchOrder.value.number, searchOrder.value.phone, selectedStatus.value, 
     searchOrder.value.beginTime, searchOrder.value.endTime, userIdStore.userId, currentPage.value, pageSize.value)
   if(res.code){
-    orderList.value = res.data.records
+    orderList.splice(0, orderList.length, ...res.data.records)
     total.value = res.data.total
   }
 }
 // 切換訂單狀態
 const setStatus = (status) => {
-  console.log(status)
   selectedStatus.value = status
-  console.log(searchOrder.value)
   search()
 }
 // 每頁展示紀錄數變化
@@ -76,6 +85,7 @@ const handleCurrentChange = (val) => {
     </div>
 
     <!-- 搜索欄 -->
+    {{ searchOrder }}
     <el-form :inline="true" class="search-bar">
       <el-form-item label="訂單號">
         <el-input v-model="searchOrder.number" placeholder="請輸入訂單號" />
@@ -85,7 +95,7 @@ const handleCurrentChange = (val) => {
       </el-form-item>
       <el-form-item label="下單時間">
         <el-date-picker
-          v-model="searchOrder.orderTime"
+          v-model="searchOrder.date"
           type="daterange"
           range-separator="至"
           start-placeholder="開始日期"
@@ -126,7 +136,7 @@ const handleCurrentChange = (val) => {
     </el-table>
 
     <!-- 分頁條 -->
-    <div class="container">
+    <div class="pagination">
       <el-pagination
         v-model:current-page="currentPage"
         v-model:page-size="pageSize"
@@ -155,5 +165,7 @@ const handleCurrentChange = (val) => {
 .status-button {
   border-radius: 5px; 
 }
-
+.pagination{
+  margin-top: 20px;
+}
 </style>
