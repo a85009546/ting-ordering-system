@@ -55,7 +55,7 @@ const queryCategorys = async () => {
 const search = async () => {
   const result = await pageQueryApi(searchMeal.value.name, searchMeal.value.categoryId, searchMeal.value.status, 
                                     currentPage.value, pageSize.value)
-  if(result.code === 1){
+  if(result.code){
     mealList.value = result.data.records
     total.value = result.data.total
   }
