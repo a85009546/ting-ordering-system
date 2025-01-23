@@ -11,6 +11,7 @@ import com.github.mattwei.exception.UserBusinessException;
 import com.github.mattwei.mapper.*;
 import com.github.mattwei.result.PageResult;
 import com.github.mattwei.service.OrderService;
+import com.github.mattwei.vo.OrderStatisticsVO;
 import com.github.mattwei.vo.OrderSubmitVO;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -122,6 +123,25 @@ public class OrderServiceImpl implements OrderService {
         Page<Orders> page = orderMapper.pageQuery(ordersPageQueryDTO);
 
         return new PageResult(page.getTotal(), page.getResult());
+    }
+
+    /**
+     * 管理端 - 各個狀態的訂單數量統計
+     * @return
+     */
+    @Override
+    public OrderStatisticsVO statistics() {
+        // 根據狀態查詢訂單數量
+        Integer toBeConfirmed = orderMapper.countByStatus(Orders.TO_BE_CONFIRMED);
+        Integer confirmed = orderMapper.countByStatus(Orders.CONFIRMED);
+        Integer deliveryInProgress = orderMapper.countByStatus(Orders.DELIVERY_IN_PROGRESS);
+
+        // 封裝結果
+        OrderStatisticsVO orderStatisticsVO = new OrderStatisticsVO();
+        orderStatisticsVO.setToBeConfirmed(toBeConfirmed);
+        orderStatisticsVO.setConfirmed(confirmed);
+        orderStatisticsVO.setDeliveryInProgress(deliveryInProgress);
+        return orderStatisticsVO;
     }
 }
 

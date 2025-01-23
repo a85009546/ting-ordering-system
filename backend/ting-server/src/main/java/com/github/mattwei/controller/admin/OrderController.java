@@ -5,6 +5,7 @@ import com.github.mattwei.entity.Orders;
 import com.github.mattwei.result.PageResult;
 import com.github.mattwei.result.Result;
 import com.github.mattwei.service.OrderService;
+import com.github.mattwei.vo.OrderStatisticsVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,5 +35,15 @@ public class OrderController {
     public Result<PageResult> conditionSearch(OrdersPageQueryDTO ordersPageQueryDTO){
         PageResult pageResult = orderService.conditionSearch(ordersPageQueryDTO);
         return Result.success(pageResult);
+    }
+
+    /**
+     * 各個狀態的訂單數量統計
+     * @return
+     */
+    @GetMapping("/statistics")
+    public Result<OrderStatisticsVO> statistics(){
+        OrderStatisticsVO orderStatisticsVO = orderService.statistics();
+        return Result.success(orderStatisticsVO);
     }
 }

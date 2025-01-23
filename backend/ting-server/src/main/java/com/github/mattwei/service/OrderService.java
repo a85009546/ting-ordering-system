@@ -3,6 +3,7 @@ package com.github.mattwei.service;
 import com.github.mattwei.dto.OrderSumbitDTO;
 import com.github.mattwei.dto.OrdersPageQueryDTO;
 import com.github.mattwei.result.PageResult;
+import com.github.mattwei.vo.OrderStatisticsVO;
 import com.github.mattwei.vo.OrderSubmitVO;
 
 /**
@@ -25,4 +26,10 @@ public interface OrderService {
      * @return
      */
     PageResult conditionSearch(OrdersPageQueryDTO ordersPageQueryDTO);
+
+    /**
+     * 管理端 - 各個狀態的訂單數量統計
+     * @return
+     */
+    OrderStatisticsVO statistics();
 }
