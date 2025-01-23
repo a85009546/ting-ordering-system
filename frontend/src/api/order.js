@@ -10,3 +10,8 @@ export const orderConditionPageApi = (number, phone, status, beginTime, endTime,
   return request.get('/admin/order/conditionSearch',
     { params: { number, phone, status, beginTime, endTime, userId, page, pageSize } })
 }
+
+// 管理端 - 接單
+export const orderConfirmApi = (id) => {
+  return request.put('/admin/order/confirm', {id})
+}

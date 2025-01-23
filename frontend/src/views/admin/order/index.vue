@@ -4,6 +4,7 @@ import { ElMessage } from "element-plus"
 import { orderConditionPageApi } from '@/api/order'
 import { useUserIdStore } from '@/stores/userId'
 import dayjs from 'dayjs'
+import { orderConfirmApi } from '@/api/order'
 
 const userIdStore = useUserIdStore()
 const orderList = reactive([]) // 訂單列表
@@ -65,6 +66,14 @@ const handleSizeChange = (val) => {
 const handleCurrentChange = (val) => {
   console.log(`當前頁碼: ${val}`)
   search()
+}
+// 接單
+const confirmOrder = async (id) => {
+  const res = await orderConfirmApi(id)
+  if(res.code){
+    ElMessage.success(`成功接單`)
+    search()
+  }
 }
 </script>
 
@@ -129,6 +138,7 @@ const handleCurrentChange = (val) => {
                 v-if="scope.row.status === 2"
                 size="small" 
                 type="text"
+                @click="confirmOrder(scope.row.id)"
               >接單</el-button>
               <el-button
                 v-else-if="scope.row.status === 3"
