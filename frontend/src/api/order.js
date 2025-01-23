@@ -25,3 +25,8 @@ export const orderRejectionApi = (id, rejectionReason) => {
 export const orderCancelApi = (id, cancelReason) => {
   return request.put('/admin/order/cancel', {id, cancelReason})
 }
+
+// 管理端 - 派送訂單
+export const orderDeliveryApi = (id) => {
+  return request.put(`/admin/order/delivery/${id}`)
+}

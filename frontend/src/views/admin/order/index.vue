@@ -4,7 +4,7 @@ import { ElMessage } from "element-plus"
 import { orderConditionPageApi } from '@/api/order'
 import { useUserIdStore } from '@/stores/userId'
 import dayjs from 'dayjs'
-import { orderConfirmApi, orderRejectionApi, orderCancelApi } from '@/api/order'
+import { orderConfirmApi, orderRejectionApi, orderCancelApi, orderDeliveryApi } from '@/api/order'
 
 const userIdStore = useUserIdStore()
 const orderList = reactive([]) // 訂單列表
@@ -86,7 +86,7 @@ const confirmOrder = async (id) => {
 const openRejectDialog = (id) => {
   isRejection.value = true
   isDialogVisible.value = true
-  DialogTitle.value = '拒單原因'
+  DialogTitle.value = '拒單'
   labelText.value = '拒單原因'
   placeholderText.value = '請輸入拒單原因'
   selectedOrderId.value = id
@@ -95,7 +95,7 @@ const openRejectDialog = (id) => {
 const openCancelDialog = (id) => {
   isRejection.value = false
   isDialogVisible.value = true
-  DialogTitle.value = '取消原因'
+  DialogTitle.value = '取消訂單'
   labelText.value = '取消原因'
   placeholderText.value = '請輸入取消原因'
   selectedOrderId.value = id
@@ -123,6 +123,15 @@ const submitReason = async () => {
     search()
   }else{
     ElMessage.error(res.msg)
+  }
+}
+// 派送訂單
+const deliveryOrder = async (id) => {
+  const res = await orderDeliveryApi(id)
+  if(res.code){
+    ElMessage.success('已派送訂單！')
+    // 刷新
+    search()
   }
 }
 // 關閉彈窗的處理函數
@@ -199,6 +208,7 @@ const handleClose = () => {
                 v-else-if="scope.row.status === 3"
                 size="small" 
                 type="primary"
+                @click="deliveryOrder(scope.row.id)"
               >派送</el-button>
               <el-button
                 v-else-if="scope.row.status === 4"
