@@ -413,7 +413,7 @@ const beforeAvatarUpload = (rawFile) => {
           </el-icon>
           <span class="clear-cart-text">清空</span>
         </div>
-        
+        {{ shoppingCartItems  }}
         <div v-for="item in shoppingCartItems" :key="item.id" class="cart-item">
           <img :src="item.image" alt="meal image" class="cart-item-image" />
           <div class="cart-item-details">
@@ -421,9 +421,12 @@ const beforeAvatarUpload = (rawFile) => {
             <p class="cart-item-price">單價：{{ item.amount }} 元</p>
             <p class="cart-item-quantity">數量：{{ item.number }}</p>
           </div>
+          <div class="cart-item-flavor">
+            <p v-if="item.mealFlavor">口味 : {{ item.mealFlavor }}</p>
+          </div>
         </div>
         <div class="cart-footer">
-          <span>總金額：{{ totalAmount }} 元</span>
+          <span class="cart-total-amount">總金額：{{ totalAmount }} 元</span>
           <el-button v-if="isOpen" type="primary" @click="proceedToCheckout">去結算</el-button>
         </div>
       </div>
@@ -746,6 +749,13 @@ margin-bottom: 15px;
 }
 .cart-item-name {
   font-weight: bold;
+}
+.cart-total-amount{
+  font-size: 20px;
+}
+.cart-item-flavor{
+  margin-top: 40px;
+  margin-right: 120px;
 }
 .cart-footer {
   display: flex;

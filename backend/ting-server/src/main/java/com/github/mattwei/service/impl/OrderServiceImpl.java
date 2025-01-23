@@ -87,6 +87,8 @@ public class OrderServiceImpl implements OrderService {
         orders.setOrderTime(LocalDateTime.now());
         orders.setPayStatus(Orders.UN_PAID); // 未支付
         orders.setPhone(addressBook.getPhone());
+        String destrictName = addressBook.getDistrictName() == null ? "" : addressBook.getDistrictName();
+        orders.setAddress(addressBook.getCityName() + destrictName + addressBook.getDetail());
         orders.setUserName(user.getName());
         orders.setConsignee(addressBook.getConsignee());
 
