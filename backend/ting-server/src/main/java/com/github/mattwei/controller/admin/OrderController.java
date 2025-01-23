@@ -102,4 +102,15 @@ public class OrderController {
         orderService.delivery(id);
         return Result.success();
     }
+
+    /**
+     * 完成訂單
+     * @param id
+     * @return
+     */
+    @PutMapping("/complete/{id}")
+    public Result complete(@PathVariable Long id){
+        orderService.complete(id);
+        return Result.success();
+    }
 }

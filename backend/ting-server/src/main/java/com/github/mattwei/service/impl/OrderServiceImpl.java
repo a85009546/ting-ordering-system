@@ -268,6 +268,28 @@ public class OrderServiceImpl implements OrderService {
                 .build();
         orderMapper.update(orders);
     }
+
+    /**
+     * 管理端 - 完成訂單
+     * @param id
+     */
+    @Override
+    public void complete(Long id) {
+        // 根據id查詢訂單
+        Orders ordersDB = orderMapper.getById(id);
+
+        // 校驗訂單是否存在，且狀態為 4
+        if(ordersDB == null || !ordersDB.getStatus().equals(Orders.DELIVERY_IN_PROGRESS)){
+            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        }
+
+        Orders orders = Orders.builder()
+                .id(id)
+                .status(Orders.COMPLETED) // 狀態更新為完成
+                .deliveryTime(LocalDateTime.now()) // 設置派送時間
+                .build();
+        orderMapper.update(orders);
+    }
 }
 
 

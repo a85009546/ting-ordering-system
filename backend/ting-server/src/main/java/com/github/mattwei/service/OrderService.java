@@ -63,4 +63,10 @@ public interface OrderService {
      * @param id
      */
     void delivery(Long id);
+
+    /**
+     * 管理端 - 完成訂單
+     * @param id
+     */
+    void complete(Long id);
 }
