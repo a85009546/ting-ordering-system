@@ -1,6 +1,8 @@
 package com.github.mattwei.mapper;
 
+import com.github.mattwei.dto.OrdersPageQueryDTO;
 import com.github.mattwei.entity.Orders;
+import com.github.pagehelper.Page;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
@@ -36,4 +38,12 @@ public interface OrderMapper {
      * @param orders
      */
     void update(Orders orders);
+
+
+    /**
+     * 管理端 - 訂單條件分頁查詢
+     * @param ordersPageQueryDTO
+     * @return
+     */
+    Page<Orders> pageQuery(OrdersPageQueryDTO ordersPageQueryDTO);
 }

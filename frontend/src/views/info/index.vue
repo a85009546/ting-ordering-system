@@ -88,7 +88,7 @@ const updateUserInfo = () => {
 
     <!-- 保存按鈕 -->
     <el-form-item>
-      <el-button type="primary" @click="updateUserInfo">保存</el-button>
+      <el-button class="save" type="primary" @click="updateUserInfo">保存</el-button>
     </el-form-item>
   </el-form>
 </template>
@@ -97,9 +97,19 @@ const updateUserInfo = () => {
 .personal-center-form {
   max-width: 400px;
   margin: 0 auto;
-  padding: 20px;
-  background-color: #fff;
+  padding: 50px 40px 30px;
+  background-color: #ffffff;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 4px rgba(0, 0, 0, 0.1);
+
+  transform: scale(1.15); /* 這裡可以調整放大的倍數 */
+  transform-origin: top center; /* 設置縮放的起始點，這樣縮放後內容不會偏移 */
+}
+.personal-center-form .el-form-item {
+  margin-bottom: 30px; /* 增加表單項目的間距 */
+}
+.save{
+  margin-top: 20px;
+  margin-left: 100px;
 }
 </style>

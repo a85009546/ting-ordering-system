@@ -1,6 +1,8 @@
 package com.github.mattwei.service;
 
 import com.github.mattwei.dto.OrderSumbitDTO;
+import com.github.mattwei.dto.OrdersPageQueryDTO;
+import com.github.mattwei.result.PageResult;
 import com.github.mattwei.vo.OrderSubmitVO;
 
 /**
@@ -16,4 +18,11 @@ public interface OrderService {
      * @return
      */
     OrderSubmitVO submitOrder(OrderSumbitDTO orderSumbitDTO);
+
+    /**
+     * 管理端 - 訂單條件分頁查詢
+     * @param ordersPageQueryDTO
+     * @return
+     */
+    PageResult conditionSearch(OrdersPageQueryDTO ordersPageQueryDTO);
 }

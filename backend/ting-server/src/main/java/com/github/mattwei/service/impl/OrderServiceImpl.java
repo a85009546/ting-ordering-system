@@ -3,13 +3,17 @@ package com.github.mattwei.service.impl;
 import com.github.mattwei.constant.MessageConstant;
 import com.github.mattwei.context.BaseContext;
 import com.github.mattwei.dto.OrderSumbitDTO;
+import com.github.mattwei.dto.OrdersPageQueryDTO;
 import com.github.mattwei.entity.*;
 import com.github.mattwei.exception.AddressBookBusinessException;
 import com.github.mattwei.exception.ShoppingCartBusinessException;
 import com.github.mattwei.exception.UserBusinessException;
 import com.github.mattwei.mapper.*;
+import com.github.mattwei.result.PageResult;
 import com.github.mattwei.service.OrderService;
 import com.github.mattwei.vo.OrderSubmitVO;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -105,4 +109,52 @@ public class OrderServiceImpl implements OrderService {
                 .build();
         return orderSubmitVO;
     }
+
+    /**
+     * 管理端 - 訂單條件分頁查詢
+     * @param ordersPageQueryDTO
+     * @return
+     */
+    @Override
+    public PageResult conditionSearch(OrdersPageQueryDTO ordersPageQueryDTO) {
+        PageHelper.startPage(ordersPageQueryDTO.getPage(), ordersPageQueryDTO.getPageSize());
+
+        Page<Orders> page = orderMapper.pageQuery(ordersPageQueryDTO);
+
+        return new PageResult(page.getTotal(), page.getResult());
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
