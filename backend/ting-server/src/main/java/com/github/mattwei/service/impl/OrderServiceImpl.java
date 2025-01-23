@@ -5,8 +5,10 @@ import com.github.mattwei.context.BaseContext;
 import com.github.mattwei.dto.OrderSumbitDTO;
 import com.github.mattwei.dto.OrdersConfirmDTO;
 import com.github.mattwei.dto.OrdersPageQueryDTO;
+import com.github.mattwei.dto.OrdersRejectionDTO;
 import com.github.mattwei.entity.*;
 import com.github.mattwei.exception.AddressBookBusinessException;
+import com.github.mattwei.exception.OrderBusinessException;
 import com.github.mattwei.exception.ShoppingCartBusinessException;
 import com.github.mattwei.exception.UserBusinessException;
 import com.github.mattwei.mapper.*;
@@ -180,6 +182,41 @@ public class OrderServiceImpl implements OrderService {
                 .id(ordersConfirmDTO.getId())
                 .status(Orders.CONFIRMED)
                 .build();
+        orderMapper.update(orders);
+    }
+
+    /**
+     * 管理端 - 拒單
+     * @param ordersRejectionDTO
+     */
+    @Override
+    @Transactional
+    public void rejection(OrdersRejectionDTO ordersRejectionDTO) {
+        // 根據id查詢訂單
+        Orders ordersDB = orderMapper.getById(ordersRejectionDTO.getId());
+
+        // 訂單狀態為 2(待接單) 才可以拒單
+        if(ordersDB == null || !ordersDB.getStatus().equals(Orders.TO_BE_CONFIRMED)){
+            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        }
+
+        // 支付狀態
+        Integer payStatus = ordersDB.getPayStatus();
+        if(payStatus == Orders.PAYED){
+            // 用戶已支付，需要退款
+            // 根據用戶id查詢用戶資料
+            User user = userMapper.getById(ordersDB.getUserId());
+            user.setBalance(user.getBalance().add(ordersDB.getAmount()));
+            userMapper.update(user);
+        }
+        // 根據訂單id更新訂單狀態、拒單原因、取消時間
+        Orders orders = Orders.builder()
+                .id(ordersRejectionDTO.getId())
+                .status(Orders.CANCELLED)
+                .rejectionReason(ordersRejectionDTO.getRejectionReason())
+                .cancelTime(LocalDateTime.now())
+                .build();
+
         orderMapper.update(orders);
     }
 }

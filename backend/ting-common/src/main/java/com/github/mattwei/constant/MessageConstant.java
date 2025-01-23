@@ -17,5 +17,6 @@ public class MessageConstant {
     public static final String ADDRESS_BOOK_IS_NULL = "沒有地址，無法下單";
     public static final String SHOPPING_CART_IS_NULL = "購物車裡沒有餐點，無法下單";
     public static final String USER_BALANCE_NOT_ENOUGH = "餘額不足，無法下單";
+    public static final String ORDER_STATUS_ERROR = "訂單狀態錯誤";
 
 }

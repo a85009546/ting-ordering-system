@@ -1,8 +1,8 @@
 package com.github.mattwei.controller.admin;
 
+import com.github.mattwei.dto.OrdersRejectionDTO;
 import com.github.mattwei.dto.OrdersConfirmDTO;
 import com.github.mattwei.dto.OrdersPageQueryDTO;
-import com.github.mattwei.entity.Orders;
 import com.github.mattwei.result.PageResult;
 import com.github.mattwei.result.Result;
 import com.github.mattwei.service.OrderService;
@@ -66,6 +66,17 @@ public class OrderController {
     @PutMapping("/confirm")
     public Result confirm(@RequestBody OrdersConfirmDTO ordersConfirmDTO){
         orderService.confirm(ordersConfirmDTO);
+        return Result.success();
+    }
+
+    /**
+     * 拒單
+     * @param ordersRejectionDTO
+     * @return
+     */
+    @PutMapping("/rejection")
+    public Result rejection(@RequestBody OrdersRejectionDTO ordersRejectionDTO){
+        orderService.rejection(ordersRejectionDTO);
         return Result.success();
     }
 }

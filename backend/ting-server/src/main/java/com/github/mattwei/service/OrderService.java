@@ -3,6 +3,7 @@ package com.github.mattwei.service;
 import com.github.mattwei.dto.OrderSumbitDTO;
 import com.github.mattwei.dto.OrdersConfirmDTO;
 import com.github.mattwei.dto.OrdersPageQueryDTO;
+import com.github.mattwei.dto.OrdersRejectionDTO;
 import com.github.mattwei.result.PageResult;
 import com.github.mattwei.vo.OrderStatisticsVO;
 import com.github.mattwei.vo.OrderSubmitVO;
@@ -47,4 +48,10 @@ public interface OrderService {
      * @param ordersConfirmDTO
      */
     void confirm(OrdersConfirmDTO ordersConfirmDTO);
+
+    /**
+     * 管理端 - 拒單
+     * @param ordersRejectionDTO
+     */
+    void rejection(OrdersRejectionDTO ordersRejectionDTO);
 }
