@@ -4,7 +4,7 @@ import { ElMessage } from "element-plus"
 import { orderConditionPageApi } from '@/api/order'
 import { useUserIdStore } from '@/stores/userId'
 import dayjs from 'dayjs'
-import { orderConfirmApi, orderRejectionApi, orderCancelApi, orderDeliveryApi } from '@/api/order'
+import { orderConfirmApi, orderRejectionApi, orderCancelApi, orderDeliveryApi, orderCompleteApi } from '@/api/order'
 
 const userIdStore = useUserIdStore()
 const orderList = reactive([]) // 訂單列表
@@ -134,6 +134,15 @@ const deliveryOrder = async (id) => {
     search()
   }
 }
+// 完成訂單
+const completeOrder = async (id) => {
+  const res = await orderCompleteApi(id)
+  if(res.code){
+    ElMessage.success('訂單已完成！')
+    // 刷新
+    search()
+  }
+}
 // 關閉彈窗的處理函數
 const handleClose = () => {
   reason.value = '' // 清空拒單原因
@@ -214,6 +223,7 @@ const handleClose = () => {
                 v-else-if="scope.row.status === 4"
                 size="small" 
                 type="success"
+                @click="completeOrder(scope.row.id)"
               >完成</el-button>
               <el-button 
                 v-if="scope.row.status === 2"

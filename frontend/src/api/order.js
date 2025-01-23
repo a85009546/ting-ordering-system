@@ -30,3 +30,8 @@ export const orderCancelApi = (id, cancelReason) => {
 export const orderDeliveryApi = (id) => {
   return request.put(`/admin/order/delivery/${id}`)
 }
+
+// 管理端 - 完成訂單
+export const orderCompleteApi = (id) => {
+  return request.put(`/admin/order/complete/${id}`)
+}
