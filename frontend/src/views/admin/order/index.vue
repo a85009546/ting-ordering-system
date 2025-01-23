@@ -30,6 +30,7 @@ const orderStatusList = [
   { label: "已完成", value: "5", count: 0 },
   { label: "已取消", value: "6", count: 0 }
 ]
+
 // 分頁相關
 const currentPage = ref(1) 
 const pageSize = ref(5) 
@@ -122,15 +123,25 @@ const handleCurrentChange = (val) => {
       <el-table-column prop="address" label="地址" align="center"/>
       <el-table-column prop="orderTime" label="下單時間" width="180" align="center"/>
       <el-table-column prop="amount" label="實收金額" width="120" align="center"/>
-      <el-table-column label="操作" align="center">
+      <el-table-column label="操作" align="center" width="300">
         <template #default="scope">
-          <el-button
-            size="small"
-            type="text"
-            @click="viewOrderDetails(scope.row)"
-          >
-            查看
-          </el-button>
+              <el-button
+                v-if="scope.row.status === 2"
+                size="small" 
+                type="text"
+              >接單</el-button>
+              <el-button
+                v-else-if="scope.row.status === 3"
+                size="small" 
+                type="text"
+              >派送</el-button>
+              <el-button
+                v-else-if="scope.row.status === 4"
+                size="small" 
+                type="text"
+              >完成</el-button>
+              <el-button size="small" type="text">取消</el-button>
+              <el-button size="small" type="text" @click="viewOrderDetails(scope.row)">查看</el-button>
         </template>
       </el-table-column>
     </el-table>
