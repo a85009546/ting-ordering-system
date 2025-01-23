@@ -1,5 +1,6 @@
 package com.github.mattwei.controller.admin;
 
+import com.github.mattwei.dto.OrdersCancelDTO;
 import com.github.mattwei.dto.OrdersRejectionDTO;
 import com.github.mattwei.dto.OrdersConfirmDTO;
 import com.github.mattwei.dto.OrdersPageQueryDTO;
@@ -77,6 +78,17 @@ public class OrderController {
     @PutMapping("/rejection")
     public Result rejection(@RequestBody OrdersRejectionDTO ordersRejectionDTO){
         orderService.rejection(ordersRejectionDTO);
+        return Result.success();
+    }
+
+    /**
+     * 取消訂單
+     * @param ordersCancelDTO
+     * @return
+     */
+    @PutMapping("/cancel")
+    public Result canel(@RequestBody OrdersCancelDTO ordersCancelDTO){
+        orderService.cancel(ordersCancelDTO);
         return Result.success();
     }
 }
