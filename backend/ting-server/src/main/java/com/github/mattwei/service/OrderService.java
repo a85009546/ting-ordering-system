@@ -1,6 +1,7 @@
 package com.github.mattwei.service;
 
 import com.github.mattwei.dto.OrderSumbitDTO;
+import com.github.mattwei.dto.OrdersConfirmDTO;
 import com.github.mattwei.dto.OrdersPageQueryDTO;
 import com.github.mattwei.result.PageResult;
 import com.github.mattwei.vo.OrderStatisticsVO;
@@ -40,4 +41,10 @@ public interface OrderService {
      * @return
      */
     OrderVO details(Long id);
+
+    /**
+     * 管理端 - 接單
+     * @param ordersConfirmDTO
+     */
+    void confirm(OrdersConfirmDTO ordersConfirmDTO);
 }

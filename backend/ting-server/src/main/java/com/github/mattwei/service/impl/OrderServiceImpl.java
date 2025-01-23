@@ -3,6 +3,7 @@ package com.github.mattwei.service.impl;
 import com.github.mattwei.constant.MessageConstant;
 import com.github.mattwei.context.BaseContext;
 import com.github.mattwei.dto.OrderSumbitDTO;
+import com.github.mattwei.dto.OrdersConfirmDTO;
 import com.github.mattwei.dto.OrdersPageQueryDTO;
 import com.github.mattwei.entity.*;
 import com.github.mattwei.exception.AddressBookBusinessException;
@@ -167,6 +168,19 @@ public class OrderServiceImpl implements OrderService {
         orderVO.setOrderDetailList(orderDetailList);
 
         return orderVO;
+    }
+
+    /**
+     * 管理端 - 接單
+     * @param ordersConfirmDTO
+     */
+    @Override
+    public void confirm(OrdersConfirmDTO ordersConfirmDTO) {
+        Orders orders = Orders.builder()
+                .id(ordersConfirmDTO.getId())
+                .status(Orders.CONFIRMED)
+                .build();
+        orderMapper.update(orders);
     }
 }
 

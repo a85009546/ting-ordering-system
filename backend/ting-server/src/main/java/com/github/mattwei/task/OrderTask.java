@@ -25,7 +25,7 @@ public class OrderTask {
     /**
      * 處理超時訂單
      */
-    @Scheduled(cron = "0 * * * * ? ") // 每分鐘觸發一次
+//    @Scheduled(cron = "0 * * * * ? ") // 每分鐘觸發一次
     public void processTimeoutOrder(){
         log.info("定時處理超時訂單: {}", LocalDateTime.now());
 
