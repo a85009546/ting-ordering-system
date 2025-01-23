@@ -247,6 +247,27 @@ public class OrderServiceImpl implements OrderService {
 
         orderMapper.update(orders);
     }
+
+    /**
+     * 管理端 - 派送訂單
+     * @param id
+     */
+    @Override
+    public void delivery(Long id) {
+        // 根據id查詢訂單
+        Orders ordersDB = orderMapper.getById(id);
+
+        // 校驗訂單是否存在，且狀態為 3
+        if(ordersDB == null || !ordersDB.getStatus().equals(Orders.CONFIRMED)){
+            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        }
+
+        Orders orders = Orders.builder()
+                .id(id)
+                .status(Orders.DELIVERY_IN_PROGRESS) // 狀態更新為派送中
+                .build();
+        orderMapper.update(orders);
+    }
 }
 
 
