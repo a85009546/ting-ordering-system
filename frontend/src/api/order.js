@@ -35,3 +35,8 @@ export const orderDeliveryApi = (id) => {
 export const orderCompleteApi = (id) => {
   return request.put(`/admin/order/complete/${id}`)
 }
+
+// 管理端 - 各個狀態的訂單數量統計
+export const orderStatisticsApi = () => {
+  return request.get('/admin/order/statistics')
+}

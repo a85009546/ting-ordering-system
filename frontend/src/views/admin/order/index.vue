@@ -1,10 +1,11 @@
 <script setup>
-import { ref, reactive, onMounted, watch } from 'vue'
+import { ref, reactive, onMounted, watch, computed } from 'vue'
 import { ElMessage } from "element-plus"
 import { orderConditionPageApi } from '@/api/order'
 import { useUserIdStore } from '@/stores/userId'
 import dayjs from 'dayjs'
-import { orderConfirmApi, orderRejectionApi, orderCancelApi, orderDeliveryApi, orderCompleteApi } from '@/api/order'
+import { orderConfirmApi, orderRejectionApi, orderCancelApi, 
+  orderDeliveryApi, orderCompleteApi, orderStatisticsApi } from '@/api/order'
 
 const userIdStore = useUserIdStore()
 const orderList = reactive([]) // 訂單列表
@@ -19,6 +20,9 @@ const selectedOrderId = ref(null)
 const searchOrder = ref({
   number:'', phone:'', date:[], beginTime:'', endTime:''
 })
+const statisticsData = ref({
+  toBeConfirmed:null, confirmed:null, deliveryInProgress:null,
+})
 // 監聽searchOrder的date屬性
 watch(() => searchOrder.value.date, (newVal, oldVal) => {
   if(newVal.length === 2){
@@ -30,23 +34,44 @@ watch(() => searchOrder.value.date, (newVal, oldVal) => {
   }
 })
 // 訂單狀態列表
-const orderStatusList = [
+const orderStatusList = computed(() => [
   { label: "全部訂單", value: "", count: 0 },
-  { label: "待接單", value: "2", count: 0 },
-  { label: "待派送", value: "3", count: 0 },
-  { label: "派送中", value: "4", count: 0 },
+  { label: "待接單", value: "2", count: statisticsData.value.toBeConfirmed },
+  { label: "待派送", value: "3", count: statisticsData.value.confirmed },
+  { label: "派送中", value: "4", count: statisticsData.value.deliveryInProgress },
   { label: "已完成", value: "5", count: 0 },
   { label: "已取消", value: "6", count: 0 }
-]
+]);
+// const orderStatusList = reactive([
+//   { label: "全部訂單", value: "", count: 0 },
+//   { label: "待接單", value: "2", count: statisticsData.value.toBeConfirmed },
+//   { label: "待派送", value: "3", count: statisticsData.value.confirmed },
+//   { label: "派送中", value: "4", count: statisticsData.value.deliveryInProgress },
+//   { label: "已完成", value: "5", count: 0 },
+//   { label: "已取消", value: "6", count: 0 }
+// ])
 
 // 分頁相關
 const currentPage = ref(1) 
 const pageSize = ref(5) 
 const background = ref(true)
 const total = ref(0)
+// 獲得訂單的數量統計
+const fetchOrderCount = async () => {
+  const res = await orderStatisticsApi()
+  if(res.code){
+    statisticsData.value = {
+      toBeConfirmed: res.data.toBeConfirmed || 0,
+      confirmed: res.data.confirmed || 0,
+      deliveryInProgress: res.data.deliveryInProgress || 0,
+    }
+    console.log(statisticsData.value)
+  }
+}
 // 鉤子
 onMounted(() => {
   search()
+  fetchOrderCount()
 })
 // 查詢訂單列表
 const search = async () => {
@@ -154,21 +179,26 @@ const handleClose = () => {
   <h1>訂單管理</h1>
   <div class="order-management">
     <!-- 訂單狀態欄 -->
+    {{ orderStatusList }}
     <div class="order-status-bar">
-      <el-button 
-        class="status-button"  
-        v-for="status in orderStatusList"
-        :type="selectedStatus === status.value ? 'primary' : 'default'"
-        size="large"
-        @click="setStatus(status.value)"
-        :key="status.value"
+      <el-badge 
+          v-for="status in orderStatusList" :key="status.value"
+          :value="status.count > 0 ? status.count : null"
+          class="status-badge"
+          :hidden="status.count === 0"
       >
-        {{ status.label }}
-      </el-button>
+        <el-button 
+          class="status-button"   
+          :type="selectedStatus === status.value ? 'primary' : 'default'"
+          size="large"
+          @click="setStatus(status.value)"
+        >
+          {{ status.label }}
+        </el-button>
+      </el-badge>
     </div>
 
     <!-- 搜索欄 -->
-    {{ searchOrder }}
     <el-form :inline="true" class="search-bar">
       <el-form-item label="訂單號">
         <el-input v-model="searchOrder.number" placeholder="請輸入訂單號" />
@@ -297,6 +327,10 @@ const handleClose = () => {
 }
 .status-button {
   border-radius: 5px; 
+}
+.status-badge{
+  margin-bottom: 10px;
+  margin-left: 20px;
 }
 .pagination{
   margin-top: 20px;

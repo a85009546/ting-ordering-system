@@ -28,7 +28,9 @@ const accountStore = useAccountStore()
 const balanceStore = useBalanceStore()
 const avatarStore = useAvatarStore()
 
-const defaultAddress = ref('')
+const defaultAddress = ref(
+  {cityName:'', destrictName:'', detail:''}
+)
 const selectedAddress = ref('尚未選擇地址') // 當前選擇的地址
 const isAddressDialogVisible = ref(false) // 控制地址彈窗顯示
 const isEditAddressDialogVisible = ref(false)
@@ -114,8 +116,9 @@ const fetchAddresses = async () => {
   const response = await getAddressListApi()
   addressList.splice(0, addressList.length, ...response.data)
   // 綁定 defaultAddress
-  defaultAddress.value = addressList.find(address => address.isDefault)
-
+  const defaultAddr = addressList.find((address) => address.isDefault)
+  // 確保defaultAddress不會設成 undefined
+  defaultAddress.value = defaultAddr || { cityName: '', destrictName: '', detail: '尚未設置默認地址' };
 }
 // 打開營業狀態彈框
 const openStatusDialog = () => {
@@ -323,7 +326,12 @@ const beforeAvatarUpload = (rawFile) => {
                   class="marker-icon-image"
                   @click="openCartDialog"
             />
-            <span>{{ defaultAddress.detail }}</span>
+            <span v-if="defaultAddress && defaultAddress.detail">
+              {{ defaultAddress.detail }}
+            </span>
+            <span v-else>
+              尚未設置默認地址
+            </span>
           </span>
         </span>
         
@@ -413,7 +421,6 @@ const beforeAvatarUpload = (rawFile) => {
           </el-icon>
           <span class="clear-cart-text">清空</span>
         </div>
-        {{ shoppingCartItems  }}
         <div v-for="item in shoppingCartItems" :key="item.id" class="cart-item">
           <img :src="item.image" alt="meal image" class="cart-item-image" />
           <div class="cart-item-details">
