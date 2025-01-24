@@ -18,7 +18,6 @@ const labelText = ref('拒單原因'); // 動態改變的label
 const placeholderText = ref('請輸入拒單原因'); // 動態改變的placeholder
 const reason = ref(''); // 拒單原因輸入框的綁定數據
 const orderDetail = ref({}) // 訂單詳情
-const deliveryFee = 30
 // 分頁相關
 const currentPage = ref(1) 
 const pageSize = ref(5) 
@@ -236,7 +235,16 @@ const handleClose = () => {
       :header-cell-style="{ backgroundColor: '#f5f7fa' }"
     >
       <el-table-column prop="number" label="訂單編號" width="150" align="center"/>
-      <el-table-column prop="status" label="訂單狀態" width="100" align="center"/>
+      <el-table-column prop="status" label="訂單狀態" width="100" align="center">
+        <template #default="scope">
+          <span v-if="scope.row.status === 1">待付款</span>
+          <span v-else-if="scope.row.status === 2">待接單</span>
+          <span v-else-if="scope.row.status === 3">待派送</span>
+          <span v-else-if="scope.row.status === 4">派送中</span>
+          <span v-else-if="scope.row.status === 5">已完成</span>
+          <span v-else-if="scope.row.status === 6">已取消</span>
+        </template>
+      </el-table-column>  
       <el-table-column prop="userName" label="顧客姓名" width="120" align="center"/>
       <el-table-column prop="phone" label="手機號碼" width="120" align="center"/>
       <el-table-column prop="address" label="地址" align="center"/>
@@ -322,14 +330,13 @@ const handleClose = () => {
       </div>
     </el-dialog>
 
-    <!-- 彈窗 -->
+    <!-- 訂單明細彈窗 -->
     <el-dialog 
       v-model="isDetaildialogVisible"
       title="訂單詳細資訊" 
       :close-on-click-modal="true"
       width="600px"
     >
-      <!-- 彈窗內容 -->
       <div>
         <hr />
         <!-- 第一行：訂單號及下單時間 -->
@@ -445,7 +452,6 @@ const handleClose = () => {
   margin-top: 10px;
   padding-left: 48px;
   padding-right: 15px;
-
 }
 
 </style>

@@ -10,6 +10,17 @@ export const orderPayApi = (id) => {
   return request.put(`/customer/order/pay/${id}`)
 }
 
+// 顧客端 - 歷史訂單分頁查詢
+export const orderHistoryPageApi = (status, page, pageSize) => {
+  return request.get('/customer/order/historyOrders',
+    { params: { status, page, pageSize }})
+}
+
+// 顧客端 - 查詢訂單詳情
+export const orderDetail4CustomerApi = (id) => {
+  return request.get(`/customer/order/orderDetail/${id}`)
+}
+
 // 管理端 - 訂單條件分頁查詢
 export const orderConditionPageApi = (number, phone, status, beginTime, endTime, userId, page, pageSize) => {
   return request.get('/admin/order/conditionSearch',

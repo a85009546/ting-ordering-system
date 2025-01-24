@@ -33,7 +33,7 @@ public class Orders implements Serializable {
     public static final Integer CANCELLED = 6;
 
     /**
-     * 支付狀態 1已支付 2退款
+     * 支付狀態 0待付款 1已支付 2退款
      */
     public static final Integer UN_PAID = 0;
     public static final Integer PAYED = 1;
