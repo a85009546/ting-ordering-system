@@ -14,6 +14,8 @@ import locationIcon from '@/assets/images/location-icon.png';
 import defaultAvatarIcon from '@/assets/images/default-avatar.png'
 import { useRouter } from 'vue-router'
 import { uploadApi } from '@/api/upload'
+import { updateUserApi } from '@/api/user'
+import { useUserIdStore } from '@/stores/userId'
 
 
 const router = useRouter()
@@ -27,6 +29,7 @@ const roleStore = useRoleStore()
 const accountStore = useAccountStore()
 const balanceStore = useBalanceStore()
 const avatarStore = useAvatarStore()
+const userIdStore = useUserIdStore()
 
 const defaultAddress = ref(
   {cityName:'', destrictName:'', detail:''}
@@ -278,15 +281,17 @@ const proceedToCheckout = () => {
   })
 
 }
-// 保存圖片
+// 更新頭像
 const saveAvatar = async (options) => {
   const formData = new FormData()
   formData.append('file', options.file)
-
+  // 將圖片上傳至阿里云，並返回圖片url
   const result = await uploadApi(formData)
-  if(result.code){
-    avatar.value = result.data
-    avatarStore.setAvatar(result.data)
+  avatar.value = result.data
+  avatarStore.setAvatar(result.data)
+  const user = {avatar: result.data, id: userIdStore.userId}
+  const res = await updateUserApi(user)
+  if(res.code){
     // isAvatarDialogVisible.value = false
     ElMessage.success('頭像更新成功')
   }

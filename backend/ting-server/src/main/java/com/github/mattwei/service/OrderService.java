@@ -21,6 +21,12 @@ public interface OrderService {
     OrderSubmitVO submitOrder(OrderSumbitDTO orderSumbitDTO);
 
     /**
+     * 顧客支付
+     * @param id
+     */
+    void payOrder(Long id);
+
+    /**
      * 管理端 - 訂單條件分頁查詢
      * @param ordersPageQueryDTO
      * @return
@@ -69,4 +75,6 @@ public interface OrderService {
      * @param id
      */
     void complete(Long id);
+
+
 }

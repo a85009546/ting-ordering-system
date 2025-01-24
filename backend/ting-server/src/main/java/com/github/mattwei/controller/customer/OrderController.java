@@ -6,10 +6,7 @@ import com.github.mattwei.service.OrderService;
 import com.github.mattwei.vo.OrderSubmitVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Description:
@@ -35,5 +32,17 @@ public class OrderController {
         log.info("顧客下單: {}", orderSumbitDTO);
         OrderSubmitVO orderSubmitVO = orderService.submitOrder(orderSumbitDTO);
         return Result.success(orderSubmitVO);
+    }
+
+    /**
+     * 顧客支付
+     * @param id
+     * @return
+     */
+    @PutMapping("/pay/{id}")
+    public Result pay(@PathVariable Long id){
+        log.info("顧客支付，訂單id為: {}", id);
+        orderService.payOrder(id);
+        return Result.success();
     }
 }

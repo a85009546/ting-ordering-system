@@ -63,20 +63,12 @@ public class OrderServiceImpl implements OrderService {
         if(shoppingCartList == null || shoppingCartList.size() == 0){
             throw new ShoppingCartBusinessException(MessageConstant.SHOPPING_CART_IS_NULL);
         }
-        // 1.2 購物車不為空，查詢餘額是否足夠
-        User user = userMapper.getById(userId);
-        if(user.getBalance().compareTo(orderSumbitDTO.getAmount()) < 0){
-            throw new UserBusinessException(MessageConstant.USER_BALANCE_NOT_ENOUGH);
-        }
-        // 1.3 檢查是否有地址
+        // 1.2 檢查是否有地址
         AddressBook addressBook = addressBookMapper.getById(orderSumbitDTO.getAddressBookId());
         if(addressBook == null){
             throw new AddressBookBusinessException(MessageConstant.ADDRESS_BOOK_IS_NULL);
         }
-
-//        // 2. 根據訂單金額扣除用戶餘額
-//        user.setBalance(user.getBalance().subtract(orderSumbitDTO.getAmount()));
-//        userMapper.update(user);
+        User user = userMapper.getById(userId);
 
         // 2. 需要向訂單表插入 1 條數據
         Orders orders = new Orders();
@@ -113,6 +105,40 @@ public class OrderServiceImpl implements OrderService {
                 .orderTime(orders.getOrderTime())
                 .build();
         return orderSubmitVO;
+    }
+
+    /**
+     * 顧客支付
+     * @param id
+     */
+    @Override
+    @Transactional
+    public void payOrder(Long id) {
+        // 1. 根據訂單id查詢訂單
+        Orders orders = orderMapper.getById(id);
+        // 1.1 檢查訂單狀態是否為 待支付
+        if(orders.getStatus() != Orders.PENDING_PAYMENT){
+            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        }
+        // 2. 查詢用戶當前餘額
+        Long userId = BaseContext.getCurrentId();
+        User user = userMapper.getById(userId);
+        // 2.1 餘額不足，拋出異常
+        if(user.getBalance().compareTo(orders.getAmount()) < 0){
+            throw new UserBusinessException(MessageConstant.USER_BALANCE_NOT_ENOUGH);
+        }
+        // 3. 根據訂單金額扣除用戶餘額
+        user.setBalance(user.getBalance().subtract(orders.getAmount()));
+        userMapper.update(user);
+
+        // 4. 修改訂單狀態、結帳時間、支付狀態
+        orders.setStatus(Orders.TO_BE_CONFIRMED); // 待接單
+        orders.setCheckoutTime(LocalDateTime.now());
+        orders.setPayStatus(Orders.PAYED); // 已支付
+        orderMapper.update(orders);
+
+
+
     }
 
     /**

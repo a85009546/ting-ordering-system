@@ -185,7 +185,6 @@ const handleClose = () => {
   <h1>訂單管理</h1>
   <div class="order-management">
     <!-- 訂單狀態欄 -->
-    {{ orderStatusList }}
     <div class="order-status-bar">
       <el-badge 
           v-for="status in orderStatusList" :key="status.value"
@@ -300,7 +299,6 @@ const handleClose = () => {
     <el-dialog
       v-model="isDialogVisible"
       :title="DialogTitle"
-      
       @close="handleClose"
     >
       <el-form>
