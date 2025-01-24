@@ -40,7 +40,7 @@ public interface OrderService {
     OrderStatisticsVO statistics();
 
     /**
-     * 管理端 - 查詢訂單詳情
+     * 查詢訂單詳情
      * @param id
      * @return
      */

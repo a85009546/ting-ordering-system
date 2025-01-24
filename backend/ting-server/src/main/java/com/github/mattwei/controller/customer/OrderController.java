@@ -5,6 +5,7 @@ import com.github.mattwei.result.PageResult;
 import com.github.mattwei.result.Result;
 import com.github.mattwei.service.OrderService;
 import com.github.mattwei.vo.OrderSubmitVO;
+import com.github.mattwei.vo.OrderVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -58,5 +59,16 @@ public class OrderController {
     public Result<PageResult> page(int page, int pageSize, Integer status){
         PageResult pageResult = orderService.pageQuery4Customer(page, pageSize, status);
         return Result.success(pageResult);
+    }
+
+    /**
+     * 查詢訂單詳情
+     * @param id
+     * @return
+     */
+    @GetMapping("orderDetail/{id}")
+    public Result<OrderVO> details(@PathVariable Long id){
+        OrderVO orderVO = orderService.details(id);
+        return Result.success(orderVO);
     }
 }
