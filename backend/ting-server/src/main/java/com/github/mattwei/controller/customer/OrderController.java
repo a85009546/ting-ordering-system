@@ -1,6 +1,7 @@
 package com.github.mattwei.controller.customer;
 
 import com.github.mattwei.dto.OrderSumbitDTO;
+import com.github.mattwei.result.PageResult;
 import com.github.mattwei.result.Result;
 import com.github.mattwei.service.OrderService;
 import com.github.mattwei.vo.OrderSubmitVO;
@@ -44,5 +45,18 @@ public class OrderController {
         log.info("顧客支付，訂單id為: {}", id);
         orderService.payOrder(id);
         return Result.success();
+    }
+
+    /**
+     * 歷史訂單分頁查詢
+     * @param page
+     * @param pageSize
+     * @param status
+     * @return
+     */
+    @GetMapping("/historyOrders")
+    public Result<PageResult> page(int page, int pageSize, Integer status){
+        PageResult pageResult = orderService.pageQuery4Customer(page, pageSize, status);
+        return Result.success(pageResult);
     }
 }

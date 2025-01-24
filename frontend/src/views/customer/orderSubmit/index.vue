@@ -175,7 +175,7 @@ const payNow = async () => {
       <h3>收貨資訊</h3>
       <el-form label-width="120px" :model="order" :rules="rules" ref="orderFormRef">
         <!-- 收貨地址 -->
-        <el-form-item label="收貨地址" prop="addressBookId">
+        <el-form-item class="top-item" label="收貨地址" prop="addressBookId">
           <el-select v-model="order.addressBookId" placeholder="請選擇收貨地址">
             <el-option
               v-for="address in addressList"
@@ -189,7 +189,7 @@ const payNow = async () => {
         <el-form-item label="下單方式" prop="deliveryStatus">
           <el-radio-group v-model="order.deliveryStatus">
             <el-radio label="1">立即送出</el-radio>
-            <el-radio label="0">選擇其他時間</el-radio>
+            <el-radio label="0">選擇其他時間 ( 請在備註欄說明 )</el-radio>
           </el-radio-group>
           <el-alert
             v-if="deliveryStatus === '選擇其他時間'"
@@ -206,7 +206,7 @@ const payNow = async () => {
     <el-card class="card">
       <h3>訂單明細</h3>
       <el-table :data="shoppingCartItems" border>
-        <el-table-column label="餐點圖片" width="100" align="center">
+        <el-table-column class="top-item" label="餐點圖片" width="100" align="center">
           <template #default="{ row }">
             <el-image
               :src="row.image"
@@ -242,8 +242,9 @@ const payNow = async () => {
 
     <!-- 第三部分：備註與支付 -->
     <el-card class="card">
-      <h3>備註與支付</h3>
+      <h3>備註欄</h3>
       <el-input
+        class="top-item"
         v-model="order.remark"
         type="textarea"
         placeholder="請填寫備註（可選）"
@@ -292,6 +293,9 @@ const payNow = async () => {
 
 .card {
   margin-bottom: 20px;
+}
+.top-item{
+  margin-top: 15px;
 }
 
 .mt-2 {

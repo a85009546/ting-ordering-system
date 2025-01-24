@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -318,6 +319,42 @@ public class OrderServiceImpl implements OrderService {
                 .deliveryTime(LocalDateTime.now()) // 設置派送時間
                 .build();
         orderMapper.update(orders);
+    }
+
+    /**
+     * 顧客端 - 訂單分頁查詢
+     * @param pageNum
+     * @param pageSize
+     * @param status
+     * @return
+     */
+    @Override
+    public PageResult pageQuery4Customer(int pageNum, int pageSize, Integer status) {
+        PageHelper.startPage(pageNum, pageSize);
+
+        OrdersPageQueryDTO ordersPageQueryDTO = new OrdersPageQueryDTO();
+        ordersPageQueryDTO.setUserId(BaseContext.getCurrentId());
+        ordersPageQueryDTO.setStatus(status);
+
+        // 條件分頁查詢
+        Page<Orders> page = orderMapper.pageQuery(ordersPageQueryDTO);
+
+        List<OrderVO> list = new ArrayList<>();
+        // 查詢訂單明細
+        if(page != null && page.getTotal() > 0){
+            for (Orders orders : page) {
+                // 獲取訂單id
+                Long orderId = orders.getId();
+                // 根據訂單id查詢訂單明細
+                List<OrderDetail> orderDetailList = orderDetailMapper.getByOrderId(orderId);
+
+                OrderVO orderVO = new OrderVO();
+                BeanUtils.copyProperties(orders, orderVO);
+                orderVO.setOrderDetailList(orderDetailList);
+                list.add(orderVO);
+            }
+        }
+        return new PageResult(page.getTotal(), list);
     }
 }
 

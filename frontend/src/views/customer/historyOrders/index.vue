@@ -1,5 +1,16 @@
 <script set>
+import { ref } from 'vue'
 
+
+// 訂單狀態列表
+const orderStatusList = computed(() => [
+  { label: "全部訂單", value: "", count: 0 },
+  { label: "待接單", value: "2", count: statisticsData.value.toBeConfirmed },
+  { label: "待派送", value: "3", count: statisticsData.value.confirmed },
+  { label: "派送中", value: "4", count: statisticsData.value.deliveryInProgress },
+  { label: "已完成", value: "5", count: 0 },
+  { label: "已取消", value: "6", count: 0 }
+])
 </script>
 
 <template>

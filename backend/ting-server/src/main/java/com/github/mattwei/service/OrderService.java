@@ -77,4 +77,12 @@ public interface OrderService {
     void complete(Long id);
 
 
+    /**
+     * 顧客端 - 訂單分頁查詢
+     * @param page
+     * @param pageSize
+     * @param status
+     * @return
+     */
+    PageResult pageQuery4Customer(int page, int pageSize, Integer status);
 }

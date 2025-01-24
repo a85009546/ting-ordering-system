@@ -100,6 +100,7 @@ const confirmOrder = async (id) => {
   if(res.code){
     ElMessage.success(`成功接單`)
     search()
+    fetchOrderCount()
   }
 }
 // 打開拒單彈窗
@@ -163,6 +164,7 @@ const deliveryOrder = async (id) => {
     ElMessage.success('已派送訂單！')
     // 刷新
     search()
+    fetchOrderCount()
   }
 }
 // 完成訂單
