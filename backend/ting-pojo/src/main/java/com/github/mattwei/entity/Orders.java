@@ -23,7 +23,7 @@ import java.time.LocalDateTime;
 public class Orders implements Serializable {
 
     /**
-     * 訂單狀態 1待支付 2待接單 3已接單 4派送中 5已完成 6已取消 7退款
+     * 訂單狀態 1待支付 2待接單 3已接單 4派送中 5已完成 6已取消
      */
     public static final Integer PENDING_PAYMENT = 1;
     public static final Integer TO_BE_CONFIRMED = 2;
@@ -45,7 +45,7 @@ public class Orders implements Serializable {
     // 訂單號
     private String number;
 
-    // 訂單狀態 1待支付 2待接單 3已接單 4派送中 5已完成 6已取消 7退款
+    // 訂單狀態 1待支付 2待接單 3已接單 4派送中 5已完成 6已取消
     private Integer status;
 
     // 下單用戶id

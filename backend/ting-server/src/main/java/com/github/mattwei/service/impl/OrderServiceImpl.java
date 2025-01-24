@@ -138,8 +138,6 @@ public class OrderServiceImpl implements OrderService {
         orders.setPayStatus(Orders.PAYED); // 已支付
         orderMapper.update(orders);
 
-
-
     }
 
     /**
@@ -355,6 +353,44 @@ public class OrderServiceImpl implements OrderService {
             }
         }
         return new PageResult(page.getTotal(), list);
+    }
+
+    /**
+     * 顧客端 - 取消訂單
+     * @param id
+     */
+    @Override
+    @Transactional
+    public void userCancelById(Long id) {
+        // 根據訂單id查詢訂單
+        Orders ordersDB = orderMapper.getById(id);
+        if(ordersDB == null){
+            throw new OrderBusinessException(MessageConstant.ORDER_NOT_FOUND);
+        }
+
+        // 訂單狀態 1待支付 2待接單 3已接單 4派送中 5已完成 6已取消
+        // 只能取消狀態為 1待支付、2待接單
+        if(ordersDB.getStatus() > 2){
+            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        }
+
+        Orders orders = new Orders();
+        orders.setId(id);
+
+        // 訂單已付款的話需要退款
+        if(ordersDB.getStatus().equals(Orders.TO_BE_CONFIRMED)){
+            // 獲取用戶資訊
+            User user = userMapper.getById(ordersDB.getUserId());
+            user.setBalance(user.getBalance().add(ordersDB.getAmount()));
+            userMapper.update(user);
+            // 修改支付狀態為退款
+            orders.setPayStatus(Orders.REFUND);
+        }
+        // 更新訂單狀態、取消原因、取消時間
+        orders.setStatus(Orders.CANCELLED);
+        orders.setCancelReason("顧客取消");
+        orders.setCancelTime(LocalDateTime.now());
+        orderMapper.update(orders);
     }
 }
 
