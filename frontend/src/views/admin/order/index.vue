@@ -5,17 +5,25 @@ import { orderConditionPageApi } from '@/api/order'
 import { useUserIdStore } from '@/stores/userId'
 import dayjs from 'dayjs'
 import { orderConfirmApi, orderRejectionApi, orderCancelApi, 
-  orderDeliveryApi, orderCompleteApi, orderStatisticsApi } from '@/api/order'
+  orderDeliveryApi, orderCompleteApi, orderStatisticsApi, orderDetailApi } from '@/api/order'
 
 const userIdStore = useUserIdStore()
 const orderList = reactive([]) // 訂單列表
 const selectedStatus = ref('') // 當前選中的訂單狀態
-const isDialogVisible = ref(false); // 控制彈窗的顯示
+const isDialogVisible = ref(false) // 控制彈窗的顯示
+const isDetaildialogVisible = ref(false) // 控制訂單詳情彈窗的顯示
 const isRejection = ref(false)
 const DialogTitle = ref('拒單原因')
 const labelText = ref('拒單原因'); // 動態改變的label
 const placeholderText = ref('請輸入拒單原因'); // 動態改變的placeholder
 const reason = ref(''); // 拒單原因輸入框的綁定數據
+const orderDetail = ref({}) // 訂單詳情
+const deliveryFee = 30
+// 分頁相關
+const currentPage = ref(1) 
+const pageSize = ref(5) 
+const background = ref(true)
+const total = ref(0)
 const selectedOrderId = ref(null)
 const searchOrder = ref({
   number:'', phone:'', date:[], beginTime:'', endTime:''
@@ -41,21 +49,8 @@ const orderStatusList = computed(() => [
   { label: "派送中", value: "4", count: statisticsData.value.deliveryInProgress },
   { label: "已完成", value: "5", count: 0 },
   { label: "已取消", value: "6", count: 0 }
-]);
-// const orderStatusList = reactive([
-//   { label: "全部訂單", value: "", count: 0 },
-//   { label: "待接單", value: "2", count: statisticsData.value.toBeConfirmed },
-//   { label: "待派送", value: "3", count: statisticsData.value.confirmed },
-//   { label: "派送中", value: "4", count: statisticsData.value.deliveryInProgress },
-//   { label: "已完成", value: "5", count: 0 },
-//   { label: "已取消", value: "6", count: 0 }
-// ])
+])
 
-// 分頁相關
-const currentPage = ref(1) 
-const pageSize = ref(5) 
-const background = ref(true)
-const total = ref(0)
 // 獲得訂單的數量統計
 const fetchOrderCount = async () => {
   const res = await orderStatisticsApi()
@@ -116,7 +111,7 @@ const openRejectDialog = (id) => {
   placeholderText.value = '請輸入拒單原因'
   selectedOrderId.value = id
 }
-// 打開取消彈窗
+// 打開取消訂單彈窗
 const openCancelDialog = (id) => {
   isRejection.value = false
   isDialogVisible.value = true
@@ -124,6 +119,17 @@ const openCancelDialog = (id) => {
   labelText.value = '取消原因'
   placeholderText.value = '請輸入取消原因'
   selectedOrderId.value = id
+}
+// 打開查看訂單詳情彈窗
+const openDetailDialog = async (id, status) => {
+  isDetaildialogVisible.value = true
+  selectedOrderId.value = id
+  selectedStatus.value = status
+  const res = await orderDetailApi(id)
+  if(res.code){
+    orderDetail.value = res.data
+    console.log(orderDetail.value)
+  }
 }
 // 提交拒單/取消 原因並 拒單/取消訂單
 const submitReason = async () => {
@@ -228,7 +234,7 @@ const handleClose = () => {
       style="width: 100%; margin-top: 20px"
       :header-cell-style="{ backgroundColor: '#f5f7fa' }"
     >
-      <el-table-column prop="number" label="訂單號" width="150" align="center"/>
+      <el-table-column prop="number" label="訂單編號" width="150" align="center"/>
       <el-table-column prop="status" label="訂單狀態" width="100" align="center"/>
       <el-table-column prop="userName" label="顧客姓名" width="120" align="center"/>
       <el-table-column prop="phone" label="手機號碼" width="120" align="center"/>
@@ -267,7 +273,11 @@ const handleClose = () => {
                 type="danger"
                 @click="openCancelDialog(scope.row.id)"
               >取消</el-button>  
-              <el-button size="small" type="default" @click="viewOrderDetails(scope.row)">查看</el-button>
+              <el-button 
+                size="small" 
+                type="default" 
+                @click="openDetailDialog(scope.row.id, scope.row.status)"
+              >查看</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -290,7 +300,7 @@ const handleClose = () => {
     <el-dialog
       v-model="isDialogVisible"
       :title="DialogTitle"
-      :close-on-click-modal="true"
+      
       @close="handleClose"
     >
       <el-form>
@@ -312,6 +322,77 @@ const handleClose = () => {
       </div>
     </el-dialog>
 
+    <!-- 彈窗 -->
+    <el-dialog 
+      v-model="isDetaildialogVisible"
+      title="訂單詳細資訊" 
+      :close-on-click-modal="true"
+      width="600px"
+    >
+      <!-- 彈窗內容 -->
+      <div>
+        <hr />
+        <!-- 第一行：訂單號及下單時間 -->
+        <div class="row">
+          <p><strong>訂單號：</strong>{{ orderDetail.number }}</p>
+          <p><strong>下單時間：</strong>{{ orderDetail.orderTime }}</p>
+        </div>
+        <!-- 第二行：訂單狀態及訂單金額 -->
+        <div class="row">
+          <p><strong>訂單狀態：</strong>{{ orderDetail.status }}</p>
+          <p><strong>訂單金額：</strong>{{ orderDetail.amount }}</p>
+        </div>
+        <!-- 第三行：用戶名及手機號碼 -->
+        <div class="row">
+          <p><strong>用戶名：</strong>{{ orderDetail.userName }}</p>
+          <p><strong>手機號碼：</strong>{{ orderDetail.phone }}</p>
+        </div>
+        <!-- 第四行：地址 -->
+        <div class="row">
+          <p><strong>地址：</strong>{{ orderDetail.address }}</p>
+        </div>
+        <!-- 第五行：備註 -->
+        <div class="row">
+          <p><strong>備註：</strong>{{ orderDetail.remark || "無" }}</p>
+        </div>
+        <el-table 
+          :data="orderDetail.orderDetailList" 
+          class="order-detail-table"
+          stripe 
+          style="width: 520px">
+          <el-table-column prop="name" label="餐點" width="120" align="left"/>
+          <el-table-column prop="flavor" label="口味" width="100" align="center"/>
+          <el-table-column prop="number" label="數量" width="120" align="center"/>
+          <el-table-column prop="amount" label="價格" width="100" align="right"/>
+        </el-table>
+        <br>
+        <hr/>
+        <!-- 外送費和合計 -->
+        <el-row class="order-count-row" gutter="150px">
+          <el-col :span="10" style="text-align: left;">外送費</el-col>
+          <el-col :span="10" style="text-align: right;">30</el-col>
+        </el-row>
+        <el-row class="order-count-row" gutter="150px">
+          <el-col :span="10" style="text-align: left;">合計</el-col>
+          <el-col :span="10" style="text-align: right;">{{orderDetail.amount}}</el-col>
+        </el-row>
+        
+      </div>
+      <!-- 底部按鈕 -->
+      <template #footer>
+        <el-button
+          v-if="selectedStatus === 2"
+          type="danger" 
+          @click="openRejectDialog(selectedOrderId)"
+          >拒單</el-button>
+        <el-button
+          v-else-if="selectedStatus <= 4"
+          type="danger" 
+          @click="openCancelDialog(selectedOrderId)"
+          >取消訂單</el-button>
+        <el-button @click="isDetaildialogVisible = false">返回</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -341,4 +422,30 @@ const handleClose = () => {
 .dialog-footer button{
   margin-left: 30px;
 }
+.row {
+  margin-top: 20px;
+  margin-bottom: 10px;
+  padding: 0px 45px;
+  display: flex;
+  justify-content: space-between; /* 讓左右欄位分佈到兩端 */
+  align-items: center; /* 確保垂直對齊 */
+}
+.row p {
+  margin: 0; /* 移除段落預設的外邊距 */
+  flex: 1; /* 讓每個欄位占用均等空間 */
+}
+.row p:first-child, :last-child {
+  text-align: left; /* 左側欄位靠左對齊 */
+}
+.order-detail-table{
+  margin-left: 35px;
+  margin-right: 20px;
+}
+.order-count-row{
+  margin-top: 10px;
+  padding-left: 48px;
+  padding-right: 15px;
+
+}
+
 </style>

@@ -40,3 +40,8 @@ export const orderCompleteApi = (id) => {
 export const orderStatisticsApi = () => {
   return request.get('/admin/order/statistics')
 }
+
+// 管理端 - 查詢訂單詳情
+export const orderDetailApi = (id) => {
+  return request.get(`/admin/order/details/${id}`)
+}

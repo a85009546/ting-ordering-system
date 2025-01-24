@@ -129,8 +129,14 @@ const openStatusDialog = () => {
 // 提交更新營業狀態
 const confirmStatusChange = async () => {
   isShopDialogVisible.value = false // 關閉選框
-  const response = await updateStatusApi(Number(isOpen.value))
-  console.log(`營業狀態已更新: ${isOpen.value ? '營業中' : '休息中'}`)
+  const res = await updateStatusApi(Number(isOpen.value))
+  if(res.code){
+    ElMessage.success('營業狀態已更新！')
+    console.log(`營業狀態已更新: ${isOpen.value ? '營業中' : '休息中'}`)
+  }else{
+    ElMessage.error(res.msg)
+  }
+  
 }
 // 打開購物車彈框
 const openCartDialog = () => {
