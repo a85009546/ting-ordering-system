@@ -21,6 +21,11 @@ export const orderDetail4CustomerApi = (id) => {
   return request.get(`/customer/order/orderDetail/${id}`)
 }
 
+// 顧客端 - 再來一單
+export const orderRepetitionApi = (id) => {
+  return request.post(`/customer/order/repetition/${id}`)
+}
+
 // 管理端 - 訂單條件分頁查詢
 export const orderConditionPageApi = (number, phone, status, beginTime, endTime, userId, page, pageSize) => {
   return request.get('/admin/order/conditionSearch',

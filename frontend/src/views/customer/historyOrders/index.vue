@@ -1,13 +1,21 @@
 <script setup>
-import { ref, onMounted, reactive } from 'vue'
-import { orderHistoryPageApi, orderDetail4CustomerApi } from '@/api/order'
+import { ref, onMounted, reactive, computed, inject } from 'vue'
+import { orderHistoryPageApi, orderDetail4CustomerApi, orderPayApi, orderRepetitionApi } from '@/api/order'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import { getCartApi } from '@/api/shoppingCart'
+import { useBalanceStore } from '@/stores/balance'
 
 
+const balanceStore = useBalanceStore()
+const amount = ref(null)
 const selectedStatus = ref('') // 當前被選中的訂單狀態
 const orderList = reactive([]) // 訂單列表
 const selectedOrderId = ref(null) // 當前被選中的訂單的id
 const orderDetail = ref({}) // 訂單詳情
 const isDetaildialogVisible = ref(false) // 控制訂單詳情彈窗的顯示
+const isPayDialogVisible = ref(false) // 控制支付確認彈窗的顯示
+const payOrderId = ref(null) // 支付的訂單id
+const shoppingCartItems = inject('shoppingCartItems')
 // 分頁相關
 const currentPage = ref(1) 
 const pageSize = ref(5) 
@@ -19,7 +27,10 @@ const orderStatusList = ref([
   { label: "待付款", value: "1"},
   { label: "已取消", value: "6"}
 ])
-
+// 餘額計算
+const newBalance = computed(() => {
+  return balanceStore.balance - amount.value
+})
 // 鉤子
 onMounted(() => {
   search()
@@ -33,6 +44,12 @@ const search = async () => {
     total.value = res.data.total
   }
 }
+// 獲取購物車內容
+const getCartItems = async () => {
+  const result = await getCartApi();
+  console.log(result);
+  shoppingCartItems.splice(0, shoppingCartItems.length, ...result.data); // 清空原數據並插入新數據
+};
 // 每頁展示紀錄數變化
 const handleSizeChange = (val) => {
   console.log(`每頁展示 ${val} 項紀錄`)
@@ -58,6 +75,48 @@ const openDetailDialog = async (id, status) => {
     orderDetail.value = res.data
     console.log(orderDetail.value)
   }
+}
+// 打開確認支付彈窗
+const openPayDialog = (id, time, price) => {
+  isPayDialogVisible.value = true
+  payOrderId.value = id
+  amount.value = price
+  orderTime.value = new Date(time)
+  console.log('orderTime', orderTime.value)
+}
+// 立即支付按鈕操作
+const payNow = async () => {
+  // 調用支付接口
+  console.log('payOrderId:' + payOrderId.value)
+  const res = await orderPayApi(payOrderId.value)
+  if(res.code){
+    ElMessage.success('支付成功！')
+    // 更新餘額顯示
+    balanceStore.setBalance(newBalance.value)
+    // 關閉支付彈窗
+    isPayDialogVisible.value = false
+    // 刷新頁面
+    search()
+  }else{
+    ElMessage.error(result.msg)
+  }
+}
+// 再來一單
+const repetition = (id) => {
+  ElMessageBox.confirm('您確定要再來一單嗎？', '提示', {
+    confirmButtonText: '確定', cancelButtonText: '取消', type: 'warning'}
+  ).then(async () => { // 確定
+    const res = await orderRepetitionApi(id)
+    if(res.code){
+      ElMessage.success('已成功再來一單!')
+      // 要更新購物車
+      getCartItems()
+      // 刷新訂單列表
+      search()
+    }else{
+      ElMessage.error(res.msg)
+    }
+  })
 }
 </script>
 
@@ -121,12 +180,13 @@ const openDetailDialog = async (id, status) => {
               <el-button
                 v-if="scope.row.status === 1"
                 size="small" 
-                type="warning"
-                @click="confirmOrder(scope.row.id)"
+                type="success"
+                @click="openPayDialog(scope.row.id, scope.row.orderTime, scope.row.amount)"
               >去支付</el-button>
               <el-button
                 size="small" 
                 type="warning"
+                @click="repetition(scope.row.id)"
               >再來一單</el-button>  
               <el-button 
                 size="small" 
@@ -220,14 +280,32 @@ const openDetailDialog = async (id, status) => {
         <!-- 備註 -->
         <div class="row">
           <p><strong>備註：</strong>{{ orderDetail.remark || "無" }}</p>
+          <p></p>
         </div>
       </div>
       <div class="dialog-back-button" >
         <el-button @click="isDetaildialogVisible = false">返回</el-button>
       </div>
-      
     </el-dialog>
 
+    <!-- 支付確認彈窗 -->
+    <el-dialog
+      v-model="isPayDialogVisible"
+      title="要立即支付費用嗎?" 
+      :close-on-click-modal="true"
+      width="400px">
+      <!-- 剩餘支付時間 -->
+      <!-- <p style="margin-bottom: 20px; color: rgb(127, 67, 74); font-weight: bold;">
+        剩餘支付時間：{{ remainingTimeText }}
+      </p> -->
+
+      <span>扣除費用 {{ amount }} 元，餘額為 {{ newBalance }} 元</span>
+
+      <template #footer>
+        <el-button @click="isPayDialogVisible = false">稍後支付</el-button>
+        <el-button type="primary" @click="payNow">立即支付</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -307,13 +385,11 @@ const openDetailDialog = async (id, status) => {
 .dialog-footer{
   text-align: center;
 }
-.dialog-footer button{
-  margin-left: 30px;
-}
+
 .row {
   margin-top: 20px;
   margin-bottom: 20px;
-  padding: 0px 35px;
+  padding: 0px 40px;
   display: flex;
   justify-content: space-between; /* 讓左右欄位分佈到兩端 */
   align-items: center; /* 確保垂直對齊 */
@@ -324,6 +400,9 @@ const openDetailDialog = async (id, status) => {
 }
 .row p:first-child, :last-child {
   text-align: left; /* 左側欄位靠左對齊 */
+}
+.row p:last-child {
+  margin-left: 80px;
 }
 .order-detail-table{
   margin-left: 35px;

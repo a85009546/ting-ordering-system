@@ -30,7 +30,7 @@ public class OrderTask {
         log.info("定時處理超時訂單: {}", LocalDateTime.now());
 
         // select * from orders where status = 1 and order_time < (當前時間 - 15分鐘)
-        List<Orders> ordersList = orderMapper.getByStatusAndOrderTimeLT(Orders.PENDING_PAYMENT, LocalDateTime.now().minusMinutes(15));
+        List<Orders> ordersList = orderMapper.getByStatusAndOrderTimeLT(Orders.PENDING_PAYMENT, LocalDateTime.now().minusMinutes(1500));
 
         if(ordersList != null && ordersList.size() > 0){
             for (Orders orders : ordersList) {

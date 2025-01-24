@@ -14,7 +14,7 @@ const isPayDialogVisible = ref(false) // 控制確定支付彈窗
 const orderFormRef = ref()
 const { fetchAddressList } = useAddress()
 const payOrderId = ref(null)
-const remainingTime = ref(15 * 60); // 倒數時間，單位：秒 (15 分鐘)
+const remainingTime = ref(15 * 60) // 倒數時間，單位：秒 (15 分鐘)
 let timer = null;
 
 
