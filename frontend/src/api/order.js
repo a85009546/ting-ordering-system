@@ -1,8 +1,13 @@
 import request from '@/utils/request'
 
-// 顧客下單
+// 顧客端 - 顧客下單
 export const orderSubmitApi = (orderSubmit) => {
   return request.post('/customer/order/submit', orderSubmit)
+}
+
+// 顧客端 - 顧客支付
+export const orderPayApi = (id) => {
+  return request.put(`/customer/order/pay/${id}`)
 }
 
 // 管理端 - 訂單條件分頁查詢
@@ -45,3 +50,4 @@ export const orderStatisticsApi = () => {
 export const orderDetailApi = (id) => {
   return request.get(`/admin/order/details/${id}`)
 }
+

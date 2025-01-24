@@ -1,21 +1,65 @@
 <script setup>
-import {ref, computed, inject, watch, reactive, onMounted} from 'vue'
-import { orderSubmitApi } from '@/api/order'
+import { ref, computed, inject, watch, reactive, onMounted, onBeforeUnmount} from 'vue'
+import { orderSubmitApi, orderPayApi } from '@/api/order'
 import { useBalanceStore } from '@/stores/balance'
 import { ElMessage } from 'element-plus'
-import useAddress from '@/composables/useAddress';
+import useAddress from '@/composables/useAddress'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const balanceStore = useBalanceStore()
 const addressList = inject('addressList', reactive([])) // 地址列表，從父組件傳入
 const shoppingCartItems = inject('shoppingCartItems', reactive([])) // 購物車列表，從父組件傳入
 const isPayDialogVisible = ref(false) // 控制確定支付彈窗
 const orderFormRef = ref()
 const { fetchAddressList } = useAddress()
+const payOrderId = ref(null)
+const remainingTime = ref(15 * 60); // 倒數時間，單位：秒 (15 分鐘)
+let timer = null;
+
 
 onMounted(() => {
   fetchAddressList()
 })
-
+// 組件卸載前清理計時器
+onBeforeUnmount(() => {
+  clearCountdown();
+})
+// 計算屬性 - 格式化剩餘時間為 mm:ss
+const remainingTimeText = computed(() => {
+  const minutes = Math.floor(remainingTime.value / 60)
+    .toString()
+    .padStart(2, "0");
+  const seconds = (remainingTime.value % 60)
+    .toString()
+    .padStart(2, "0");
+  return `${minutes}:${seconds}`
+})
+// 開始倒數計時
+const startCountdown = () => {
+  clearCountdown() // 確保不會有多個計時器
+  timer = setInterval(() => {
+    if (remainingTime.value > 0) {
+      remainingTime.value--;
+    } else {
+      timeUp()
+    }
+  }, 1000)
+}
+// 倒數時間結束處理
+const timeUp = () => {
+  clearCountdown()
+  isPayDialogVisible.value = false;
+  ElMessage.error("支付時間已結束，訂單已取消！")
+}
+// 清除倒數計時器
+const clearCountdown = () => {
+  if (timer) {
+    clearInterval(timer);
+    timer = null;
+  }
+  console.log('已清除倒數計時器')
+}
 // 外送費與總金額計算
 const deliveryFee = 30
 const amount = computed(() => {
@@ -70,10 +114,10 @@ watch(() => order.value.deliveryStatus, (newStatus) => {
 // 定義註冊表單校驗規則
 const rules = {
   addressBookId: [
-  { required: true, message: '請選擇收貨地址', trigger: 'blur' },
+  { required: true, message: '請選擇收貨地址', trigger: 'change' },
   ],
   deliveryStatus: [
-    { required: true, message: '請選擇下單方式', trigger: 'blur' },
+    { required: true, message: '請選擇下單方式', trigger: 'change' },
   ]
 }
 // 提交訂單按鈕操作
@@ -86,33 +130,40 @@ const submitOrder = () => {
       const res = await orderSubmitApi(order.value)
       if(res.code){
         ElMessage.success('訂單提交成功！')
-        // 清空購物車列表
-        shoppingCartItems.length = 0
-        // 跳轉到訂單頁面，去支付
+        // 獲取訂單ID
+        payOrderId.value = res.data.id
+        // 彈出支付彈窗
+        isPayDialogVisible.value = true
+        // 開啟倒計時器
+        startCountdown()   
       }
     }else{
       ElMessage.error('表單校驗不通過')
     }
   })
 }
-// 確認支付按鈕操作
-// const payOrder = async () => {
-//   // 調用支付接口
-//   const result = await orderSubmitApi(order.value)
-//   if(result.code){
-//     ElMessage.success('訂單提交成功')
-//     // 更新餘額顯示
-//     balanceStore.setBalance(newBalance.value)
-//     // 清空訂單信息
-//     clearOrder()
-//     // 關閉彈窗
-//     isPayDialogVisible.value = false
-//     // 跳轉到歷史訂單頁面
-//     console.log('跳轉到歷史訂單頁面')
-//   }else{
-//     ElMessage.error(result.msg)
-//   }
-// }
+// 關閉支付彈窗
+const handleClose = () => {
+  // 清空購物車列表
+  shoppingCartItems.length = 0
+  // 跳轉至歷史訂單頁面
+  router.push({name: 'history'})
+}
+// 立即支付按鈕操作
+const payNow = async () => {
+  // 調用支付接口
+  console.log('payOrderId:' + payOrderId.value)
+  const res = await orderPayApi(payOrderId.value)
+  if(res.code){
+    ElMessage.success('支付成功！')
+    // 更新餘額顯示
+    balanceStore.setBalance(newBalance.value)
+    // 跳轉到歷史訂單頁面
+    router.push({name: 'history'})
+  }else{
+    ElMessage.error(result.msg)
+  }
+}
 </script>
 
 <template>
@@ -155,7 +206,7 @@ const submitOrder = () => {
     <el-card class="card">
       <h3>訂單明細</h3>
       <el-table :data="shoppingCartItems" border>
-        <el-table-column label="餐點圖片" width="100">
+        <el-table-column label="餐點圖片" width="100" align="center">
           <template #default="{ row }">
             <el-image
               :src="row.image"
@@ -164,13 +215,14 @@ const submitOrder = () => {
             />
           </template>
         </el-table-column>
-        <el-table-column label="餐點名稱" prop="name" />
-        <el-table-column label="數量">
+        <el-table-column label="餐點名稱" prop="name" align="center"/>
+        <el-table-column label="口味" prop="mealFlavor" align="center"/>
+        <el-table-column label="數量" align="center">
           <template #default="{ row }">
             <span>{{ row.number }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="金額">
+        <el-table-column label="金額" align="center">
           <template #default="{ row }">
             <span>NT$ {{ row.amount }}</span>
           </template>
@@ -209,12 +261,22 @@ const submitOrder = () => {
 
 
     <!-- 支付確認彈窗 -->
-    <el-dialog v-model="isPayDialogVisible" title="確定支付" width="400px">
+    <el-dialog
+      v-model="isPayDialogVisible" 
+      title="要立即支付費用嗎?" 
+      :close-on-click-modal="true"
+      @close="handleClose"
+      width="400px">
+      <!-- 剩餘支付時間 -->
+      <p style="margin-bottom: 20px; color: rgb(127, 67, 74); font-weight: bold;">
+        剩餘支付時間：{{ remainingTimeText }}
+      </p>
+
       <span>扣除費用 {{ amount }} 元，餘額為 {{ newBalance }} 元</span>
 
       <template #footer>
-        <el-button @click="isPayDialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="payOrder">確定支付</el-button>
+        <el-button @click="isPayDialogVisible = false">稍後支付</el-button>
+        <el-button type="primary" @click="payNow">立即支付</el-button>
       </template>
     </el-dialog>
   
@@ -246,6 +308,8 @@ const submitOrder = () => {
   display: flex;
   justify-content: space-between;
   margin-bottom: 10px;
+  padding-left: 10px;
+  padding-right: 20px;
 }
 
 .summary-row.total {

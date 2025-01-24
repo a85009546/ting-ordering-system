@@ -11,6 +11,8 @@ import MealView from '@/views/admin/meal/index.vue'
 import InfoView from '@/views/info/index.vue'
 import MealsBrowsingView from '@/views/customer/mealsBrowsing/index.vue'
 import OrderSubmitView from '@/views/customer/orderSubmit/index.vue'
+import HistoryOrdersView from '@/views/customer/historyOrders/index.vue'
+
 
 const routes = [
   { path: '/login', name: 'login', component: LoginView},
@@ -26,6 +28,7 @@ const routes = [
       { path: '/user/info', name: 'info', component: InfoView},
       { path: '/customer/meal', name: 'mealsBrowsing', component: MealsBrowsingView},
       { path: '/customer/order/submit', name: 'checkout', component: OrderSubmitView},
+      { path: '/customer/order/history', name: 'history', component: HistoryOrdersView},
     ]
   }
 ]
