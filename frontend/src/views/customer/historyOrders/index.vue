@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted, reactive, computed, inject } from 'vue'
-import { orderHistoryPageApi, orderDetail4CustomerApi, orderPayApi, orderRepetitionApi } from '@/api/order'
+import { orderHistoryPageApi, orderDetail4CustomerApi,
+    orderPayApi, orderRepetitionApi, orderReminderApi } from '@/api/order'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getCartApi } from '@/api/shoppingCart'
 import { useBalanceStore } from '@/stores/balance'
@@ -117,6 +118,17 @@ const repetition = (id) => {
     }
   })
 }
+// 催單
+const expediting = (id) => {
+  ElMessageBox.confirm('您確定要催單嗎？', '提示', {
+    confirmButtonText: '確定', cancelButtonText: '取消', type: 'warning'}
+  ).then(async () => {
+    const res = await orderReminderApi(id)
+    if(res.code){
+      ElMessage.success('已向店家催單!')
+    }
+  })
+}
 </script>
 
 <template>
@@ -182,6 +194,12 @@ const repetition = (id) => {
                 type="success"
                 @click="openPayDialog(scope.row.id, scope.row.orderTime, scope.row.amount)"
               >去支付</el-button>
+              <el-button
+                v-else-if="scope.row.status === 2"
+                size="small" 
+                type="danger"
+                @click="expediting(scope.row.id)"
+              >催單</el-button>
               <el-button
                 size="small" 
                 type="warning"

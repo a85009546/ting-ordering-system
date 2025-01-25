@@ -13,6 +13,7 @@ import defaultIcon from '@/assets/images/default-location-icon.png';
 import locationIcon from '@/assets/images/location-icon.png';
 import defaultAvatarIcon from '@/assets/images/default-avatar.png'
 import remind from '@/assets/sounds/remind.mp3'
+import expediting from '@/assets/sounds/expediting.mp3'
 import { useRouter } from 'vue-router'
 import { uploadApi } from '@/api/upload'
 import { updateUserApi } from '@/api/user'
@@ -43,6 +44,7 @@ const addressDialogTitle = ref('新增地址')
 const addressList = reactive([]) // 地址列表
 const AddressFormRef = ref() // 地址表單物件
 const remindSound = new Audio(remind) // 提醒音效
+const expeditingSound = new Audio(expediting)
 const avatar = ref(avatarStore.avatar)
 const citys = ref([
   { name: '基隆', value: 1 },
@@ -137,6 +139,18 @@ const connectToWebSocket = () => {
           ElNotification({
               title: '待接單',
               message: `來了一筆訂單，${msg.content}`,
+              position: 'top-right',  // 右上角顯示
+              duration: 8000,  // 5秒後自動消失
+          });
+        }else{ // 顧客催單
+          // 播放催單音效expediting
+          expeditingSound.play().catch((error) => {
+            console.error('播放音效失敗:', error);
+          })
+          // 顯示通知
+          ElNotification({
+              title: '催單',
+              message: `${msg.content}`,
               position: 'top-right',  // 右上角顯示
               duration: 8000,  // 5秒後自動消失
           });

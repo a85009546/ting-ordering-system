@@ -26,6 +26,11 @@ export const orderRepetitionApi = (id) => {
   return request.post(`/customer/order/repetition/${id}`)
 }
 
+// 顧客端 - 催單
+export const orderReminderApi = (id) => {
+  return request.get(`/customer/order/reminder/${id}`)
+}
+
 // 管理端 - 訂單條件分頁查詢
 export const orderConditionPageApi = (number, phone, status, beginTime, endTime, userId, page, pageSize) => {
   return request.get('/admin/order/conditionSearch',
