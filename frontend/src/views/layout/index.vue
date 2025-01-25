@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, computed, provide, inject, reactive, watch} from 'vue'
+import { ref, onMounted, computed, provide, inject, reactive, watch, onBeforeUnmount} from 'vue'
 import { getMenuApi } from '@/api/menu'
 import { updateStatusApi, queryStatusApi } from '@/api/shop'
 import { useRoleStore } from '@/stores/role'
@@ -8,14 +8,16 @@ import { useBalanceStore } from '@/stores/balance'
 import { useAvatarStore } from '@/stores/avatar'
 import { getCartApi, clearCartApi } from '@/api/shoppingCart'
 import { getAddressListApi, setDefaultAddressApi, deleteAddressApi, getAddressByIdApi, addAddressApi, updateAddressApi } from '@/api/addressBook'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ElMessage, ElMessageBox, ElNotification } from 'element-plus'
 import defaultIcon from '@/assets/images/default-location-icon.png';
 import locationIcon from '@/assets/images/location-icon.png';
 import defaultAvatarIcon from '@/assets/images/default-avatar.png'
+import remind from '@/assets/sounds/remind.mp3'
 import { useRouter } from 'vue-router'
 import { uploadApi } from '@/api/upload'
 import { updateUserApi } from '@/api/user'
 import { useUserIdStore } from '@/stores/userId'
+
 
 const router = useRouter()
 const isOpen = ref(true) // 營業狀態 (true: 營業中, false: 休息中)
@@ -40,6 +42,7 @@ const isAvatarDialogVisible = ref(false) // 控制頭像彈窗顯示
 const addressDialogTitle = ref('新增地址')
 const addressList = reactive([]) // 地址列表
 const AddressFormRef = ref() // 地址表單物件
+const remindSound = new Audio(remind) // 提醒音效
 const avatar = ref(avatarStore.avatar)
 const citys = ref([
   { name: '基隆', value: 1 },
@@ -95,6 +98,12 @@ onMounted(async () => {
   fetchAddresses() // 獲取地址列表
   connectToWebSocket() // 建立 WebSocket 連接 
 })
+// 在組件卸載時關閉 WebSocket
+onBeforeUnmount(() => {
+  if (ws.value) {
+    ws.value.close();
+  }
+})
 
 // WebSocket 實例及狀態
 const ws = ref(null);
@@ -104,19 +113,39 @@ const receivedMessages = ref([]);
 // WebSocket 連接函數
 const connectToWebSocket = () => {
   // 假設伺服端 WebSocket URL，根據需要修改
-  ws.value = new WebSocket('ws://localhost:8080/ws/tingorderingsystem');
+  // type、orderId、content
+  ws.value = new WebSocket(`ws://localhost:8080/ws/${userIdStore.userId}`);
 
   ws.value.onopen = () => {
     isConnected.value = true;
     console.log('WebSocket 已連接');
-    // 可以選擇登入成功後，發送一個訊息給伺服端
-    // ws.value.send(JSON.stringify({ type: 'auth', token: tokenStore.token }));
   };
 
   ws.value.onmessage = (event) => {
     console.log('收到伺服端訊息:', event.data);
     receivedMessages.value.push(event.data); // 儲存伺服端返回的訊息
-  };
+    if(roleStore.role > 1){ // 管理端才接收
+      try{
+        const msg = JSON.parse(event.data);
+        // 判斷是來單提醒還是客戶催單
+        if(msg.type === 1){ // 來單提醒
+          // 播放提醒音效
+          remindSound.play().catch((error) => {
+            console.error('播放音效失敗:', error);
+          })
+          // 顯示通知
+          ElNotification({
+              title: '待接單',
+              message: `來了一筆訂單，${msg.content}`,
+              position: 'top-right',  // 右上角顯示
+              duration: 8000,  // 5秒後自動消失
+          });
+        }
+      }catch(error){
+        console.error('解析伺服端訊息時出現錯誤:', error);
+      }
+    }
+  }
 
   ws.value.onerror = (error) => {
     console.error('WebSocket 錯誤:', error);

@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref} from 'vue'
 import { ElMessage } from 'element-plus'
 import { registerApi, loginApi } from '@/api/auth'
 import { Avatar, User, Lock, Phone } from '@element-plus/icons-vue'
@@ -51,7 +51,6 @@ const checkRePassword = (rule, value, callback) => {
     callback()
   }
 }
-
 // 定義註冊表單校驗規則
 const rules = {
   name: [
@@ -77,7 +76,6 @@ const rules = {
     { required: true, message: '請選擇性別', trigger: 'change' } // 性別校驗
   ]
 }
-
 const registerFormRef = ref()
 // 註冊函數
 const register = async () => {
@@ -205,6 +203,7 @@ const login = async () => {
         </el-form-item>
       </el-form>
     </div>
+
   </div>
 </template>
 
