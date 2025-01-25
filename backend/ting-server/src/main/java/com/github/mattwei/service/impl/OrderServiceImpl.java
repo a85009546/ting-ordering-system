@@ -1,5 +1,6 @@
 package com.github.mattwei.service.impl;
 
+import com.alibaba.fastjson2.JSON;
 import com.github.mattwei.constant.MessageConstant;
 import com.github.mattwei.context.BaseContext;
 import com.github.mattwei.dto.*;
@@ -14,6 +15,7 @@ import com.github.mattwei.service.OrderService;
 import com.github.mattwei.vo.OrderStatisticsVO;
 import com.github.mattwei.vo.OrderSubmitVO;
 import com.github.mattwei.vo.OrderVO;
+import com.github.mattwei.websocket.WebSocketServer;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.BeanUtils;
@@ -22,9 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -46,7 +46,8 @@ public class OrderServiceImpl implements OrderService {
     private ShoppingCartMapper shoppingCartMapper;
     @Autowired
     private UserMapper userMapper;
-
+    @Autowired
+    private WebSocketServer webSocketServer;
     /**
      * 顧客下單
      * @param orderSumbitDTO
@@ -137,6 +138,15 @@ public class OrderServiceImpl implements OrderService {
         orders.setCheckoutTime(LocalDateTime.now());
         orders.setPayStatus(Orders.PAYED); // 已支付
         orderMapper.update(orders);
+
+        // 通過 websocket 向用戶端(管理端)瀏覽器發送消息 type orderId content
+        Map map = new HashMap();
+        map.put("type", 1); // 1來單提醒 2顧客催單
+        map.put("orderId", orders.getId());
+        map.put("content", "訂單號: " + orders.getNumber());
+        // 轉成JSON字符串
+        String json = JSON.toJSONString(map);
+        webSocketServer.sendToAllClient(json);
 
     }
 

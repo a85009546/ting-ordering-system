@@ -5,6 +5,7 @@ import { useBalanceStore } from '@/stores/balance'
 import { ElMessage } from 'element-plus'
 import useAddress from '@/composables/useAddress'
 import { useRouter } from 'vue-router'
+import { getCartApi } from '@/api/shoppingCart'
 
 const router = useRouter()
 const balanceStore = useBalanceStore()
@@ -120,6 +121,12 @@ const rules = {
     { required: true, message: '請選擇下單方式', trigger: 'change' },
   ]
 }
+// 獲取購物車內容
+const getCartItems = async () => {
+  const result = await getCartApi();
+  console.log(result);
+  shoppingCartItems.splice(0, shoppingCartItems.length, ...result.data); // 清空原數據並插入新數據
+}
 // 提交訂單按鈕操作
 const submitOrder = () => {
   // 表單校驗
@@ -158,6 +165,8 @@ const payNow = async () => {
     ElMessage.success('支付成功！')
     // 更新餘額顯示
     balanceStore.setBalance(newBalance.value)
+    // 刷新購物車列表
+    getCartItems()
     // 跳轉到歷史訂單頁面
     router.push({name: 'history'})
   }else{

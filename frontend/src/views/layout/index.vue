@@ -17,7 +17,6 @@ import { uploadApi } from '@/api/upload'
 import { updateUserApi } from '@/api/user'
 import { useUserIdStore } from '@/stores/userId'
 
-
 const router = useRouter()
 const isOpen = ref(true) // 營業狀態 (true: 營業中, false: 休息中)
 const isShopDialogVisible = ref(false) // 控制選框的顯示
@@ -77,14 +76,12 @@ const AddressForm = reactive({
   label: '',
   isDefault: ''
 })
-
 // 提供購物車數據和操作方法
 provide('shoppingCartItems', shoppingCartItems);
 // 提供營業狀態數據和操作方法
 provide('isOpen', isOpen);
 // 提供地址列表數據
 provide('addressList', addressList);
-
 
 // 計算總金額
 const totalAmount = computed(() =>
@@ -96,7 +93,64 @@ onMounted(async () => {
   getShopStatus() // 獲取營業狀態
   getCartItems() // 獲取購物車內容
   fetchAddresses() // 獲取地址列表
+  connectToWebSocket() // 建立 WebSocket 連接 
 })
+
+// WebSocket 實例及狀態
+const ws = ref(null);
+const isConnected = ref(false);
+const message = ref('');
+const receivedMessages = ref([]);
+// WebSocket 連接函數
+const connectToWebSocket = () => {
+  // 假設伺服端 WebSocket URL，根據需要修改
+  ws.value = new WebSocket('ws://localhost:8080/ws/tingorderingsystem');
+
+  ws.value.onopen = () => {
+    isConnected.value = true;
+    console.log('WebSocket 已連接');
+    // 可以選擇登入成功後，發送一個訊息給伺服端
+    // ws.value.send(JSON.stringify({ type: 'auth', token: tokenStore.token }));
+  };
+
+  ws.value.onmessage = (event) => {
+    console.log('收到伺服端訊息:', event.data);
+    receivedMessages.value.push(event.data); // 儲存伺服端返回的訊息
+  };
+
+  ws.value.onerror = (error) => {
+    console.error('WebSocket 錯誤:', error);
+  };
+
+  ws.value.onclose = () => {
+    console.log('WebSocket 已關閉');
+    isConnected.value = false;
+  };
+};
+
+// 發送訊息
+const sendMessage = () => {
+  if (ws.value && ws.value.readyState === WebSocket.OPEN) {
+    ws.value.send(JSON.stringify({ type: 'message', content: message.value }));
+    message.value = ''; // 清空輸入框
+  } else {
+    ElMessage.error('WebSocket 未連接，請重新登入！');
+  }
+};
+
+// 關閉連接
+const disconnect = () => {
+  if (ws.value) {
+    ws.value.close();
+    ws.value = null;
+    isConnected.value = false;
+  }
+};
+// 退出登入
+const logout = () => {
+  // 斷開WebSocket連接
+  // disconnect();
+};
 const navigate = (path) => router.push(path);
 // 獲得選單列表數據
 const getMenu = async () => {
@@ -387,7 +441,7 @@ const beforeAvatarUpload = (rawFile) => {
             <el-icon><EditPen /></el-icon> 修改密碼 
           </a>
           &nbsp;&nbsp; |  &nbsp;&nbsp;
-          <a href="">
+          <a @click="logout">
             <el-icon><SwitchButton /></el-icon> 退出登入
           </a>
         </span>

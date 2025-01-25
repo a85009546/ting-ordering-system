@@ -43,13 +43,14 @@ const search = async () => {
     orderList.splice(0, orderList.length, ...res.data.records)
     total.value = res.data.total
   }
+  console.log(orderList)
 }
 // 獲取購物車內容
 const getCartItems = async () => {
   const result = await getCartApi();
   console.log(result);
   shoppingCartItems.splice(0, shoppingCartItems.length, ...result.data); // 清空原數據並插入新數據
-};
+}
 // 每頁展示紀錄數變化
 const handleSizeChange = (val) => {
   console.log(`每頁展示 ${val} 項紀錄`)
@@ -81,8 +82,6 @@ const openPayDialog = (id, time, price) => {
   isPayDialogVisible.value = true
   payOrderId.value = id
   amount.value = price
-  orderTime.value = new Date(time)
-  console.log('orderTime', orderTime.value)
 }
 // 立即支付按鈕操作
 const payNow = async () => {
