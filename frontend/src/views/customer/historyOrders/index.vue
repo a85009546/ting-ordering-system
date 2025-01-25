@@ -158,6 +158,10 @@ const expediting = (id) => {
       <el-table-column prop="status" label="訂單狀態" align="center">
         <template #default="scope">
           <span v-if="scope.row.status === 1">待付款</span>
+          <span v-else-if="scope.row.status === 2">待接單</span>
+          <span v-else-if="scope.row.status === 3">待派送</span>
+          <span v-else-if="scope.row.status === 4">派送中</span>
+          <span v-else-if="scope.row.status === 5">已完成</span>
           <span v-else-if="scope.row.status === 6">已取消</span>
         </template>
       </el-table-column>

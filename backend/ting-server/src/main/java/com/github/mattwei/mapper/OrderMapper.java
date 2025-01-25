@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Select;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Description:
@@ -62,4 +63,11 @@ public interface OrderMapper {
      */
     @Select("select * from orders where id = #{id}")
     Orders getById(Long id);
+
+    /**
+     * 根據動態條件統計營業額數據
+     * @param map
+     * @return
+     */
+    Double sumByMap(Map map);
 }
