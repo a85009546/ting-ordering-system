@@ -427,6 +427,28 @@ public class OrderServiceImpl implements OrderService {
         // 將購物車對象批量添加到數據庫
         shoppingCartMapper.insertBatch(shoppingCartList);
     }
+
+    /**
+     * 顧客端 - 催單
+     * @param id
+     */
+    @Override
+    public void reminder(Long id) {
+        // 根據id查詢訂單
+        Orders ordersDB = orderMapper.getById(id);
+
+        // 校驗訂單是否存在
+        if(ordersDB == null){
+            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        }
+        // 通過 websocket 發送消息
+        Map map = new HashMap();
+        map.put("type", 2); // 客戶催單
+        map.put("orderId", id);
+        map.put("content", "訂單號: " + ordersDB.getNumber() + "，請注意接單!");
+        webSocketServer.sendToAllClient(JSON.toJSONString(map));
+
+    }
 }
 
 
