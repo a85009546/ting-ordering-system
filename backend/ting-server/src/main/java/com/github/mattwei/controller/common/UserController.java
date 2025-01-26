@@ -1,5 +1,6 @@
 package com.github.mattwei.controller.common;
 
+import com.github.mattwei.dto.PasswordDTO;
 import com.github.mattwei.entity.User;
 import com.github.mattwei.result.Result;
 import com.github.mattwei.service.UserService;
@@ -48,5 +49,14 @@ public class UserController {
         return Result.success();
     }
 
-
+    /**
+     * 修改用戶密碼
+     * @param passwordDTO
+     * @return
+     */
+    @PutMapping("/changePassword")
+    public Result changePassword(@RequestBody PasswordDTO passwordDTO) {
+        userService.changePassword(passwordDTO);
+        return Result.success();
+    }
 }

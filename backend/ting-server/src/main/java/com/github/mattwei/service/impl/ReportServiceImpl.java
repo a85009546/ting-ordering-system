@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -53,6 +54,10 @@ public class ReportServiceImpl implements ReportService {
             begin = begin.plusDays(1);
             dateList.add(begin);
         }
+        // 格式化日期，移除年份
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd");
+        // 儲存移除年份後的日期
+        List<String> formattedDateList = new ArrayList<>();
 
         // turnoverList
         List<Double> turnoverList = new ArrayList<>();
@@ -68,10 +73,12 @@ public class ReportServiceImpl implements ReportService {
             map.put("status", Orders.COMPLETED);
             Double turnover =  orderMapper.sumByMap(map);
             turnoverList.add(turnover == null ? 0.0 : turnover);
+
+            formattedDateList.add(date.format(formatter)); // 格式化為 MM-dd
         }
 
         return TurnoverReportVO.builder()
-                .dateList(StringUtils.join(dateList, ","))
+                .dateList(StringUtils.join(formattedDateList, ","))
                 .turnoverList(StringUtils.join(turnoverList, ","))
                 .build();
     }
@@ -91,6 +98,10 @@ public class ReportServiceImpl implements ReportService {
             begin = begin.plusDays(1);
             dateList.add(begin);
         }
+        // 格式化日期，移除年份
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd");
+        // 儲存移除年份後的日期
+        List<String> formattedDateList = new ArrayList<>();
 
         // 存放每天的新增顧客數量
         // SQL: select count(id) from user where create_time > ? and create_time < ? and role = 1
@@ -112,9 +123,11 @@ public class ReportServiceImpl implements ReportService {
             Integer newCustomer = userMapper.countByMap(map);
             totalCustomerList.add(totalCustomer);
             newCustomerList.add(newCustomer);
+
+            formattedDateList.add(date.format(formatter)); // 格式化為 MM-dd
         }
         return CustomerReportVO.builder()
-                .dateList(StringUtils.join(dateList, ","))
+                .dateList(StringUtils.join(formattedDateList, ","))
                 .totalCustomerList(StringUtils.join(totalCustomerList, ","))
                 .newCustomerList(StringUtils.join(newCustomerList, ","))
                 .build();
@@ -134,6 +147,10 @@ public class ReportServiceImpl implements ReportService {
             begin = begin.plusDays(1);
             dateList.add(begin);
         }
+        // 格式化日期，移除年份
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd");
+        // 儲存移除年份後的日期
+        List<String> formattedDateList = new ArrayList<>();
 
         List<Integer> orderCountList = new ArrayList<>();
         List<Integer> validOrderCountList = new ArrayList<>();
@@ -147,6 +164,8 @@ public class ReportServiceImpl implements ReportService {
 
             orderCountList.add(orderCount);
             validOrderCountList.add(validOrderCount);
+
+            formattedDateList.add(date.format(formatter)); // 格式化為 MM-dd
         }
         // 計算時間區間內的訂單總數量
         Integer totalOrderCount = orderCountList.stream().reduce(Integer::sum).get();
@@ -159,7 +178,7 @@ public class ReportServiceImpl implements ReportService {
         }
 
         return OrderReportVO.builder()
-                .dateList(StringUtils.join(dateList, ","))
+                .dateList(StringUtils.join(formattedDateList, ","))
                 .orderCountList(StringUtils.join(orderCountList, ","))
                 .validOrderCountList(StringUtils.join(validOrderCountList, ","))
                 .totalOrderCount(totalOrderCount)

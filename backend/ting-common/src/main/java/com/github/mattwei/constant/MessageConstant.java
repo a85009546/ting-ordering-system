@@ -19,5 +19,6 @@ public class MessageConstant {
     public static final String USER_BALANCE_NOT_ENOUGH = "餘額不足，無法下單";
     public static final String ORDER_STATUS_ERROR = "訂單狀態錯誤";
     public static final String ORDER_NOT_FOUND = "訂單不存在";
+    public static final String ORIGINAL_PASSWORD_ERROR = "原密碼錯誤";
 
 }

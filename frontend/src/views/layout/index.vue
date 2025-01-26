@@ -405,6 +405,12 @@ const beforeAvatarUpload = (rawFile) => {
   }
   return true
 }
+// 跳轉修改密碼頁面
+const openChangePassword = () => {
+  router.push({
+    name: 'password'
+  })
+}
 </script>
 
 <template>
@@ -480,11 +486,11 @@ const beforeAvatarUpload = (rawFile) => {
             </el-badge>
           </template>
           |  &nbsp;&nbsp;
-          <a href="">
+          <a @click="openChangePassword" class="clickable-link">
             <el-icon><EditPen /></el-icon> 修改密碼 
           </a>
           &nbsp;&nbsp; |  &nbsp;&nbsp;
-          <a @click="logout">
+          <a @click="logout" class="clickable-link">
             <el-icon><SwitchButton /></el-icon> 退出登入
           </a>
         </span>
@@ -925,11 +931,16 @@ margin-bottom: 15px;
   object-fit: contain; /* 確保圖片不會變形 */
   cursor: pointer; /* 鼠標懸停顯示指針 */
 }
-/* .avatar-uploader .avatar{
-  width: 78px;
-  height: 78px;
-  display: block;
-} */
+/* 修改密碼與退出登入的樣式 */
+.clickable-link {
+  cursor: pointer; /* 手掌樣式 */
+  text-decoration: none; /* 移除超連結的預設下劃線 */
+  color: inherit; /* 保持文字顏色一致 */
+}
+
+.clickable-link:hover {
+  color: #409EFF; /* 可選：當滑鼠移上去時改變文字顏色 */
+}
 .avatar-upload-container {
   display: flex;
   justify-content: center;

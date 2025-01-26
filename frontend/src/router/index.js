@@ -13,6 +13,7 @@ import MealsBrowsingView from '@/views/customer/mealsBrowsing/index.vue'
 import OrderSubmitView from '@/views/customer/orderSubmit/index.vue'
 import HistoryOrdersView from '@/views/customer/historyOrders/index.vue'
 import ReportView from '@/views/admin/report/index.vue'
+import PasswordView from '@/views/password/index.vue'
 
 
 const routes = [
@@ -28,6 +29,7 @@ const routes = [
       { path: '/admin/meal', name: 'meal', component: MealView},
       { path: '/admin/report', name: 'report', component: ReportView},
       { path: '/user/info', name: 'info', component: InfoView},
+      { path: '/user/changePassword', name: 'password', component: PasswordView},
       { path: '/customer/meal', name: 'mealsBrowsing', component: MealsBrowsingView},
       { path: '/customer/order/submit', name: 'checkout', component: OrderSubmitView},
       { path: '/customer/order/history', name: 'history', component: HistoryOrdersView},

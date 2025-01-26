@@ -89,7 +89,7 @@ const initChart = () => {
         type: 'line',
         smooth: false,
         showSymbol: true,
-        symbolSize: 10,
+        symbolSize: 8,
         itemStyle: {
           normal: {
             color: '#1f8ba2',
@@ -109,8 +109,8 @@ const initChart = () => {
         name: '新增用戶',
         type: 'line',
         smooth: false,
-        showSymbol: false,
-        symbolSize: 10,
+        showSymbol: true,
+        symbolSize: 5,
         itemStyle: {
           normal: {
             color: '#FD7F7F',

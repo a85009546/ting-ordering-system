@@ -1,5 +1,6 @@
 package com.github.mattwei.service;
 
+import com.github.mattwei.dto.PasswordDTO;
 import com.github.mattwei.entity.User;
 import com.github.mattwei.result.Result;
 
@@ -22,4 +23,10 @@ public interface UserService {
      * @param user
      */
     void update(User user);
+
+    /**
+     * 修改用戶密碼
+     * @param passwordDTO
+     */
+    void changePassword(PasswordDTO passwordDTO);
 }

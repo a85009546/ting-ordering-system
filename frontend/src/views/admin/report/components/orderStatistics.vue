@@ -93,7 +93,7 @@ const initChart = () => {
         type: 'line',
         smooth: false,
         showSymbol: true,
-        symbolSize: 10,
+        symbolSize: 8,
         itemStyle: {
           normal: {
             color: '#219d57',
@@ -114,7 +114,7 @@ const initChart = () => {
         type: 'line',
         smooth: false,
         showSymbol: true,
-        symbolSize: 10,
+        symbolSize: 5,
         itemStyle: {
           normal: {
             color: '#FD7F7F',
