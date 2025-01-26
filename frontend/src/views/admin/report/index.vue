@@ -10,9 +10,11 @@ import {
 import { 
   getTurnoverStatistics,
   getCustomerStatistics,
+  getOrderStatistics,
 } from '@/api/report'
 import TurnoverStatistics from './components/turnoverStatistics.vue'
 import CustomerStatistics from './components/customerStatistics.vue'
+import OrderStatistics from './components/orderStatistics.vue'
 
 const timeButtons = ['昨日', '近7日', '近30日', '本周', '本月']
 
@@ -21,13 +23,14 @@ const state = reactive({
   intervalDate: [],
   turnoverData: {},
   customerData: {},
+  orderData: {},
 })
 // 初始化函數
 const init = async (begin, end) => {
     
     getTurnoverStatisticsData(begin, end)
     getCustomerStatisticsData(begin, end)
-    // getOrderStatisticsData(begin, end)
+    getOrderStatisticsData(begin, end)
     // getTopData(begin, end)
 }
 // 獲取營業額數據
@@ -53,6 +56,23 @@ const getCustomerStatisticsData = async (begin, end) => {
       dateList: customerData.dateList.split(','),
       newCustomerList: customerData.newCustomerList.split(','),
       totalCustomerList: customerData.totalCustomerList.split(','),
+    }
+  }
+  console.log(state.customerData)
+}
+// 獲取訂單數據
+const getOrderStatisticsData = async (begin, end) => {
+  console.log(begin, end)
+  const res = await getOrderStatistics(begin, end)
+  if(res.code){
+    const orderData = res.data
+    state.orderData = {
+      dateList: orderData.dateList.split(','),
+      orderCountList: orderData.orderCountList.split(','),
+      validOrderCountList: orderData.validOrderCountList.split(','),
+      totalOrderCount: orderData.totalOrderCount,
+      validOrderCount: orderData.validOrderCount,
+      orderCompletionRate: orderData.orderCompletionRate
     }
   }
   console.log(state.customerData)
@@ -126,6 +146,11 @@ onMounted(() => {
           <CustomerStatistics :customerdata="state.customerData" />
         </div>
       </div>
+      <div class="homeMain">
+        <div class="chart-wrapper">
+          <OrderStatistics :orderdata="state.orderData" />
+        </div>
+      </div>
     </div>
     <!-- end 圖表 -->
       
@@ -150,7 +175,6 @@ onMounted(() => {
   gap: 10px;
 }
 .right-panel {
-  margin-top: 10px;
   margin-right: 100px;
 }
 .button-group {
@@ -170,6 +194,7 @@ onMounted(() => {
   display: flex; /* 使用 flex 布局 */
   justify-content: space-between; /* 在同一行內平分 */
   gap: 20px; /* 圖表間的間距 */
+  margin-bottom: 20px;
 }
 .chart-wrapper {
   flex: 1; /* 每個圖表平分剩餘空間 */

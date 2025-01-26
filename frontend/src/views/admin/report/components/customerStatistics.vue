@@ -168,7 +168,7 @@ onUnmounted(() => {
   border-radius: 50%; /* 使其成為圓形 */
   margin-right: 8px; /* 與文字之間的間距 */
 }
-.orderListLine.cutomer span {
+.orderListLine.customer span {
   display: inline-block;
   width: 10px;
   height: 10px;
