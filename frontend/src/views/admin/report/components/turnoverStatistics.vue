@@ -6,44 +6,44 @@
       <ul class="orderListLine turnover">
         <li>營業額(元)</li>
       </ul>
+
     </div>
   </div>
 </template>
 
 <script setup>
-import * as echarts from 'echarts';
-import { onMounted, ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue'
+import * as echarts from 'echarts'
 
 // 接收父組件傳遞的數據
-const data = defineProps({
+const props = defineProps({
   turnoverdata: {
     type: Object,
     required: true,
   }
 })
 
-const chartInstance = ref(null);
+const chartRef = ref(null);
 // 初始化圖表
 const initChart = () => {
-  console.log(data.turnoverdata)
+  console.log(props.turnoverdata)
   const chartDom = document.getElementById('main');
   if (!chartDom) return;
 
-  if (!chartInstance.value) {
-    chartInstance.value = echarts.init(chartDom);
+  if (!chartRef.value) {
+    chartRef.value = echarts.init(chartDom);
   }
 
   const option = {
     tooltip: {
       trigger: 'axis',
-      formatter: function (params) {
-        // 自定義提示框的內容
-        let tooltipContent = `<strong>${params[0].name}</strong><br/>`; // 顯示 X 軸的名稱（日期）
-        params.forEach(param => {
-          tooltipContent += `${param.seriesName}: ${param.value}<br/>`; // 顯示 Y 軸的數值
-        });
-        return tooltipContent;
-      },
+      backgroundColor: '#fff',
+      borderRadius: 2,
+      textStyle: {
+        color: '#333',
+        fontSize: 12,
+        fontWeight: 300
+      }
     },
     grid: {
       top: '5%',
@@ -67,7 +67,7 @@ const initChart = () => {
           width: 1,
         },
       },
-      data: data.turnoverdata.dateList || [], // 後端傳來的日期數據
+      data: props.turnoverdata.dateList || [], // 後端傳來的日期數據
     },
     yAxis: [
       {
@@ -101,16 +101,16 @@ const initChart = () => {
             borderColor: '#FFC100',
           },
         },
-        data: data.turnoverdata.turnoverList || [], // 後端傳來的營業額數據
+        data: props.turnoverdata.turnoverList || [], // 後端傳來的營業額數據
       },
     ],
   };
 
-  chartInstance.value.setOption(option);
+  chartRef.value.setOption(option);
 };
 // 監聽 turnoverdata 變化，重新初始化圖表
 watch(
-  () => data.turnoverdata,
+  () => props.turnoverdata,
   () => {
     initChart();
   },
@@ -124,25 +124,11 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.container {
-  padding: 20px;
-}
-.homeTitle {
-  font-size: 20px;
-  margin-bottom: 10px;
-}
 .charBox {
   margin-top: 10px;
 }
-#main {
-  border: 1px solid #e5e4e4;
-  border-radius: 8px;
+.orderListLine{
+  margin-bottom: 20px;
 }
-.orderListLine {
-  margin-top: 10px;
-  list-style: none;
-  padding: 0;
-  font-size: 14px;
-  color: #333;
-}
+
 </style>

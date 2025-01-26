@@ -8,25 +8,29 @@ import {
   pastMonth,
 } from '@/utils/formValidate'
 import { 
-  getTurnoverStatistics
+  getTurnoverStatistics,
+  getCustomerStatistics,
 } from '@/api/report'
 import TurnoverStatistics from './components/turnoverStatistics.vue'
+import CustomerStatistics from './components/customerStatistics.vue'
 
 const timeButtons = ['昨日', '近7日', '近30日', '本周', '本月']
-const selectedTimeRange = ref({ begin: '', end: ''})
 
 const state = reactive({
   flag: 2,
   intervalDate: [],
-  turnoverData: {}
+  turnoverData: {},
+  customerData: {},
 })
+// 初始化函數
 const init = async (begin, end) => {
     
     getTurnoverStatisticsData(begin, end)
-    // getUserStatisticsData(begin, end)
+    getCustomerStatisticsData(begin, end)
     // getOrderStatisticsData(begin, end)
     // getTopData(begin, end)
 }
+// 獲取營業額數據
 const getTurnoverStatisticsData = async (begin, end) => {
   console.log(begin, end)
   const res = await getTurnoverStatistics(begin, end)
@@ -38,6 +42,20 @@ const getTurnoverStatisticsData = async (begin, end) => {
     }
   }
   console.log(state.turnoverData)
+}
+// 獲取顧客數據
+const getCustomerStatisticsData = async (begin, end) => {
+  console.log(begin, end)
+  const res = await getCustomerStatistics(begin, end)
+  if(res.code){
+    const customerData = res.data
+    state.customerData = {
+      dateList: customerData.dateList.split(','),
+      newCustomerList: customerData.newCustomerList.split(','),
+      totalCustomerList: customerData.totalCustomerList.split(','),
+    }
+  }
+  console.log(state.customerData)
 }
 // 選擇日期區間
 const getTitleNum = (data) => {
@@ -98,13 +116,15 @@ onMounted(() => {
 
     <!-- 圖表 -->
     <div class="charts-section">
-      <div class="charts-top">
-        <TurnoverStatistics :turnoverdata="state.turnoverData" />
-        <div class="chart-container" id="chart2"></div>
-      </div>
-      <div class="charts-bottom">
-        <div class="chart-container" id="chart3"></div>
-        <div class="chart-container" id="chart4"></div>
+      <div class="homeMain">
+        <!-- 營業額统计 -->
+        <div class="chart-wrapper">
+          <TurnoverStatistics :turnoverdata="state.turnoverData" />
+        </div>
+        <!-- 顾客统计 -->
+        <div class="chart-wrapper">
+          <CustomerStatistics :customerdata="state.customerData" />
+        </div>
       </div>
     </div>
     <!-- end 圖表 -->
@@ -137,5 +157,22 @@ onMounted(() => {
   margin-left: 20px;
   font-size: 15px;
 }
-
+.charts-section {
+  padding: 20px;
+}
+.homeMain {
+  display: flex; /* 使用 flex 布局 */
+  justify-content: space-between; /* 在同一行內平分 */
+  gap: 20px; /* 圖表間的間距 */
+}
+.chart-wrapper {
+  flex: 1; /* 每個圖表平分剩餘空間 */
+  max-width: 48%; /* 控制圖表最大寬度為容器的一半（略小於 50% 以留空隙） */
+  height: 400px; /* 固定高度，確保一致 */
+  background-color: #fff; /* 可選：設置背景顏色 */
+  border: 1px solid #e5e4e4; /* 可選：設置邊框 */
+  border-radius: 8px; /* 可選：設置圓角 */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 可選：設置陰影 */
+  padding: 10px; /* 可選：內部留白 */
+}
 </style>
