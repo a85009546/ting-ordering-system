@@ -11,10 +11,12 @@ import {
   getTurnoverStatistics,
   getCustomerStatistics,
   getOrderStatistics,
+  getTop
 } from '@/api/report'
 import TurnoverStatistics from './components/turnoverStatistics.vue'
 import CustomerStatistics from './components/customerStatistics.vue'
 import OrderStatistics from './components/orderStatistics.vue'
+import Top10Statistics from './components/top10.vue'
 
 const timeButtons = ['昨日', '近7日', '近30日', '本周', '本月']
 
@@ -24,6 +26,7 @@ const state = reactive({
   turnoverData: {},
   customerData: {},
   orderData: {},
+  top10Data: {},
 })
 // 初始化函數
 const init = async (begin, end) => {
@@ -31,7 +34,7 @@ const init = async (begin, end) => {
     getTurnoverStatisticsData(begin, end)
     getCustomerStatisticsData(begin, end)
     getOrderStatisticsData(begin, end)
-    // getTopData(begin, end)
+    getTopData(begin, end)
 }
 // 獲取營業額數據
 const getTurnoverStatisticsData = async (begin, end) => {
@@ -73,6 +76,19 @@ const getOrderStatisticsData = async (begin, end) => {
       totalOrderCount: orderData.totalOrderCount,
       validOrderCount: orderData.validOrderCount,
       orderCompletionRate: orderData.orderCompletionRate
+    }
+  }
+  console.log(state.customerData)
+}
+// 獲取銷量數據
+const getTopData = async (begin, end) => {
+  console.log(begin, end)
+  const res = await getTop(begin, end)
+  if(res.code){
+    const top10Data = res.data
+    state.top10Data = {
+      nameList: top10Data.nameList.split(',').reverse(),
+      numberList: top10Data.numberList.split(',').reverse()
     }
   }
   console.log(state.customerData)
@@ -146,9 +162,12 @@ onMounted(() => {
           <CustomerStatistics :customerdata="state.customerData" />
         </div>
       </div>
-      <div class="homeMain">
+      <div class="homeMain down">
         <div class="chart-wrapper">
           <OrderStatistics :orderdata="state.orderData" />
+        </div>
+        <div class="chart-wrapper">
+          <Top10Statistics :top10data="state.top10Data" />
         </div>
       </div>
     </div>
@@ -196,6 +215,7 @@ onMounted(() => {
   gap: 20px; /* 圖表間的間距 */
   margin-bottom: 20px;
 }
+
 .chart-wrapper {
   flex: 1; /* 每個圖表平分剩餘空間 */
   max-width: 48%; /* 控制圖表最大寬度為容器的一半（略小於 50% 以留空隙） */
@@ -205,5 +225,7 @@ onMounted(() => {
   border-radius: 8px; /* 可選：設置圓角 */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 可選：設置陰影 */
   padding: 10px; /* 可選：內部留白 */
+  width: 100%;
+
 }
 </style>

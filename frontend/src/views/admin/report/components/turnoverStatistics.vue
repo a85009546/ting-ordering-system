@@ -30,9 +30,7 @@ const initChart = () => {
   const chartDom = document.getElementById('main');
   if (!chartDom) return;
 
-  if (!chartRef.value) {
-    chartRef.value = echarts.init(chartDom);
-  }
+  const myChart = echarts.init(chartDom);
 
   const option = {
     tooltip: {
@@ -106,7 +104,11 @@ const initChart = () => {
     ],
   };
 
-  chartRef.value.setOption(option);
+  myChart.setOption(option)
+  // 監聽窗口大小變化，重新調整圖表大小
+  window.addEventListener('resize', () => {
+    myChart.resize()
+  })
 };
 // 監聽 turnoverdata 變化，重新初始化圖表
 watch(

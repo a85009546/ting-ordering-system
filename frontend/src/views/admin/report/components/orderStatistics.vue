@@ -134,6 +134,10 @@ const initChart = () => {
   };
 
   myChart.setOption(option);
+  // 監聽窗口大小變化，重新調整圖表大小
+  window.addEventListener('resize', () => {
+    myChart.resize()
+  })
 };
 
 watch(

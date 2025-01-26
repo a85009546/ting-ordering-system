@@ -12,7 +12,7 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted, onUnmounted } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import * as echarts from 'echarts'
 
 // 接收父组件傳入的 props
@@ -130,12 +130,15 @@ const initChart = () => {
   }
 
   myChart.setOption(option)
+  // 監聽窗口大小變化，重新調整圖表大小
+  window.addEventListener('resize', () => {
+    myChart.resize()
+  })
 
   // 提取系列顏色並更新
   customerTotalColor.value = option.series[0].itemStyle.normal.color;
   newCustomerColor.value = option.series[1].itemStyle.normal.color;
 
-  chartRef.value = myChart
 }
 
 // 監聽 props.customerdata 的变化
@@ -152,12 +155,6 @@ onMounted(() => {
   initChart();
 })
 
-// 銷毀元件時清理圖表
-onUnmounted(() => {
-  if (chartRef.value) {
-    chartRef.value.dispose();
-  }
-})
 </script>
 
 <style scoped>

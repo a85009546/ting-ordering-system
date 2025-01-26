@@ -17,3 +17,9 @@ export const getOrderStatistics = (begin, end) => {
   return request.get('/admin/report/ordersStatistics',
     { params: { begin, end} })
 }
+
+// 銷量排名統計
+export const getTop= (begin, end) => {
+  return request.get('/admin/report/top10',
+    { params: { begin, end} })
+}
