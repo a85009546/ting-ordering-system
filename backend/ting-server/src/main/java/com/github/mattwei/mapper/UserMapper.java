@@ -5,6 +5,8 @@ import com.github.mattwei.result.Result;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
+import java.util.Map;
+
 /**
  * Description:
  *
@@ -27,4 +29,11 @@ public interface UserMapper {
      * @param user
      */
     void update(User user);
+
+    /**
+     * 根據動態條件統計顧客數量
+     * @param map
+     * @return
+     */
+    Integer countByMap(Map map);
 }

@@ -2,7 +2,9 @@ package com.github.mattwei.service.impl;
 
 import com.github.mattwei.entity.Orders;
 import com.github.mattwei.mapper.OrderMapper;
+import com.github.mattwei.mapper.UserMapper;
 import com.github.mattwei.service.ReportService;
+import com.github.mattwei.vo.CustomerReportVO;
 import com.github.mattwei.vo.TurnoverReportVO;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,9 @@ public class ReportServiceImpl implements ReportService {
 
     @Autowired
     private OrderMapper orderMapper;
+    @Autowired
+    private UserMapper userMapper;
+
     /**
      * 統計指定時間區間內的營業額數據
      * @param begin
@@ -34,7 +39,7 @@ public class ReportServiceImpl implements ReportService {
      * @return
      */
     @Override
-    public TurnoverReportVO turnoverStatistics(LocalDate begin, LocalDate end) {
+    public TurnoverReportVO getTurnoverStatistics(LocalDate begin, LocalDate end) {
         // 當前集合用於存放begin到end的所有日期
         List<LocalDate> dateList = new ArrayList<>();
 
@@ -64,6 +69,50 @@ public class ReportServiceImpl implements ReportService {
         return TurnoverReportVO.builder()
                 .dateList(StringUtils.join(dateList, ","))
                 .turnoverList(StringUtils.join(turnoverList, ","))
+                .build();
+    }
+
+    /**
+     * 統計指定時間區間內的顧客數據
+     * @param begin
+     * @param end
+     * @return
+     */
+    @Override
+    public CustomerReportVO getCustomerStatistics(LocalDate begin, LocalDate end) {
+        List<LocalDate> dateList = new ArrayList<>();
+        // dateList
+        dateList.add(begin);
+        while(!begin.equals(end)){
+            begin = begin.plusDays(1);
+            dateList.add(begin);
+        }
+
+        // 存放每天的新增顧客數量
+        // SQL: select count(id) from user where create_time > ? and create_time < ? and role = 1
+        List<Integer> newCustomerList = new ArrayList<>();
+        // 存放每天的總顧客數量
+        // SQL: select count(id) from user where create_time < ? and role = 1，與上面共用同一個動態SQL就行
+        List<Integer> totalCustomerList = new ArrayList<>();
+
+        for (LocalDate date : dateList) {
+            LocalDateTime beginTime = LocalDateTime.of(date, LocalTime.MIN);
+            LocalDateTime endTime = LocalDateTime.of(date, LocalTime.MAX);
+            Map map = new HashMap();
+            map.put("end", endTime);
+            // 先查總顧客數，因為只需要 end
+            Integer totalCustomer = userMapper.countByMap(map);
+
+            map.put("begin", beginTime);
+            // 新增用戶數量
+            Integer newCustomer = userMapper.countByMap(map);
+            totalCustomerList.add(totalCustomer);
+            newCustomerList.add(newCustomer);
+        }
+        return CustomerReportVO.builder()
+                .dateList(StringUtils.join(dateList, ","))
+                .totalCustomerList(StringUtils.join(totalCustomerList, ","))
+                .newCustomerList(StringUtils.join(newCustomerList, ","))
                 .build();
     }
 }

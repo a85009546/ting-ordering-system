@@ -1,5 +1,6 @@
 package com.github.mattwei.service;
 
+import com.github.mattwei.vo.CustomerReportVO;
 import com.github.mattwei.vo.TurnoverReportVO;
 
 import java.time.LocalDate;
@@ -18,5 +19,13 @@ public interface ReportService {
      * @param end
      * @return
      */
-    TurnoverReportVO turnoverStatistics(LocalDate begin, LocalDate end);
+    TurnoverReportVO getTurnoverStatistics(LocalDate begin, LocalDate end);
+
+    /**
+     * 統計指定時間區間內的顧客數據
+     * @param begin
+     * @param end
+     * @return
+     */
+    CustomerReportVO getCustomerStatistics(LocalDate begin, LocalDate end);
 }
