@@ -18,6 +18,7 @@ import CustomerStatistics from './components/customerStatistics.vue'
 import OrderStatistics from './components/orderStatistics.vue'
 import Top10Statistics from './components/top10.vue'
 
+
 const timeButtons = ['昨日', '近7日', '近30日', '本周', '本月']
 
 const state = reactive({
@@ -144,7 +145,11 @@ onMounted(() => {
       <!-- end 左側部分 -->
       <!-- 右側部分 -->
       <div class="right-panel">
-        <el-button type="primary" @click="exportData">數據導出</el-button>
+        
+        <el-button type="warning" @click="exportData">
+          <img class="export-icon" src="@/assets/images/export.png">
+          數據導出
+        </el-button>
       </div>
       <!-- end 右側部分 -->
     </div>
@@ -204,6 +209,12 @@ onMounted(() => {
   margin-top: 5px;
   margin-left: 20px;
   font-size: 15px;
+}
+.export-icon{
+  color: #e5e4e4;
+  width: 16px;
+  height: 16px;
+  margin-right:10px;
 }
 .charts-section {
   padding: 20px;

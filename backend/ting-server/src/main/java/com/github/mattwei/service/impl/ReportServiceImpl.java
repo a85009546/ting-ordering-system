@@ -5,14 +5,18 @@ import com.github.mattwei.entity.Orders;
 import com.github.mattwei.mapper.OrderMapper;
 import com.github.mattwei.mapper.UserMapper;
 import com.github.mattwei.service.ReportService;
-import com.github.mattwei.vo.CustomerReportVO;
-import com.github.mattwei.vo.OrderReportVO;
-import com.github.mattwei.vo.SalesTop10ReportVO;
-import com.github.mattwei.vo.TurnoverReportVO;
+import com.github.mattwei.vo.*;
 import org.apache.commons.lang.StringUtils;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -219,6 +223,113 @@ public class ReportServiceImpl implements ReportService {
                 .numberList(numberList)
                 .build();
     }
+
+    /**
+     * 導出運營報表
+     * @param response
+     */
+    @Override
+    public void exportBusinessData(HttpServletResponse response) {
+        // 1. 調用 getBusinessData，獲得營業數據
+        LocalDate dateBegin = LocalDate.now().minusDays(30);
+        LocalDate dateEnd = LocalDate.now().minusDays(1);
+        BusinessDataVO businessDataVO = getBusinessData(
+                LocalDateTime.of(dateBegin, LocalTime.MIN), LocalDateTime.of(dateEnd, LocalTime.MAX));
+        // 2. 通過 POI 將數據寫入到Excel文件中
+        InputStream in = this.getClass().getClassLoader().getResourceAsStream("template/運營數據報表模板.xlsx");
+        try {
+            // 基於模板文件創建一個新的Excel文件
+            XSSFWorkbook excel = new XSSFWorkbook(in);
+            // 獲取 工作表
+            XSSFSheet sheet = excel.getSheet("sheet1");
+            // 填充數據 - 時間
+            sheet.getRow(1).getCell(1).setCellValue("時間: " + dateBegin + " 至 " + dateEnd);
+            // 獲取第四行
+            XSSFRow row = sheet.getRow(3);
+            row.getCell(2).setCellValue(businessDataVO.getTurnover());
+            row.getCell(4).setCellValue(businessDataVO.getOrderCompletionRate());
+            row.getCell(6).setCellValue(businessDataVO.getNewCustomerCount());
+            // 獲取第五行
+            row = sheet.getRow(4);
+            row.getCell(2).setCellValue(businessDataVO.getValidOrderCount());
+            row.getCell(4).setCellValue(businessDataVO.getUnitPrice());
+
+            // 填充明細數據
+            for(int i = 0 ; i < 30 ; i++){
+                LocalDate date = dateBegin.plusDays(i);
+                // 查詢某一天的營業數據
+                BusinessDataVO businessData = getBusinessData(LocalDateTime.of(date, LocalTime.MIN), LocalDateTime.of(date, LocalTime.MAX));
+                // 獲取某一行
+                row = sheet.getRow(7 + i);
+                row.getCell(1).setCellValue(date.toString());
+                row.getCell(2).setCellValue(businessData.getTurnover());
+                row.getCell(3).setCellValue(businessData.getValidOrderCount());
+                row.getCell(4).setCellValue(businessData.getOrderCompletionRate());
+                row.getCell(5).setCellValue(businessData.getUnitPrice());
+                row.getCell(6).setCellValue(businessData.getNewCustomerCount());
+            }
+
+            // 3. 通過輸出流將 Excel 文件下載到客戶端瀏覽器上
+            ServletOutputStream out = response.getOutputStream();
+            excel.write(out);
+
+            // 關閉資源
+            out.close();
+            excel.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 根據時間區間統計營業數據
+     * @param begin
+     * @param end
+     * @return
+     */
+    public BusinessDataVO getBusinessData(LocalDateTime begin, LocalDateTime end) {
+        /**
+         * 營業額: 當日已完成訂單的總金額
+         * 有效訂單: 當日已完成訂單的數量
+         * 訂單完成綠: 有效訂單 / 總訂單數
+         * 平均客單價: 營業額 / 有效訂單數
+         * 新增用戶: 當日新增用戶的數量
+         */
+        Map map = new HashMap();
+        map.put("begin",begin);
+        map.put("end",end);
+        // 查詢總訂單數
+        Integer totalOrderCount = orderMapper.countByMap(map);
+
+        map.put("status", Orders.COMPLETED);
+        // 營業額
+        Double turnover = orderMapper.sumByMap(map);
+        turnover = turnover == null ? 0.0 : turnover;
+
+        // 有效訂單數
+        Integer validOrderCount = orderMapper.countByMap(map);
+
+        Double unitPrice = 0.0;
+
+        Double orderCompletionRate = 0.0;
+        if(totalOrderCount != 0 && validOrderCount != 0){
+            // 訂單完成率
+            orderCompletionRate = validOrderCount.doubleValue() / totalOrderCount;
+            // 平均客單價
+            unitPrice = turnover / validOrderCount;
+        }
+        // 新增用戶數
+        Integer newCustomerCount = userMapper.countByMap(map);
+
+        return BusinessDataVO.builder()
+                .turnover(turnover)
+                .validOrderCount(validOrderCount)
+                .orderCompletionRate(orderCompletionRate)
+                .unitPrice(unitPrice)
+                .newCustomerCount(newCustomerCount)
+                .build();
+    }
+
 }
 
 
