@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <h2 class="homeTitle">用戶統計</h2>
+    <h2 class="homeTitle">顧客統計</h2>
     <div class="charBox">
       <div id="customermain" style="width: 100%; height: 320px"></div>
       <ul class="orderListLine customer">

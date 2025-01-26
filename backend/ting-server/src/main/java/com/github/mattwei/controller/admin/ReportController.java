@@ -3,6 +3,7 @@ package com.github.mattwei.controller.admin;
 import com.github.mattwei.result.Result;
 import com.github.mattwei.service.ReportService;
 import com.github.mattwei.vo.CustomerReportVO;
+import com.github.mattwei.vo.OrderReportVO;
 import com.github.mattwei.vo.TurnoverReportVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,4 +54,36 @@ public class ReportController {
         log.info("顧客數據計: {}, {}", begin, end);
         return Result.success(reportService.getCustomerStatistics(begin, end));
     }
+
+    /**
+     * 訂單數據統計
+     * @param begin
+     * @param end
+     * @return
+     */
+    @GetMapping("/ordersStatistics")
+    public Result<OrderReportVO> ordersStatistics(
+            @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate begin,
+            @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate end){
+        log.info("訂單數據統計: {}, {}", begin, end);
+        return Result.success(reportService.getOrdersStatistics(begin, end));
+    }
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

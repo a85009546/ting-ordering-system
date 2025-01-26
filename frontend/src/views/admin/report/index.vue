@@ -145,8 +145,13 @@ onMounted(() => {
   align-items: center;
 }
 .left-panel {
+  margin-left: 60px;
   display: flex;
   gap: 10px;
+}
+.right-panel {
+  margin-top: 10px;
+  margin-right: 100px;
 }
 .button-group {
   display: flex;
@@ -159,6 +164,7 @@ onMounted(() => {
 }
 .charts-section {
   padding: 20px;
+  margin-right: 10px;
 }
 .homeMain {
   display: flex; /* 使用 flex 布局 */
