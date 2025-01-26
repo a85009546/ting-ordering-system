@@ -9,12 +9,11 @@
           <span>訂單完成率 : {{ (orderdata.orderCompletionRate * 100).toFixed(1) }}%</span>
       </div>
       <!-- end 訂單比例 -->
-      <div id="ordermain" style="width: 100%; height: 300px">
-        <ul class="orderListLine order">
-          <span class="colorDot" :style="{backgroundColor: totalOrderCountColor}"></span>訂單總數（個）
-          <span class="colorDot" :style="{backgroundColor: validOrderCountColor}"></span>有效訂單（個)
-        </ul>
-      </div> 
+      <div id="ordermain" style="width: 100%; height: 300px"></div> 
+      <ul class="orderListLine order">
+        <span class="colorDot" :style="{backgroundColor: totalOrderCountColor}"></span>訂單總數（個）
+        <span class="colorDot" :style="{backgroundColor: validOrderCountColor}"></span>有效訂單（個）
+      </ul>
     </div>
   </div>
 </template>
@@ -34,7 +33,6 @@ const props = defineProps({
 const totalOrderCountColor = ref('#FFD000'); // 默認顏色
 const validOrderCountColor = ref('#FD7F7F'); // 默認顏色
 
-const overviewData = ref({});
 
 const initChart = () => {
   const chartDom = document.getElementById('ordermain');
@@ -98,15 +96,15 @@ const initChart = () => {
         symbolSize: 10,
         itemStyle: {
           normal: {
-            color: '#FFD000',
+            color: '#219d57',
             lineStyle: {
-              color: '#FFD000',
+              color: '#219d57',
             },
           },
           emphasis: {
             color: '#fff',
             borderWidth: 5,
-            borderColor: '#FFC100',
+            borderColor: '#219d57',
           },
         },
         data: props.orderdata.orderCountList || [],
@@ -149,10 +147,10 @@ watch(
 onMounted(() => {
   initChart()
 })
+
 </script>
 
 <style scoped>
-
 .orderProportion{
   margin-top: 20px;
   margin-left: 20px;

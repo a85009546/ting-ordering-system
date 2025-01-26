@@ -4,6 +4,7 @@ import com.github.mattwei.result.Result;
 import com.github.mattwei.service.ReportService;
 import com.github.mattwei.vo.CustomerReportVO;
 import com.github.mattwei.vo.OrderReportVO;
+import com.github.mattwei.vo.SalesTop10ReportVO;
 import com.github.mattwei.vo.TurnoverReportVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,6 +70,19 @@ public class ReportController {
         return Result.success(reportService.getOrdersStatistics(begin, end));
     }
 
+    /**
+     * 銷量排名統計
+     * @param begin
+     * @param end
+     * @return
+     */
+    @GetMapping("/top10")
+    public Result<SalesTop10ReportVO> top10(
+            @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate begin,
+            @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate end){
+        log.info("銷量排名top10: {}, {}", begin, end);
+        return Result.success(reportService.getSalesTop10(begin, end));
+    }
 }
 
 

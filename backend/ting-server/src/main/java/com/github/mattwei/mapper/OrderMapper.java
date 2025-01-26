@@ -1,5 +1,6 @@
 package com.github.mattwei.mapper;
 
+import com.github.mattwei.dto.MealSalesDTO;
 import com.github.mattwei.dto.OrdersPageQueryDTO;
 import com.github.mattwei.entity.Orders;
 import com.github.pagehelper.Page;
@@ -77,4 +78,12 @@ public interface OrderMapper {
      * @return
      */
     Integer countByMap(Map map);
+
+    /**
+     * 統計指定時間區間內的銷量排名前10
+     * @param begin
+     * @param end
+     * @return
+     */
+    List<MealSalesDTO> getSalesTop(LocalDateTime begin, LocalDateTime end);
 }

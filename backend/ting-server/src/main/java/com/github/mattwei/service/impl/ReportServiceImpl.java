@@ -1,11 +1,13 @@
 package com.github.mattwei.service.impl;
 
+import com.github.mattwei.dto.MealSalesDTO;
 import com.github.mattwei.entity.Orders;
 import com.github.mattwei.mapper.OrderMapper;
 import com.github.mattwei.mapper.UserMapper;
 import com.github.mattwei.service.ReportService;
 import com.github.mattwei.vo.CustomerReportVO;
 import com.github.mattwei.vo.OrderReportVO;
+import com.github.mattwei.vo.SalesTop10ReportVO;
 import com.github.mattwei.vo.TurnoverReportVO;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Description:
@@ -165,12 +168,37 @@ public class ReportServiceImpl implements ReportService {
                 .build();
     }
 
+    /**
+     * 統計指定時間區間內的銷量Top10
+     * @param begin
+     * @param end
+     * @param status
+     * @return
+     */
     private Integer getOrderCount(LocalDateTime begin, LocalDateTime end, Integer status){
         Map map = new HashMap();
         map.put("begin", begin);
         map.put("end", end);
         map.put("status", status);
         return orderMapper.countByMap(map);
+    }
+
+    @Override
+    public SalesTop10ReportVO getSalesTop10(LocalDate begin, LocalDate end) {
+        LocalDateTime beginTime = LocalDateTime.of(begin, LocalTime.MIN);
+        LocalDateTime endTime = LocalDateTime.of(end, LocalTime.MAX);
+
+        List<MealSalesDTO> salesTop10 = orderMapper.getSalesTop(beginTime, endTime);
+        List<String> names = salesTop10.stream().map(MealSalesDTO::getName).collect(Collectors.toList());
+        List<Integer> numbers = salesTop10.stream().map(MealSalesDTO::getNumber).collect(Collectors.toList());
+
+        String nameList = StringUtils.join(names, ",");
+        String numberList = StringUtils.join(numbers, ",");
+
+        return SalesTop10ReportVO.builder()
+                .nameList(nameList)
+                .numberList(numberList)
+                .build();
     }
 }
 

@@ -2,6 +2,7 @@ package com.github.mattwei.service;
 
 import com.github.mattwei.vo.CustomerReportVO;
 import com.github.mattwei.vo.OrderReportVO;
+import com.github.mattwei.vo.SalesTop10ReportVO;
 import com.github.mattwei.vo.TurnoverReportVO;
 
 import java.time.LocalDate;
@@ -37,4 +38,12 @@ public interface ReportService {
      * @return
      */
     OrderReportVO getOrdersStatistics(LocalDate begin, LocalDate end);
+
+    /**
+     * 統計指定時間區間內的銷量Top10
+     * @param begin
+     * @param end
+     * @return
+     */
+    SalesTop10ReportVO getSalesTop10(LocalDate begin, LocalDate end);
 }
