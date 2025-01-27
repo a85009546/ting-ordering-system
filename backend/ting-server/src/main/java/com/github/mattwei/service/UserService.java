@@ -29,4 +29,9 @@ public interface UserService {
      * @param passwordDTO
      */
     void changePassword(PasswordDTO passwordDTO);
+
+    /**
+     * 用戶登出
+     */
+    void logout();
 }

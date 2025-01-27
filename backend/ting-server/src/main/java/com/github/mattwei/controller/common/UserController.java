@@ -59,4 +59,14 @@ public class UserController {
         userService.changePassword(passwordDTO);
         return Result.success();
     }
+
+    /**
+     * 用戶登出
+     * @return
+     */
+    @GetMapping("/logout")
+    public Result logout() {
+        userService.logout();
+        return Result.success();
+    }
 }

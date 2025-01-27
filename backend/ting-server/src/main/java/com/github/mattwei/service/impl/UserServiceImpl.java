@@ -10,6 +10,7 @@ import com.github.mattwei.mapper.UserMapper;
 import com.github.mattwei.result.Result;
 import com.github.mattwei.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
@@ -26,6 +27,8 @@ public class UserServiceImpl implements UserService {
     private UserMapper userMapper;
     @Autowired
     private AuthMapper authMapper;
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     /**
      * 根據id查詢用戶
@@ -62,6 +65,27 @@ public class UserServiceImpl implements UserService {
         // 2. 原密碼校驗通過後，修改密碼
         user.setPassword(DigestUtils.md5DigestAsHex(passwordDTO.getNewPassword().getBytes()));
         userMapper.update(user);
+
+        // 3. 刪除redis中的token
+        String tokenKey = "token:user:" + userId;
+        if(redisTemplate.hasKey(tokenKey)){
+            redisTemplate.delete(tokenKey);
+        }
+    }
+
+    /**
+     * 用戶登出
+     */
+    @Override
+    public void logout() {
+        // 1. 獲取當前用戶id
+        Long userId = BaseContext.getCurrentId();
+
+        // 2. 刪除redis中的token
+        String tokenKey = "token:user:" + userId;
+        if(redisTemplate.hasKey(tokenKey)){
+            redisTemplate.delete(tokenKey);
+        }
     }
 }
 

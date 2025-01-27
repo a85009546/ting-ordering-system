@@ -20,5 +20,6 @@ public class MessageConstant {
     public static final String ORDER_STATUS_ERROR = "訂單狀態錯誤";
     public static final String ORDER_NOT_FOUND = "訂單不存在";
     public static final String ORIGINAL_PASSWORD_ERROR = "原密碼錯誤";
+    public static final String USER_LOGIN_FAILED = "用戶登入失效，請重新登入";
 
 }

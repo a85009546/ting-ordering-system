@@ -192,8 +192,9 @@ const logout = () => {
     cancelButtonText: '取消',
     type: 'warning',
   }).then(() => {
-    // 登出
-    ElMessage.success('已退出登入!')
+    // 登出，調用 logoutApi
+    
+    ElMessage.success('退出成功')
     // 斷開WebSocket連接
     disconnect()
     // 清除token和角色等資訊

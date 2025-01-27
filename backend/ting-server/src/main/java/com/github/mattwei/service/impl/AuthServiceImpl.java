@@ -13,6 +13,7 @@ import com.github.mattwei.utils.JwtUtil;
 import com.github.mattwei.vo.UserLoginVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
@@ -20,6 +21,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Description:
@@ -38,7 +40,8 @@ public class AuthServiceImpl implements AuthService {
     private JwtProperties jwtProperties;
     @Autowired
     private UserMapper userMapper;
-
+    @Autowired
+    private RedisTemplate redisTemplate;
     /**
      * 根據用戶名查詢用戶信息
      * @param account
@@ -80,6 +83,11 @@ public class AuthServiceImpl implements AuthService {
                 jwtProperties.getTtl(),
                 claims
         );
+        // 構建 redis 緩存鍵，規則 toekn:user:userId
+        String key = "token:user:" + user.getId();
+        // 根據 userId 存儲 token
+        redisTemplate.opsForValue().set(key, token, 3, TimeUnit.HOURS); // 過期時間設置為三小時，與JWT一致
+
         // 根據角色獲取對應資源，1為customer，2為employee，3為admin
         List<MenuItem> menuItems = authMapper.getMenuItemsByRole(user.getRole());
 
