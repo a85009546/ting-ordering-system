@@ -23,3 +23,8 @@ export const getTop= (begin, end) => {
   return request.get('/admin/report/top10',
     { params: { begin, end} })
 }
+
+// 導出運營報表
+export const exportReport = () => {
+  return request.get('/admin/report/export', { responseType: 'blob' })
+}

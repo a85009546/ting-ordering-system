@@ -11,12 +11,14 @@ import {
   getTurnoverStatistics,
   getCustomerStatistics,
   getOrderStatistics,
-  getTop
+  getTop,
+  exportReport
 } from '@/api/report'
 import TurnoverStatistics from './components/turnoverStatistics.vue'
 import CustomerStatistics from './components/customerStatistics.vue'
 import OrderStatistics from './components/orderStatistics.vue'
 import Top10Statistics from './components/top10.vue'
+import { ElMessage, ElMessageBox } from 'element-plus';
 
 
 const timeButtons = ['昨日', '近7日', '近30日', '本周', '本月']
@@ -48,7 +50,6 @@ const getTurnoverStatisticsData = async (begin, end) => {
       turnoverList: turnoverData.turnoverList.split(',')
     }
   }
-  console.log(state.turnoverData)
 }
 // 獲取顧客數據
 const getCustomerStatisticsData = async (begin, end) => {
@@ -62,7 +63,6 @@ const getCustomerStatisticsData = async (begin, end) => {
       totalCustomerList: customerData.totalCustomerList.split(','),
     }
   }
-  console.log(state.customerData)
 }
 // 獲取訂單數據
 const getOrderStatisticsData = async (begin, end) => {
@@ -79,7 +79,6 @@ const getOrderStatisticsData = async (begin, end) => {
       orderCompletionRate: orderData.orderCompletionRate
     }
   }
-  console.log(state.customerData)
 }
 // 獲取銷量數據
 const getTopData = async (begin, end) => {
@@ -92,7 +91,6 @@ const getTopData = async (begin, end) => {
       numberList: top10Data.numberList.split(',').reverse()
     }
   }
-  console.log(state.customerData)
 }
 // 選擇日期區間
 const getTitleNum = (data) => {
@@ -115,13 +113,30 @@ const getTitleNum = (data) => {
   }
   init(state.intervalDate[0], state.intervalDate[1])
 }
-// 更新時間範圍邏輯
-const handleTimeSelect = (index) => {
-  console.log(`Selected time: ${index}`)
-}
 // 數據導出邏輯
 const exportData = () => {
-  console.log('數據導出');
+  ElMessageBox.confirm('確定要導出報表嗎？', '提示', {
+    confirmButtonText: '確定',
+    cancelButtonText: '取消',
+    type: 'warning'
+  }).then(async () => {
+    try {
+      console.log('報表導出')
+      const {data, headers} = await exportReport()
+      const contentType = headers['content-type'];
+      console.log('返回的 MIME 類型:', contentType);
+      const url = window.URL.createObjectURL(data)
+      const a = document.createElement('a')
+      document.body.appendChild(a)
+      a.href = url
+      a.download = '運營數據統計報表.xlsx' // 指定下載文件的名稱
+      a.click()
+      window.URL.revokeObjectURL(url)
+      document.body.removeChild(a)
+    }catch(error){
+      console.error('導出失敗', error)
+    }
+  })
 }
 
 onMounted(() => {

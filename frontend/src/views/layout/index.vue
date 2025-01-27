@@ -236,8 +236,10 @@ const confirmStatusChange = async () => {
   }else{
     ElMessage.error(res.msg)
   }
-  
 }
+// 監聽營業狀態變化
+watch(isOpen, (newValue) => {
+})
 // 打開購物車彈框
 const openCartDialog = () => {
   console.log("購物車", {shoppingCartItems})

@@ -12,6 +12,7 @@ export default defineConfig({
     }
   },
   server: {
+    host: '0.0.0.0',
     proxy: {
       '/api': { // 匹配所有以 /api 開頭的請求
         target: 'http://localhost:8080', // 將請求轉發到 http://localhost:8080，也就是後端伺服器的ip地址

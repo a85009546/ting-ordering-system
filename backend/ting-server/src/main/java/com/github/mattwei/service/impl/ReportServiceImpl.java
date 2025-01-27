@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
@@ -26,6 +28,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static java.lang.System.out;
 
 /**
  * Description:
@@ -230,6 +234,9 @@ public class ReportServiceImpl implements ReportService {
      */
     @Override
     public void exportBusinessData(HttpServletResponse response) {
+        // 設置響應頭
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setHeader("Content-Disposition", "attachment; filename=\"運營數據統計報表.xlsx\"");
         // 1. 調用 getBusinessData，獲得營業數據
         LocalDate dateBegin = LocalDate.now().minusDays(30);
         LocalDate dateEnd = LocalDate.now().minusDays(1);
@@ -241,7 +248,7 @@ public class ReportServiceImpl implements ReportService {
             // 基於模板文件創建一個新的Excel文件
             XSSFWorkbook excel = new XSSFWorkbook(in);
             // 獲取 工作表
-            XSSFSheet sheet = excel.getSheet("sheet1");
+            XSSFSheet sheet = excel.getSheet("Sheet1");
             // 填充數據 - 時間
             sheet.getRow(1).getCell(1).setCellValue("時間: " + dateBegin + " 至 " + dateEnd);
             // 獲取第四行
@@ -271,10 +278,11 @@ public class ReportServiceImpl implements ReportService {
 
             // 3. 通過輸出流將 Excel 文件下載到客戶端瀏覽器上
             ServletOutputStream out = response.getOutputStream();
+//            FileOutputStream out = new FileOutputStream(new File("D:\\test.xlsx"));
             excel.write(out);
 
             // 關閉資源
-            out.close();
+            System.out.close();
             excel.close();
         } catch (IOException e) {
             e.printStackTrace();
