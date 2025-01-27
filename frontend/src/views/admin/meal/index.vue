@@ -119,6 +119,11 @@ const imageUpload = async (options) => {
     ElMessage.success('上傳成功')
   }
 }
+// 文件上傳成功後觸發
+const handleAvatarSuccess = (res) => {
+  meal.value.image = res.data
+  ElMessage.success('上傳成功')
+}
 // 文件上傳之前觸發
 const beforeAvatarUpload = (rawFile) => {
   // 先判斷文件類型是否是圖片

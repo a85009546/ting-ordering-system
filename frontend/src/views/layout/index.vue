@@ -18,6 +18,7 @@ import { useRouter } from 'vue-router'
 import { uploadApi } from '@/api/upload'
 import { updateUserApi } from '@/api/user'
 import { useUserIdStore } from '@/stores/userId'
+import { useTokenStore } from '@/stores/token'
 
 
 const router = useRouter()
@@ -32,6 +33,7 @@ const accountStore = useAccountStore()
 const balanceStore = useBalanceStore()
 const avatarStore = useAvatarStore()
 const userIdStore = useUserIdStore()
+const tokenStore = useTokenStore()
 
 const defaultAddress = ref(
   {cityName:'', destrictName:'', detail:''}
@@ -380,21 +382,18 @@ const proceedToCheckout = () => {
   })
 
 }
-// 更新頭像
-const saveAvatar = async (options) => {
-  const formData = new FormData()
-  formData.append('file', options.file)
-  // 將圖片上傳至阿里云，並返回圖片url
-  const result = await uploadApi(formData)
-  avatar.value = result.data
-  avatarStore.setAvatar(result.data)
-  const user = {avatar: result.data, id: userIdStore.userId}
-  const res = await updateUserApi(user)
-  if(res.code){
-    // isAvatarDialogVisible.value = false
+// 文件上傳成功後觸發，更新頭像
+const handleAvatarSuccess = async (res) => {
+  avatar.value = res.data
+  // 將頭像存到pinia
+  avatarStore.setAvatar(res.data)
+  const user = {avatar: res.data, id: userIdStore.userId}
+  // 調用後端更新頭像API
+  const ressult = await updateUserApi(user)
+  if(ressult.code){
     ElMessage.success('頭像更新成功')
   }
-} 
+}
 // 文件上傳之前觸發
 const beforeAvatarUpload = (rawFile) => {
   // 先判斷文件類型是否是圖片
@@ -690,7 +689,25 @@ const openChangePassword = () => {
 
     <!-- 更換頭像的彈框 -->
     <el-dialog v-model="isAvatarDialogVisible" title="更換頭像" width="250px">
-      <el-row>
+        <el-row>
+          <el-col :span="20">
+            <el-form-item>
+              <el-upload
+                class="avatar-uploader"
+                action="/api/upload"
+                :headers="{'token': tokenStore.token}"
+                :show-file-list="false"
+                :on-success="handleAvatarSuccess"
+                :before-upload="beforeAvatarUpload"
+                >
+                <img v-if="avatar" :src="avatar" class="iamge"
+                style="width: 200px; height: 120px; object-fit: cover;"/>
+                <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
+              </el-upload>
+            </el-form-item>
+          </el-col>
+        </el-row>
+      <!-- <el-row>
         <el-col :span="20">
           <el-form-item>
             <el-upload
@@ -708,7 +725,7 @@ const openChangePassword = () => {
             </el-upload>
           </el-form-item>
         </el-col>
-      </el-row>
+      </el-row> -->
 
       <template #footer>
         <div class="dialog-footer">
@@ -978,5 +995,28 @@ margin-bottom: 15px;
   display: flex;
   justify-content: center;
   gap: 20px; /* 按鈕之間的間距 */
+}
+.avatar-uploader .avatar{
+  width: 78px;
+  height: 78px;
+  display: block;
+}
+.avatar-uploader .el-upload {
+  border: 1px dashed var(--el-border-color);
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: var(--el-transition-duration-fast);
+}
+.el-icon.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 78px;
+  height: 78px;
+  text-align: center;
+  border-radius: 10px;
+  /* 添加灰色的虚线边框 */
+  border: 1px dashed var(--el-border-color);
 }
 </style>

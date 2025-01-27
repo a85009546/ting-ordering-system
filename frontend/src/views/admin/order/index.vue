@@ -72,7 +72,7 @@ const search = async () => {
   console.log(`查詢訂單列表: status:${selectedStatus.value}, currentPage:${currentPage.value}, pageSize:${pageSize.value}`)
   const res = await orderConditionPageApi(
     searchOrder.value.number, searchOrder.value.phone, selectedStatus.value, 
-    searchOrder.value.beginTime, searchOrder.value.endTime, userIdStore.userId, currentPage.value, pageSize.value)
+    searchOrder.value.beginTime, searchOrder.value.endTime, currentPage.value, pageSize.value)
   if(res.code){
     orderList.splice(0, orderList.length, ...res.data.records)
     total.value = res.data.total
