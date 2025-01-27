@@ -15,7 +15,6 @@ import defaultAvatarIcon from '@/assets/images/default-avatar.png'
 import remind from '@/assets/sounds/remind.mp3'
 import expediting from '@/assets/sounds/expediting.mp3'
 import { useRouter } from 'vue-router'
-import { uploadApi } from '@/api/upload'
 import { updateUserApi } from '@/api/user'
 import { useUserIdStore } from '@/stores/userId'
 import { useTokenStore } from '@/stores/token'
@@ -108,34 +107,33 @@ onBeforeUnmount(() => {
     ws.value.close();
   }
 })
-
 // WebSocket 實例及狀態
-const ws = ref(null);
-const isConnected = ref(false);
-const message = ref('');
-const receivedMessages = ref([]);
+const ws = ref(null)
+const isConnected = ref(false)
+const message = ref('')
+const receivedMessages = ref([])
 // WebSocket 連接函數
 const connectToWebSocket = () => {
   // 假設伺服端 WebSocket URL，根據需要修改
   // type、orderId、content
-  ws.value = new WebSocket(`ws://localhost:8080/ws/${userIdStore.userId}`);
+  ws.value = new WebSocket(`ws://localhost:8080/ws/${userIdStore.userId}`)
 
   ws.value.onopen = () => {
     isConnected.value = true;
-    console.log('WebSocket 已連接');
-  };
+    console.log('WebSocket 已連接')
+  }
 
   ws.value.onmessage = (event) => {
-    console.log('收到伺服端訊息:', event.data);
-    receivedMessages.value.push(event.data); // 儲存伺服端返回的訊息
+    console.log('收到伺服端訊息:', event.data)
+    receivedMessages.value.push(event.data) // 儲存伺服端返回的訊息
     if(roleStore.role > 1){ // 管理端才接收
       try{
-        const msg = JSON.parse(event.data);
+        const msg = JSON.parse(event.data)
         // 判斷是來單提醒還是客戶催單
         if(msg.type === 1){ // 來單提醒
           // 播放提醒音效
           remindSound.play().catch((error) => {
-            console.error('播放音效失敗:', error);
+            console.error('播放音效失敗:', error)
           })
           // 顯示通知
           ElNotification({
@@ -147,7 +145,7 @@ const connectToWebSocket = () => {
         }else{ // 顧客催單
           // 播放催單音效expediting
           expeditingSound.play().catch((error) => {
-            console.error('播放音效失敗:', error);
+            console.error('播放音效失敗:', error)
           })
           // 顯示通知
           ElNotification({
@@ -158,31 +156,27 @@ const connectToWebSocket = () => {
           });
         }
       }catch(error){
-        console.error('解析伺服端訊息時出現錯誤:', error);
+        console.error('解析伺服端訊息時出現錯誤:', error)
       }
     }
   }
-
   ws.value.onerror = (error) => {
-    console.error('WebSocket 錯誤:', error);
-  };
-
+    console.error('WebSocket 錯誤:', error)
+  }
   ws.value.onclose = () => {
-    console.log('WebSocket 已關閉');
-    isConnected.value = false;
-  };
-};
-
+    console.log('WebSocket 已關閉')
+    isConnected.value = false
+  }
+}
 // 發送訊息
 const sendMessage = () => {
   if (ws.value && ws.value.readyState === WebSocket.OPEN) {
     ws.value.send(JSON.stringify({ type: 'message', content: message.value }));
     message.value = ''; // 清空輸入框
   } else {
-    ElMessage.error('WebSocket 未連接，請重新登入！');
+    ElMessage.error('WebSocket 未連接，請重新登入！')
   }
-};
-
+}
 // 關閉連接
 const disconnect = () => {
   if (ws.value) {
@@ -190,12 +184,31 @@ const disconnect = () => {
     ws.value = null;
     isConnected.value = false;
   }
-};
+}
 // 退出登入
 const logout = () => {
-  // 斷開WebSocket連接
-  // disconnect();
-};
+  ElMessageBox.confirm('確定要退出登入嗎？', '退出登入', {
+    confirmButtonText: '確定',
+    cancelButtonText: '取消',
+    type: 'warning',
+  }).then(() => {
+    // 登出
+    ElMessage.success('已退出登入!')
+    // 斷開WebSocket連接
+    disconnect()
+    // 清除token和角色等資訊
+    userIdStore.removeUserId()
+    tokenStore.removeToken()
+    roleStore.removeRole()
+    accountStore.removeAccount()
+    avatarStore.removeAvatar()
+    balanceStore.removeBalance()
+    // 登出後跳轉到登入頁面
+    router.push('/login')
+  }).catch(() => { // 取消登出
+    ElMessage.info('已取消退出登入')
+  })
+}
 const navigate = (path) => router.push(path);
 // 獲得選單列表數據
 const getMenu = async () => {
@@ -212,7 +225,7 @@ const getCartItems = async () => {
   const result = await getCartApi();
   console.log(result);
   shoppingCartItems.splice(0, shoppingCartItems.length, ...result.data); // 清空原數據並插入新數據
-};
+}
 // 獲取地址列表
 const fetchAddresses = async () => {
   const response = await getAddressListApi()
@@ -276,7 +289,7 @@ const rules = {
     { required: true, message: '請輸入詳細地址', trigger: 'blur' },
     { min: 5, max: 100, message: '地址長度在 5 到 100 個字符之間', trigger: 'blur' },
   ]
-};
+}
 // 設置默認地址
 const setDefaultAddress = async (id, detail) => {
   selectedAddress.value = id // 這一步會讓設為預設地址單選框與當前默認地址聯動
@@ -310,7 +323,7 @@ const addAddress = () => {
   if (AddressFormRef.value) {
     AddressFormRef.value.resetFields();
   }
-};
+}
 // 編輯地址
 const editAddress = async (id) => {
   const result = await getAddressByIdApi(id)
@@ -380,7 +393,6 @@ const proceedToCheckout = () => {
       cartItems: shoppingCartItems,
     },
   })
-
 }
 // 文件上傳成功後觸發，更新頭像
 const handleAvatarSuccess = async (res) => {
@@ -449,6 +461,7 @@ const openChangePassword = () => {
             </span>
           </span>
         </span>
+        <!-- end Header 左側區域 -->
         
         <!-- Header 右側區域 -->
         <span class="header-right-content">
@@ -495,6 +508,7 @@ const openChangePassword = () => {
             <el-icon><SwitchButton /></el-icon> 退出登入
           </a>
         </span>
+        <!-- end Header 右側區域 -->
       </el-header>
       
       <el-container>
@@ -556,6 +570,7 @@ const openChangePassword = () => {
         <p>購物車目前是空的。</p>
       </div>
     </el-dialog>
+    <!-- end 購物車彈框 -->
 
     <!-- 營業狀態彈框 -->
     <el-dialog
@@ -592,6 +607,7 @@ const openChangePassword = () => {
         <el-button type="primary" @click="confirmStatusChange">確認</el-button>
       </div>
     </el-dialog>
+    <!-- end 營業狀態彈框 -->
 
     <!-- 地址選擇彈窗 -->
     <el-dialog v-model="isAddressDialogVisible" width="350px">
@@ -640,6 +656,7 @@ const openChangePassword = () => {
         </div>
       </div>
     </el-dialog>
+    <!-- end 地址選擇彈窗 -->
 
     <!-- 新增與編輯地址彈窗 -->
     <el-dialog
@@ -686,55 +703,35 @@ const openChangePassword = () => {
         <el-button type="primary" @click="saveAddress">保存</el-button>
       </div>
     </el-dialog>
+    <!-- end 新增與編輯地址彈窗 -->
 
     <!-- 更換頭像的彈框 -->
     <el-dialog v-model="isAvatarDialogVisible" title="更換頭像" width="250px">
-        <el-row>
-          <el-col :span="20">
-            <el-form-item>
-              <el-upload
-                class="avatar-uploader"
-                action="/api/upload"
-                :headers="{'token': tokenStore.token}"
-                :show-file-list="false"
-                :on-success="handleAvatarSuccess"
-                :before-upload="beforeAvatarUpload"
-                >
-                <img v-if="avatar" :src="avatar" class="iamge"
-                style="width: 200px; height: 120px; object-fit: cover;"/>
-                <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
-              </el-upload>
-            </el-form-item>
-          </el-col>
-        </el-row>
-      <!-- <el-row>
+      <el-row>
         <el-col :span="20">
           <el-form-item>
             <el-upload
               class="avatar-uploader"
-              :http-request="saveAvatar"
+              action="/api/upload"
+              :headers="{'token': tokenStore.token}"
               :show-file-list="false"
+              :on-success="handleAvatarSuccess"
               :before-upload="beforeAvatarUpload"
-            >
-              <div class="avatar-upload-container">
-                <img v-if="avatar" :src="avatar" class="image-preview"/>
-                <div v-else class="placeholder">
-                  <el-icon class="avatar-uploader-icon"><Plus /></el-icon>
-                </div>
-              </div>
+              >
+              <img v-if="avatar" :src="avatar" class="iamge"
+              style="width: 200px; height: 120px; object-fit: cover;"/>
+              <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
             </el-upload>
           </el-form-item>
         </el-col>
-      </el-row> -->
-
+      </el-row>
       <template #footer>
         <div class="dialog-footer">
           <el-button @click="isAvatarDialogVisible = false">關閉</el-button>
         </div>
-        
       </template>
     </el-dialog>
-
+    <!-- end 更換頭像的彈框 -->
   </div>
 </template>
 
