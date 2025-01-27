@@ -34,5 +34,6 @@ public class OrdersPageQueryDTO implements Serializable {
 
     private Integer pageSize;
 
+    // 顧客訂單查詢時，要用到顧客的用戶id
     private Long userId;
 }

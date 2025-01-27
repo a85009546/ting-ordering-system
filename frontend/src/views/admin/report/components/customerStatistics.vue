@@ -100,7 +100,7 @@ const initChart = () => {
           emphasis: {
             color: '#fff',
             borderWidth: 5,
-            borderColor: '#1e7b9f'
+            borderColor: '#1cb791'
           }
         },
         data: props.customerdata.totalCustomerList || []
@@ -113,15 +113,15 @@ const initChart = () => {
         symbolSize: 5,
         itemStyle: {
           normal: {
-            color: '#FD7F7F',
+            color: '#b180d7',
             lineStyle: {
-              color: '#FD7F7F'
+              color: '#b180d7'
             }
           },
           emphasis: {
             color: '#fff',
             borderWidth: 5,
-            borderColor: '#FD7F7F'
+            borderColor: '#b180d7'
           }
         },
         data: props.customerdata.newCustomerList || []

@@ -117,15 +117,15 @@ const initChart = () => {
         symbolSize: 5,
         itemStyle: {
           normal: {
-            color: '#FD7F7F',
+            color: '#d23914',
             lineStyle: {
-              color: '#FD7F7F',
+              color: '#d23914',
             },
           },
           emphasis: {
             color: '#fff',
             borderWidth: 5,
-            borderColor: '#FD7F7F',
+            borderColor: '#d23914',
           },
         },
         data: props.orderdata.validOrderCountList || [],
@@ -138,6 +138,10 @@ const initChart = () => {
   window.addEventListener('resize', () => {
     myChart.resize()
   })
+
+    // 提取系列顏色並更新
+    totalOrderCountColor.value = option.series[0].itemStyle.normal.color;
+    validOrderCountColor.value = option.series[1].itemStyle.normal.color;
 };
 
 watch(

@@ -4,6 +4,7 @@ import { queryListApi as queryCategoryListApi } from '@/api/category'
 import { pageQueryApi, updateStatusApi, addApi, queryInfoApi, updateApi, deleteApi } from '@/api/meal'
 import { ElMessage, ElMessageBox, useTransitionFallthroughEmits } from 'element-plus'
 import { uploadApi } from '@/api/upload'
+import { useTokenStore } from '@/stores/token'
 
 // 鉤子
 onMounted(() => {
@@ -11,6 +12,7 @@ onMounted(() => {
   // 查詢啟用中的分類數據
   queryCategorys()
 })
+const tokenStore = useTokenStore()
 // 分類列表數據
 const categorys = ref([])
 // 搜索餐點條件
@@ -394,8 +396,10 @@ const deleteBatch = () => {
             <el-form-item label="餐點圖片" prop="image">
               <el-upload
                 class="avatar-uploader"
-                :http-request="imageUpload"
+                action="/api/upload"
+                :headers="{'token': tokenStore.token}"
                 :show-file-list="false"
+                :on-success="handleAvatarSuccess"
                 :before-upload="beforeAvatarUpload"
                 >
                 <img v-if="meal.image" :src="meal.image" class="iamge"

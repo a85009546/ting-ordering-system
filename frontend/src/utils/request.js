@@ -11,7 +11,7 @@ const instance = axios.create({
 
 // 請求攔截器
 instance.interceptors.request.use(
-  config => {
+  config => { // 成功回調
     //在發送請求前做什麼
     const tokenStore = useTokenStore()
     // 判斷有沒有token
@@ -19,15 +19,15 @@ instance.interceptors.request.use(
       // headers.token 這裡的 token 要看是定義叫什麼，有些叫Authentication
       config.headers.token = tokenStore.token
     }
+    console.log(config)
     return config
   },
-  err => {
+  err => { // 失敗回調
     //如果請求錯誤做什麼
     return Promise.reject(err)
   }
 )
 
-import router from '@/router'
 // 響應攔截器
 instance.interceptors.response.use(
   response => { // 如果響應成功做什麼
