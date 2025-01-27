@@ -16,3 +16,8 @@ export const updateUserApi = (user) => {
 export const updateUserPasswordApi = (password, newPassword) => {
   return request.put('/user/changePassword',{ password, newPassword })
 }
+
+// 登出
+export const logoutApi = () => {
+  return request.post('/user/logout')
+}

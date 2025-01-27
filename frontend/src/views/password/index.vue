@@ -2,6 +2,7 @@
 import { ref } from 'vue';
 import { ElMessage } from 'element-plus';
 import { updateUserPasswordApi } from '@/api/user'
+import { useRouter } from 'vue-router'
 
 
 // 表單數據模型
@@ -11,7 +12,7 @@ const user = ref({
   rePassword: '',
 })
 const userFormRef = ref()
-
+const router = useRouter()
 // 校驗密碼的函數
 const checkRePassword = (rule, value, callback) => {
   if (value === '') {
@@ -45,7 +46,7 @@ const updatePassword = () => {
       // 調用修改密碼 API
       const res = await updateUserPasswordApi(user.value.password, user.value.newPassword)
       if(res.code){
-        ElMessage.success('密碼已更新!')
+        ElMessage.success('密碼已更新，請重新登入!')
         // 清空表單數據
         user.value = {
           password: '',
@@ -54,6 +55,8 @@ const updatePassword = () => {
         }
         // 清空表單提示
         userFormRef.value.resetFields()
+        // 跳轉到登入頁面
+        router.push('/login')
       }
     }else{ // 表單校驗不通過
       ElMessage.error('表單校驗不通過')

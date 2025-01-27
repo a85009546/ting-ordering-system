@@ -15,7 +15,7 @@ import defaultAvatarIcon from '@/assets/images/default-avatar.png'
 import remind from '@/assets/sounds/remind.mp3'
 import expediting from '@/assets/sounds/expediting.mp3'
 import { useRouter } from 'vue-router'
-import { updateUserApi } from '@/api/user'
+import { updateUserApi, logoutApi } from '@/api/user'
 import { useUserIdStore } from '@/stores/userId'
 import { useTokenStore } from '@/stores/token'
 
@@ -188,24 +188,25 @@ const disconnect = () => {
 // 退出登入
 const logout = () => {
   ElMessageBox.confirm('確定要退出登入嗎？', '退出登入', {
-    confirmButtonText: '確定',
-    cancelButtonText: '取消',
-    type: 'warning',
-  }).then(() => {
+    confirmButtonText: '確定',cancelButtonText: '取消',type: 'warning',
+  }).then(async () => {
     // 登出，調用 logoutApi
-    
-    ElMessage.success('退出成功')
-    // 斷開WebSocket連接
-    disconnect()
-    // 清除token和角色等資訊
-    userIdStore.removeUserId()
-    tokenStore.removeToken()
-    roleStore.removeRole()
-    accountStore.removeAccount()
-    avatarStore.removeAvatar()
-    balanceStore.removeBalance()
-    // 登出後跳轉到登入頁面
-    router.push('/login')
+    const res = await logoutApi()
+    console.log(res)
+    if(res.code){
+      // 斷開WebSocket連接
+      disconnect()
+      // 清除token和角色等資訊
+      userIdStore.removeUserId()
+      tokenStore.removeToken()
+      roleStore.removeRole()
+      accountStore.removeAccount()
+      avatarStore.removeAvatar()
+      balanceStore.removeBalance()
+      ElMessage.success('退出成功')
+      // 登出後跳轉到登入頁面
+      router.push('/login')
+    }
   }).catch(() => { // 取消登出
     ElMessage.info('已取消退出登入')
   })

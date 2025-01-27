@@ -9,6 +9,7 @@ import com.github.mattwei.mapper.AuthMapper;
 import com.github.mattwei.mapper.UserMapper;
 import com.github.mattwei.result.Result;
 import com.github.mattwei.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ import org.springframework.util.DigestUtils;
  * @Create 2025/1/21 下午 11:00
  */
 @Service
+@Slf4j
 public class UserServiceImpl implements UserService {
 
     @Autowired
@@ -85,6 +87,10 @@ public class UserServiceImpl implements UserService {
         String tokenKey = "token:user:" + userId;
         if(redisTemplate.hasKey(tokenKey)){
             redisTemplate.delete(tokenKey);
+            log.info("User ID: {} has successfully logged out.", userId);
+        }else{
+            // Key 不存在，可能已經登出過
+            log.warn("User ID: {} attempted to log out, but no active session found.", userId);
         }
     }
 }

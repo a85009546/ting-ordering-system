@@ -1,9 +1,9 @@
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
 import { useTokenStore } from '@/stores/token'
-import { useRouter } from 'vue-router'
+import router from '@/router'
 
-const router = useRouter()
+
 
 const instance = axios.create({
   baseURL: '/api',
@@ -21,7 +21,6 @@ instance.interceptors.request.use(
       // headers.token 這裡的 token 要看是定義叫什麼，有些叫Authentication
       config.headers.token = tokenStore.token
     }
-    console.log(config)
     return config
   },
   err => { // 失敗回調
@@ -51,11 +50,11 @@ instance.interceptors.response.use(
       return Promise.reject(err) // 原樣返回錯誤
     }
     if(err.response.status === 401){
-      ElMessage.error('登入失效，請重新登入')
+      // ElMessage.error('登入失效，請重新登入')
       // 跳轉到登入頁面
       router.push('/login')
     }
-    ElMessage.error('伺服器異常')
+    // ElMessage.error('伺服器異常')
     return Promise.reject(err)
   }
 )

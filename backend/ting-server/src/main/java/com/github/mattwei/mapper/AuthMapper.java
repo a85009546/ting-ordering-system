@@ -45,7 +45,6 @@ public interface AuthMapper {
      * @param role
      * @return
      */
-    @Select("select * from menu_item where level <= #{role}")
     List<MenuItem> getMenuItemsByRole(Integer role);
 
 }
