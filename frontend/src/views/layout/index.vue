@@ -19,7 +19,6 @@ import { updateUserApi, logoutApi } from '@/api/user'
 import { useUserIdStore } from '@/stores/userId'
 import { useTokenStore } from '@/stores/token'
 
-
 const router = useRouter()
 const isOpen = ref(true) // 營業狀態 (true: 營業中, false: 休息中)
 const isShopDialogVisible = ref(false) // 控制選框的顯示
@@ -517,15 +516,16 @@ const openChangePassword = () => {
         <!-- 左側選單 -->
         <el-aside width="200px" class="aside">
           <!-- 左側選單欄 -->
-          <el-menu v-if="menuList.length > 0" router="true" :default-active="activeMenuItem">
-
+          <el-menu v-if="menuList.length > 0" :default-active="activeMenuItem" >
             <el-menu-item
               v-for="menu in menuList"
               :key="menu.path"
               :index="menu.path"
               @click="navigate(menu.path)"
+              class="menu-item"
             >
-              <!-- <el-icon :name="menu.icon"/> -->
+              <!-- 使用 img 標籤來顯示圖標 -->
+              <!-- <img v-if="menu.icon" :src="menu.icon" alt="icon" class="menu-icon"/> -->
               {{ menu.name }}
             </el-menu-item>
 
@@ -721,7 +721,7 @@ const openChangePassword = () => {
               :before-upload="beforeAvatarUpload"
               >
               <img v-if="avatar" :src="avatar" class="iamge"
-              style="width: 200px; height: 120px; object-fit: cover;"/>
+              style="width: 100px; height: 80px; object-fit: cover;"/>
               <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
             </el-upload>
           </el-form-item>
@@ -851,10 +851,41 @@ a {
   color: white;
   text-decoration: none;
 }
+/* 左側選單 */
 .aside {
   width: 220px;
   border-right: 1px solid #ccc;
   height: 730px;
+}
+/* 設定選單的樣式 */
+.menu {
+  width: 100%;  /* 讓選單寬度自適應 */
+  display: flex;
+  flex-direction: column;
+  align-items: center;  /* 讓選單項目水平居中 */
+  padding: 20px 0;
+}
+/* 選單項目 */
+.menu-item {
+  display: flex;
+  justify-content: center; /* 使圖標和文字水平居中 */
+  align-items: center;  /* 使圖標和文字垂直居中 */
+  text-align: center;  /* 確保文字垂直居中 */
+  width: 100%;
+  padding: 10px 0;
+}
+/* 選中樣式 */
+.el-menu-item.is-active {
+  background-color: #409eff;  /* 選中項目背景色 */
+  color: #fff;  /* 選中項目文字顏色 */
+}
+/* 非選中狀態下的樣式 */
+.el-menu-item {
+  transition: background-color 0.3s, color 0.3s;  /* 加入過渡效果 */
+}
+/* 預設選中項目的顏色 */
+.el-menu-item.is-active .menu-icon {
+  filter: brightness(0) saturate(100%) invert(38%) sepia(99%) saturate(2673%) hue-rotate(180deg) brightness(96%) contrast(94%); /* 自定義選中圖標顏色 */
 }
 .user-avatar {
   width: 40px; 
@@ -955,25 +986,8 @@ margin-bottom: 15px;
   text-decoration: none; /* 移除超連結的預設下劃線 */
   color: inherit; /* 保持文字顏色一致 */
 }
-
 .clickable-link:hover {
   color: #409EFF; /* 可選：當滑鼠移上去時改變文字顏色 */
-}
-.avatar-upload-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 190px;
-  height: 110px;
-  border: 2px dashed #d9d9d9;
-  border-radius: 4px;
-  overflow: hidden;
-  position: relative;
-  cursor: pointer;
-  transition: border-color 0.3s ease;
-}
-.avatar-upload-container:hover {
-  border-color: #409eff;
 }
 .image-preview {
   width: 100%;
@@ -995,10 +1009,11 @@ margin-bottom: 15px;
   justify-content: center;
   gap: 20px; /* 按鈕之間的間距 */
 }
-.avatar-uploader .avatar{
-  width: 78px;
-  height: 78px;
-  display: block;
+.avatar-uploader {
+  width: 100px;
+  height: 100px;
+  display: flex;
+  margin-left: 50px;
 }
 .avatar-uploader .el-upload {
   border: 1px dashed var(--el-border-color);
@@ -1011,11 +1026,16 @@ margin-bottom: 15px;
 .el-icon.avatar-uploader-icon {
   font-size: 28px;
   color: #8c939d;
-  width: 78px;
-  height: 78px;
+  width: 100px;
+  height: 100px;
   text-align: center;
   border-radius: 10px;
-  /* 添加灰色的虚线边框 */
+  /* 添加灰色的虛線邊框 */
   border: 1px dashed var(--el-border-color);
+}
+.menu-icon{
+  width: 20px;
+  height: 20px;
+  margin-right: 15px;
 }
 </style>

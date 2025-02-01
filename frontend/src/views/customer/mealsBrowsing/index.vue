@@ -4,9 +4,11 @@ import { queryListForCustomerApi } from '@/api/category'
 import { queryMealListByCategoryIdApi} from '@/api/meal'
 import { addToCartApi } from '@/api/shoppingCart'
 import { ElMessage } from 'element-plus'
+import { useRoleStore } from '@/stores/role'
 
 const shoppingCartItems = inject('shoppingCartItems')
 const isOpen = inject('isOpen')
+const roleStore = useRoleStore()
 
 // 餐點分類和餐點列表
 const categories = ref([]) // 餐點分類列表
@@ -171,10 +173,9 @@ const addToCart = async () => {
           <div class="meal-info">
             <div class="info-left">
               <p>費用：{{ meal.price }} 元</p>
-              <p>月銷量：{{ meal.sales }} 份</p>
             </div>
             <div class="info-right">
-              <template v-if="isOpen">
+              <template v-if="isOpen && roleStore.role === 1">
                 <template v-if="meal.mealFlavors && meal.mealFlavors.length > 0">
                   <el-button type="success" size="small" @click="openFlavorDialog(meal)">
                     調整口味
@@ -251,18 +252,16 @@ const addToCart = async () => {
   padding: 20px;
   margin-bottom: 30px;
 }
-
 .category-row {
   margin-bottom: 20px;
+  gap: 15px;
 }
-
 .meal-list {
   display: flex;
   flex-wrap: wrap;
   gap: 10px; /* 卡片間距 */
   justify-content: flex-start;  /* 靠左對齊 */
 }
-
 .meal-card-container {
   flex: 0 0 calc(20% - 10px); /* 每行展示 5 張卡片 */
   box-sizing: border-box;
@@ -272,19 +271,16 @@ const addToCart = async () => {
     flex: 0 0 calc(33.33% - 10px); /* 每行顯示 3 個 */
   }
 }
-
 @media (max-width: 768px) {
   .meal-card-container {
     flex: 0 0 calc(50% - 10px); /* 每行顯示 2 個 */
   }
 }
-
 @media (max-width: 480px) {
   .meal-card-container {
     flex: 0 0 calc(100% - 10px); /* 每行顯示 1 個 */
   }
 }
-
 .meal-card {
   height: 350px; /* 固定卡片高度 */
   display: flex;

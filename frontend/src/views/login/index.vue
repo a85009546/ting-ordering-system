@@ -2,7 +2,6 @@
 import { ref} from 'vue'
 import { ElMessage } from 'element-plus'
 import { registerApi, loginApi } from '@/api/auth'
-import { Avatar, User, Lock, Phone } from '@element-plus/icons-vue'
 import { useRouter } from 'vue-router'
 import { useUserIdStore } from '@/stores/userId'
 import { useTokenStore } from '@/stores/token'
@@ -97,7 +96,7 @@ const register = async () => {
       ElMessage.error('表單校驗不通過')
     }
   })
-}  
+}
 // 登入函數
 const login = async () => {
   let result = await loginApi(registerData.value)
@@ -126,7 +125,6 @@ const login = async () => {
     router.push('/')
   }
 }
-
 </script>
 
 <template>
@@ -138,7 +136,6 @@ const login = async () => {
         <el-form-item label="姓名" prop="name">
           <el-input :prefix-icon="Avatar" v-model="registerData.name" placeholder="請輸入姓名"></el-input>
         </el-form-item>
-
         <el-form-item label="帳號" prop="account">
           <el-input :prefix-icon="User" v-model="registerData.account" placeholder="請輸入帳號"></el-input>
         </el-form-item>
@@ -161,47 +158,47 @@ const login = async () => {
             <el-radio label="0">女</el-radio>
           </el-radio-group>
         </el-form-item>
-
+        <!-- 註冊與清空按鈕 -->
         <el-form-item>
           <el-button class="button" type="primary" @click="register">註 冊</el-button>
           <el-button class="button" type="info" @click="clearRegisterData">清 空</el-button>
         </el-form-item>
-
+        <!-- end 註冊與清空按鈕 -->
+        <!-- 切換登入頁面按鈕 -->
         <el-form-item class="flex">
             <el-link type="info" :underline="false" @click="isRegister = false ; clearRegisterData()">
                 ← 登入頁面
             </el-link>
         </el-form-item>
-
+        <!-- end 切換登入頁面按鈕 -->
       </el-form>
+      <!-- end 註冊 表單 -->
       <!-- 登入 表單 -->
       <el-form label-width="80px" v-else :model="registerData">
         <p class="title">登入</p>
+        <!-- 帳號與密碼輸入框 -->
         <el-form-item label="帳號" prop="account">
           <el-input :prefix-icon="User" v-model="registerData.account" placeholder="請輸入帳號"></el-input>
         </el-form-item>
-
         <el-form-item label="密碼" prop="password">
           <el-input :prefix-icon="Lock" type="password" v-model="registerData.password" placeholder="請輸入密碼"></el-input>
         </el-form-item>
-        
-        <el-form-item class="flex">
-            <div class="flex">
-                <el-checkbox>記住我</el-checkbox>
-            </div>
-        </el-form-item>
-        <!-- 登入按鈕 -->
+        <!-- end 帳號與密碼輸入框 -->
+        <!-- 登入與清空按鈕 -->
         <el-form-item>
           <el-button class="button" type="primary" @click="login">登 入</el-button>
           <el-button class="button" type="info" @click="clearRegisterData">清 空</el-button>
         </el-form-item>
-
+        <!-- end 登入與清空按鈕 -->
+        <!-- 切換註冊頁面按鈕 -->
         <el-form-item class="flex">
           <el-link type="info" :underline="false" @click="isRegister = true; clearRegisterData()">
               註冊 →
           </el-link>
         </el-form-item>
+        <!-- end 切換註冊頁面按鈕 -->
       </el-form>
+      <!-- end 登入 表單 -->
     </div>
 
   </div>
