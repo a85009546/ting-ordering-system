@@ -20,5 +20,8 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/api/, '')
       }
     }
+  },
+  build: {
+    chunkSizeWarningLimit: 1000 // 預設是 500，這裡改成 1000 KiB
   }
 })
