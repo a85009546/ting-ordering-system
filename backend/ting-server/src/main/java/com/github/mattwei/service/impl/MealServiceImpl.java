@@ -134,6 +134,7 @@ public class MealServiceImpl implements MealService {
         // 更新餐點表
         Meal meal = new Meal();
         BeanUtils.copyProperties(mealDTO, meal);
+        meal.setUpdateTime(LocalDateTime.now());
         mealMapper.update(meal);
 
         // 更新口味表，先刪除後再新增
