@@ -10,8 +10,8 @@ ting:
     secret-key: hello
   alioss:
     endpoint: oss-ap-northeast-1.aliyuncs.com
-    access-key-id: [你的阿里雲AccessKeyId]
-    access-key-secret: [你的阿里雲AccessKeySecret]
+    access-key-id: "your-access-key-id"
+    access-key-secret: "your-access-key-secret"
     bucket-name: ting-ordering-system
   redis:
     host: redis
