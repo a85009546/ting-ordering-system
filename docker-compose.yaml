@@ -8,6 +8,8 @@ services:
     restart: always
     ports:
       - "8080:8080"
+    env_file:
+      - .env
     networks:
       - app-network
     environment:
@@ -18,6 +20,8 @@ services:
       - MYSQL_PASSWORD=1234
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+      - LANG=C.UTF-8
+      - JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF-8
     depends_on:
       - mysql
       - redis
@@ -43,7 +47,7 @@ services:
     networks:
       - app-network
     ports:
-      - "3306:3306"
+      - "3307:3306"
 
 
   redis:

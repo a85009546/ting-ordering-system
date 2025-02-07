@@ -2,7 +2,7 @@ ting:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     host: mysql
-    port: 3306
+    port: 3307
     database: mydb
     username: root
     password: 1234
@@ -10,8 +10,8 @@ ting:
     secret-key: mattwei
   alioss:
     endpoint: oss-ap-northeast-1.aliyuncs.com
-    access-key-id: ENC(AoOhYvL7HBHtxp+M7tIfKItw1c3dEWs4ECOv7upPuL9+s8CSCNT/pQ==)
-    access-key-secret: ENC(GA4c3af/+/+99wHv7qX0FaFMUz3/eMbvsxdVr7PT4AOCjDUlRfOWog==)
+    access-key-id: ENC(cx+vFNwzF6n1PyEUpkts7P19vj4m5nYAlO7utmztJzZgm1f+XOO9kw==)
+    access-key-secret: ENC(IVGTzMZe44Wh4q5/DCx5ru0dFBbUpF0tHgXgyUf97gMcrEuHC0wpqQ==)
     bucket-name: ting-ordering-system
   redis:
     host: redis
