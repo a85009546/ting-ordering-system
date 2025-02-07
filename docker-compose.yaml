@@ -46,6 +46,8 @@ services:
       MYSQL_DATABASE: mydb
     networks:
       - app-network
+    volumes:
+      - ./mysql-init:/docker-entrypoint-initdb.d  # 容器啟動時自動執行初始化脚本
     ports:
       - "3307:3306"
 

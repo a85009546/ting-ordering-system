@@ -452,7 +452,7 @@ const openChangePassword = () => {
                   src="@/assets/images/marker.png"
                   alt="Location"
                   class="marker-icon-image"
-                  @click="openCartDialog"
+                  @click="openAddressDialog"
             />
             <span v-if="defaultAddress && defaultAddress.detail">
               {{ defaultAddress.detail }}

@@ -178,8 +178,6 @@ const payNow = async () => {
 <template>
   <div class="checkout-page">
     <!-- 第一部分：收貨地址和下單方式 -->
-    {{ order }}
-    {{ shoppingCartItems }}
     <el-card class="card">
       <h3>收貨資訊</h3>
       <el-form label-width="120px" :model="order" :rules="rules" ref="orderFormRef">

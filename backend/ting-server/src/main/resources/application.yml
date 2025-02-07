@@ -29,7 +29,7 @@ mybatis:
 ting:
   jwt:
     # jwt 密鑰
-    secret-key: ${ting.jwt.admin-secret-key}
+    secret-key: ${ting.jwt.secret-key}
     # jwt 有效時間: 三小時 = 180分 = 10800秒 = 10800000ms
     ttl: 10800000
     # 前端傳遞過來時的令牌名稱

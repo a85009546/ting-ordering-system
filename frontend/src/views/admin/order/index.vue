@@ -173,6 +173,7 @@ const completeOrder = async (id) => {
     ElMessage.success('訂單已完成！')
     // 刷新
     search()
+    fetchOrderCount()
   }
 }
 // 關閉彈窗的處理函數

@@ -5,17 +5,15 @@ ting:
     port: 3306
     database: mydb
     username: root
-    password: ENC(B0J6UvN7mK99jUoD0lV3Hg==)
+    password: 1234
   jwt:
-#    secret-key: ENC(k9HSYgNKYMt+LnPC9zePpQ==)
     secret-key: hello
   alioss:
     endpoint: oss-ap-northeast-1.aliyuncs.com
-    access-key-id: ENC(cx+vFNwzF6n1PyEUpkts7P19vj4m5nYAlO7utmztJzZgm1f+XOO9kw==)
-    access-key-secret: ENC(IVGTzMZe44Wh4q5/DCx5ru0dFBbUpF0tHgXgyUf97gMcrEuHC0wpqQ==)
+    access-key-id: [你的阿里雲AccessKeyId]
+    access-key-secret: [你的阿里雲AccessKeySecret]
     bucket-name: ting-ordering-system
   redis:
     host: redis
     port: 6379
-    password: ENC(241Vs/JgFZgboNGiCnNPCQ==)
     database: 2
