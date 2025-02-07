@@ -10,8 +10,8 @@ ting:
     secret-key: mattwei
   alioss:
     endpoint: oss-ap-northeast-1.aliyuncs.com
-    access-key-id: LTAI5t6wSXwf2ueMGgofS5iS
-    access-key-secret: CmC6WjX7bgYYz5r1ODwEFqv1oGYiBn
+    access-key-id: ENC(AoOhYvL7HBHtxp+M7tIfKItw1c3dEWs4ECOv7upPuL9+s8CSCNT/pQ==)
+    access-key-secret: ENC(GA4c3af/+/+99wHv7qX0FaFMUz3/eMbvsxdVr7PT4AOCjDUlRfOWog==)
     bucket-name: ting-ordering-system
   redis:
     host: redis

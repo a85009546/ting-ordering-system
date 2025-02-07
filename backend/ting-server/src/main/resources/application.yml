@@ -4,7 +4,7 @@ server:
 
 spring:
   profiles:
-    active: prod
+    active: dev
   main:
     allow-circular-references: true
   datasource:
@@ -39,3 +39,7 @@ ting:
     access-key-id: ${ting.alioss.access-key-id}
     access-key-secret: ${ting.alioss.access-key-secret}
     bucket-name: ${ting.alioss.bucket-name}
+
+jasypt:
+  encryptor:
+    password: ${JASYPT_ENCRYPTOR_PASSWORD}

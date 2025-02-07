@@ -28,7 +28,6 @@ coverage
 *.sw?
 
 # 後端
-!ting-server-0.0.1-SNAPSHOT.jar
 **/target/
 .idea
 *.iml
@@ -38,3 +37,4 @@ coverage
 
 # 忽略 application-dev.yml
 application-dev.yml
+.env
