@@ -37,4 +37,5 @@ coverage
 
 # 忽略 application-dev.yml
 application-dev.yml
+application-prod.yml
 .env
