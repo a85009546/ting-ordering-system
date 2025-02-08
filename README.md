@@ -12,6 +12,7 @@
 
 * 安裝 [Docker](https://www.docker.com/get-started) 
 * 安裝 [Docker Compose](https://docs.docker.com/compose/install/)
+* 安裝 [Maven](https://maven.apache.org/download.cgi)
 
 **運行專案**
 
@@ -24,15 +25,29 @@ cd ting-ordering-system
 
 2. 將放在`ting-ordering-system\backend\ting-server\src\main\resources` 的配置文件`application-example.yml`  改名為 `application-prod.yml`，並將阿里云的 `access-key-id` 與 `access-key-secrect` 改成自己的。
    沒有阿里雲的話，將文件改名為 `application-prod.yml`即可，除了圖片上傳功能以外，其他功能可以正常運行。
-3. 使用 Docker Compose 啟動前後端容器：
+3. 生成 jar 檔
+
+```bash
+# 進入後端目錄
+cd backend/
+
+# 使用 Mavan 打包 JAR 檔
+mvn clean package
+
+# 返回專案根目錄
+cd ..
+```
+
+4. 使用 Docker Compose 啟動前後端容器：
 
 ```bash
 # 在 ting-ordering-system 目錄下執行指令
 docker-compose up --build
 ```
 
-4. 這會構建並啟動前端和後端服務以及初始化數據庫，並且你可以在 http://localhost 訪問應用。
-5. 停止容器：
+5. 這會構建並啟動前端和後端服務以及初始化數據庫，並且你可以在 http://localhost 訪問應用。
+
+6. 停止容器：
 
 ```bash
 docker-compose down

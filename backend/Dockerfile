@@ -16,4 +16,4 @@ COPY ting-server/target/ting-server-0.0.1-SNAPSHOT.jar /app/ting-ordering-system
 EXPOSE 8080
 
 # 指定容器啟動時要執行的指令
-CMD ["java", "-jar", "ting-ordering-system-backend.jar"]
+ENTRYPOINT ["java", "-jar", "ting-ordering-system-backend.jar"]

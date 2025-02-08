@@ -15,7 +15,7 @@ spring:
   redis:
     host: ${ting.redis.host}
     port: ${ting.redis.port}
-    password: ${ting.redis.password}
+    password: ${ting.redis.password:default}
     database: ${ting.redis.database}
 
 mybatis:
@@ -36,8 +36,8 @@ ting:
     token-name: token
   alioss:
     endpoint: ${ting.alioss.endpoint}
-    access-key-id: ${ting.alioss.access-key-id:default_value}
-    access-key-secret: ${ting.alioss.access-key-secret:default_value}
+    access-key-id: ${ting.alioss.access-key-id:default}
+    access-key-secret: ${ting.alioss.access-key-secret:default}
     bucket-name: ${ting.alioss.bucket-name}
 
 jasypt:

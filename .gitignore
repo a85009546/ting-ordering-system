@@ -35,7 +35,8 @@ coverage
 *Test.java
 **/test/
 
-# 忽略 application-dev.yml
+# 指定忽略文件
 application-dev.yml
 application-prod.yml
 .env
+docker-compose.prod.yaml
