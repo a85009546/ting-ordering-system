@@ -4,7 +4,7 @@ server:
 
 spring:
   profiles:
-    active: prod
+    active: dev
   main:
     allow-circular-references: true
   datasource:
@@ -17,13 +17,16 @@ spring:
     port: ${ting.redis.port}
     password: ${ting.redis.password:default}
     database: ${ting.redis.database}
+  servlet:
+    multipart:
+      max-file-size: 2MB
+      max-request-size: 2MB
 
 mybatis:
   mapper-locations: classpath:mapper/*.xml    # mapper文件位置
   type-aliases-package: com.github.mattwei.entity  # 類別包名
   configuration:
     map-underscore-to-camel-case: true   # 駝峰命名
-
 
 
 ting:
