@@ -62,7 +62,7 @@ docker-compose down
 * 顧客帳號可自行在註冊頁面註冊 ( 登入頁面中的註冊按鈕可切換至註冊頁面，如下圖 )
 * 三種角色密碼皆為 : 123456 
 
-![Snipaste_2025-02-08_14-55-26](C:\Users\MATTWEI\Desktop\Snipaste_2025-02-08_14-55-26.png) 
+![切換註冊頁面按鈕](images/切換註冊頁面按鈕.png)
 
 ---
 
