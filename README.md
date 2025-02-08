@@ -62,24 +62,23 @@ docker-compose down
 * 顧客帳號可自行在註冊頁面註冊 ( 登入頁面中的註冊按鈕可切換至註冊頁面，如下圖 )
 * 三種角色密碼皆為 : 123456 
 
-![Snipaste_2025-02-08_14-55-26](C:\Users\MATTWEI\Desktop\Snipaste_2025-02-08_14-55-26.png) 
+![Snipaste_2025-02-08_14-55-26](images\Snipaste_2025-02-08_14-55-26.png)
 
 ---
 
 ## 主要功能
 
 - **管理端 - 管理者、員工**
-
   - 訂單管理
   - 餐點管理
   - 分類管理
   - 餐點瀏覽
-
+  
   - 員工管理
   - 數據統計
   - 運營報表導出
   - 來單提醒
-
+  
 - 顧客端
 
   - 餐點瀏覽
@@ -138,7 +137,7 @@ docker-compose down
 
 **系統架構圖**
 
-![系統架構圖](C:\Users\MATTWEI\Desktop\ting外送GitHub-README\README-Data\系統架構圖.png)
+![系統架構圖](images\系統架構圖.png)
 
 **圖示說明**
 
@@ -150,7 +149,7 @@ docker-compose down
 
 **JWT 生成與校驗流程圖**
 
-![JWT 生成與校驗流程圖](C:\Users\MATTWEI\Desktop\ting外送GitHub-README\README-Data\JWT 生成與校驗流程圖.png) 
+ ![JWT 生成與校驗流程圖](images\JWT 生成與校驗流程圖.png)
 
 **圖示說明**
 
