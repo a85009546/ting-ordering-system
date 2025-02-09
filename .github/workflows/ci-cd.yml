@@ -57,5 +57,5 @@ jobs:
       
       - name: 啟動服務
         run: |
-          docker-compose -f docker-comopse.yaml up -d
+          docker-compose -f docker-compose.yaml up -d
 
