@@ -149,7 +149,7 @@ docker-compose down
 
 **JWT 生成與校驗流程圖**
 
- ![JWT 生成與校驗流程圖](images/JWT 生成與校驗流程圖.png)
+![JWT 生成與校驗流程圖](images/JWT 生成與校驗流程圖.png)
 
 **圖示說明**
 
