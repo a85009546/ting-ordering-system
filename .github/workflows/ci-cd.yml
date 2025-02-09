@@ -15,6 +15,16 @@ jobs:
     steps:
       - name: 檢出代碼
         uses: actions/checkout@v2
+
+      - name: 設定 JDK 環境
+        uses: actions/setup-java@v2
+        with:
+          java-version: '17'  # 使用你需要的 Java 版本
+
+      - name: 編譯 JAR 檔案
+        run: |
+          cd backend/ # 進入後端目錄
+          ./mvnw clean package -DskipTests  # 這將使用 Maven 生成 JAR 檔案
       
       - name: 設定 Docker Buildx
         uses: docker/setup-buildx-action@v2
