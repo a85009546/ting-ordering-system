@@ -22,11 +22,17 @@ jobs:
               distribution: 'temurin'   # 指定 Java 版本的發行版（必填）
               java-version: '17'        # 你要使用的 Java 版本
               maven-version: '3.9.4'    # 可選，指定 Maven 版本
+              cache: 'maven'            # 啟用 Maven 依賴快取，加速構建
+
+      - name: 檢查 Maven 是否安裝成功
+        run: |
+          mvn -version  # 確認 Maven 是否可用
+          which mvn     # 確認 Maven 安裝路徑
 
       - name: 編譯 JAR 檔案
         run: |
           cd backend/ # 進入後端目錄
-          ./mvn clean package -DskipTests  # 這將使用 Maven 生成 JAR 檔案
+          mvn clean package -DskipTests  # 這將使用 Maven 生成 JAR 檔案
       
       - name: 設定 Docker Buildx
         uses: docker/setup-buildx-action@v2
