@@ -51,6 +51,7 @@ public class JwtTokenInterceptor implements HandlerInterceptor {
         try {
             log.info("jwt校驗: {}", token);
             Claims claims = JwtUtil.parseJWT(jwtProperties.getSecretKey(), token);
+            // 從 jwt 中取出 用戶id
             Long userId = Long.valueOf(claims.get(JwtClaimsConstant.USER_ID).toString());
             // 根據userId從redis中獲取對應的token
             String tokenKey = "token:user:" + userId;

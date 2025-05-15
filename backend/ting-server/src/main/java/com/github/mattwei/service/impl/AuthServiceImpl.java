@@ -83,7 +83,7 @@ public class AuthServiceImpl implements AuthService {
                 jwtProperties.getTtl(),
                 claims
         );
-        // 構建 redis 緩存鍵，規則 toekn:user:userId
+        // 構建 redis 緩存鍵，規則 token:user:userId
         String key = "token:user:" + user.getId();
         // 根據 userId 存儲 token
         redisTemplate.opsForValue().set(key, token, 3, TimeUnit.HOURS); // 過期時間設置為三小時，與JWT一致

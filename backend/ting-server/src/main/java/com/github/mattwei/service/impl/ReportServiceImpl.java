@@ -67,7 +67,7 @@ public class ReportServiceImpl implements ReportService {
         // 儲存移除年份後的日期
         List<String> formattedDateList = new ArrayList<>();
 
-        // turnoverList
+        // turnoverList，儲存每日營業額
         List<Double> turnoverList = new ArrayList<>();
         for (LocalDate date : dateList) {
             // 查詢 date 日期對應的營業額數據 : 狀態為"已完成"的訂單金額合計

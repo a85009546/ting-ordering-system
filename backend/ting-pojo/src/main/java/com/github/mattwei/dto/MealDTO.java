@@ -18,7 +18,6 @@ import java.util.List;
 @Data
 public class MealDTO implements Serializable {
 
-
     private Long id;
 
     private String name;

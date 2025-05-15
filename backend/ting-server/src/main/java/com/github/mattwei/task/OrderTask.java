@@ -30,12 +30,12 @@ public class OrderTask {
         log.info("定時處理超時訂單: {}", LocalDateTime.now());
 
         // select * from orders where status = 1 and order_time < (當前時間 - 15分鐘)
-        List<Orders> ordersList = orderMapper.getByStatusAndOrderTimeLT(Orders.PENDING_PAYMENT, LocalDateTime.now().minusMinutes(1500));
+        List<Orders> ordersList = orderMapper.getByStatusAndOrderTimeLT(Orders.PENDING_PAYMENT, LocalDateTime.now().minusMinutes(15));
 
         if(ordersList != null && ordersList.size() > 0){
             for (Orders orders : ordersList) {
                 orders.setStatus(Orders.CANCELLED);
-                orders.setCancelReason("訂單超時，自訂取消");
+                orders.setCancelReason("訂單超時，自動取消");
                 orders.setCancelTime(LocalDateTime.now());
                 orderMapper.update(orders);
             }
@@ -43,13 +43,13 @@ public class OrderTask {
     }
 
     /**
-     * 處裡一直處於派送中的訂單
+     * 處理一直處於派送中的訂單
      */
-    @Scheduled(cron = "0 0 1 * * ? ") // 每天凌晨一點觸發
+    @Scheduled(cron = "0 0 1 * * ? ") // 每天凌晨一點觸發(店家打烊之後)
     public void processDeliveryOrder(){
         log.info("定時處理處於派送中的訂單: {}", LocalDateTime.now());
 
-        // 處理前一天的訂單 : select * from orders where status = 1 and order_time < (當前時間 - 60分鐘)
+        // 處理前一天的訂單 : select * from orders where status = 4 and order_time < (當前時間 - 60分鐘)
         List<Orders> ordersList = orderMapper.getByStatusAndOrderTimeLT(Orders.DELIVERY_IN_PROGRESS, LocalDateTime.now().minusMinutes(60));
 
         if(ordersList != null && ordersList.size() > 0){

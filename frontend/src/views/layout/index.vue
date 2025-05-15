@@ -447,7 +447,7 @@ const openChangePassword = () => {
           </el-button>
 
           <!-- 地址顯示框 -->
-          <span v-if="roleStore.role <= 3" class="address-display" @click="openAddressDialog">
+          <span v-if="roleStore.role != 2" class="address-display" @click="openAddressDialog">
             <img
                   src="@/assets/images/marker.png"
                   alt="Location"
@@ -484,7 +484,7 @@ const openChangePassword = () => {
             身份：<strong>{{ roleStore.role === 1 ? '顧客' : roleStore.role === 2 ? '員工' : '管理員' }}</strong>
           </span>
           
-          <span v-if="roleStore.role <= 3 ? true : false" class="balance-info">
+          <span v-if="roleStore.role != 2 ? true : false" class="balance-info">
             &nbsp;&nbsp; | &nbsp;&nbsp;
             餘額：<strong>{{ balanceStore.balance }}</strong>
           </span>

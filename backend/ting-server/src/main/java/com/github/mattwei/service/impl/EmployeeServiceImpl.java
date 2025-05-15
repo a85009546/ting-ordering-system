@@ -49,9 +49,10 @@ public class EmployeeServiceImpl implements EmployeeService {
         // 查詢帳號是否存在
         User user = authMapper.findByAccount(employeeDTO.getAccount());
         if(user == null){
-            // 新增員工
+            // 創建用戶
             user = new User();
             BeanUtils.copyProperties(employeeDTO, user);
+            // 將用戶的角色設置為員工
             user.setRole(2);
             // 默認密碼 123456
             user.setPassword(DigestUtils.md5DigestAsHex(PasswordConstant.DEFAULT_PASSWORD.getBytes()));

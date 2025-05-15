@@ -119,7 +119,7 @@ public class OrderServiceImpl implements OrderService {
         // 1. 根據訂單id查詢訂單
         Orders orders = orderMapper.getById(id);
         // 1.1 檢查訂單狀態是否為 待支付
-        if(orders.getStatus() != Orders.PENDING_PAYMENT){
+        if(!Objects.equals(orders.getStatus(), Orders.PENDING_PAYMENT)){
             throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
         }
         // 2. 查詢用戶當前餘額

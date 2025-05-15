@@ -33,13 +33,14 @@ public class UploadController {
         log.info("文件上傳: {}", file);
 
         try {
+            // 使用 UUID 作為新的文件名
             // 原始文件名
             String originalFilename = file.getOriginalFilename();
             // 擷取原始文件名的副檔名
             String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
             // 新文件名
             String objectName = UUID.randomUUID().toString() + extension;
-            // 文件的請求路徑
+            // 文件的請求路徑 (圖片網址)
             String filePath = aliOssUtil.upload(file.getBytes(), objectName);
 
             return Result.success(filePath);

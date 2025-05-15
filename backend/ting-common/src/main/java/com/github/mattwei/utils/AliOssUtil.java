@@ -23,6 +23,12 @@ public class AliOssUtil {
     private String bucketName;
 
 
+    /**
+     * 文件上傳
+     * @param bytes
+     * @param objectName
+     * @return  圖片網址
+     */
     public String upload(byte[] bytes, String objectName){
 
         // 創建 OSSclient 物件
