@@ -2,6 +2,7 @@ package com.github.mattwei.service.impl;
 
 import com.github.mattwei.constant.MessageConstant;
 import com.github.mattwei.constant.PasswordConstant;
+import com.github.mattwei.constant.RoleConstant;
 import com.github.mattwei.context.BaseContext;
 import com.github.mattwei.dto.EmployeeDTO;
 import com.github.mattwei.dto.UserPageQueryDTO;
@@ -53,7 +54,7 @@ public class EmployeeServiceImpl implements EmployeeService {
             user = new User();
             BeanUtils.copyProperties(employeeDTO, user);
             // 將用戶的角色設置為員工
-            user.setRole(2);
+            user.setRole(RoleConstant.EMPLOYEE);
             // 默認密碼 123456
             user.setPassword(DigestUtils.md5DigestAsHex(PasswordConstant.DEFAULT_PASSWORD.getBytes()));
             employeeMapper.insert(user);
@@ -61,7 +62,6 @@ public class EmployeeServiceImpl implements EmployeeService {
             // 帳號已存在
             throw new AccountAlreadyExistException(MessageConstant.ACCOUNT_ALREADY_EXIST);
         }
-
     }
 
     /**

@@ -20,6 +20,7 @@ public class OssConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
+    // 參數注入 AliOssProperties
     public AliOssUtil aliOssUtil(AliOssProperties aliOssProperties){
         log.info("開始創建阿里云文件上傳工具類物件: {}", aliOssProperties);
         return new AliOssUtil(aliOssProperties.getEndpoint(),

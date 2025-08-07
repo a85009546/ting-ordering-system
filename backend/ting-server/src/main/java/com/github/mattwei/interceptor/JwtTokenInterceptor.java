@@ -35,6 +35,7 @@ public class JwtTokenInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+
         String requestPath = request.getRequestURI();
         System.out.println("Request Path: " + requestPath);
 

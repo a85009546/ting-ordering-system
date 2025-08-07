@@ -1,6 +1,7 @@
 package com.github.mattwei.controller.auth;
 
 import com.github.mattwei.constant.MessageConstant;
+import com.github.mattwei.constant.RoleConstant;
 import com.github.mattwei.dto.RegisterRequestDTO;
 import com.github.mattwei.dto.UserLoginDTO;
 import com.github.mattwei.entity.User;
@@ -50,7 +51,7 @@ public class AuthController {
             // 這裡的 user 皆為 customer
             user = new User();
             BeanUtils.copyProperties(registerRequestDTO, user);
-            user.setRole(1);
+            user.setRole(RoleConstant.CUSTOMER);
             user.setBalance(new BigDecimal("5000.00")); // 默認5000元
             authService.register(user);
             return Result.success();

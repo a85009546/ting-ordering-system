@@ -12,7 +12,7 @@ import java.io.Serializable;
  */
 
 @Data
-public class UserPageQueryDTO implements Serializable {
+public class  UserPageQueryDTO implements Serializable {
 
 
     private String account;
