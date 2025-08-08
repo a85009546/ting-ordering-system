@@ -45,8 +45,6 @@ services:
     volumes:
       - ./mysql-init:/docker-entrypoint-initdb.d  # 容器啟動時自動執行初始化脚本
       - ./my.cnf:/etc/mysql/my.cnf  # 從主機掛載自定義的 my.cnf
-    ports:
-      - "3307:3306"
         # 設置容器內文件的權限
     entrypoint:
       - sh

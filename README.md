@@ -101,7 +101,7 @@ docker-compose down
 - **後端** : Spring Boot、Spring MVC、Spring Task、JWT、阿里雲 OSS、POI、WebSocket
 - **數據存儲** : MySQL、Redis
 - **容器化** : Docker
-- **工具** : Git、Maven、Junit、Apifox
+- **工具** : Git、Maven、Apifox
 - **其他** : Nginx
 
 
